@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if form.errors %}
+    <ul class=errors>
+        {% for name, error in form.errors.items() %}
+          <span style="color:red;">{{ name }}: {{ error[0] }}</span>
+        {% endfor %}
+    </ul>
+{% endif %}
+<div class="row">
+    <div class="col">
+        <form method="POST" action="{{ url_for('main.home') }}">
+            {{ form.csrf_token }}
+            <div class="row mt-3">
+                <div class="col-4">
+                    <div class="form-group">{{ form.keywords_include.label }}:
+                        {{ form.keywords_include(class="form-control", placeholder="Enter Keywords") }}</div>
+                    <div class="form-group">{{ form.keywords_exclude.label }}:
+                        {{ form.keywords_exclude(class="form-control", placeholder="optional") }}</div>
+                </div>
+                <!--MIN & MAX PRICE-->
+                <div class="col-2">
+                    <div class="form-group">{{ form.maximum_price.label }}:
+                        {{ form.maximum_price(class="form-control", placeholder="optional") }}</div>
+                    <div class="form-group">{{ form.minimum_price.label }}:
+                        {{ form.minimum_price(class="form-control", placeholder="optional") }}</div>
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col">
+                            <label>Seller Location:</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="usa_check" id="usa_check"
+                                       value="usa_only" checked>
+                                <label class="form-check-label text-muted" for="usa_check">USA Sellers ONLY</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4" style="padding-top:4px;">
+                        <div class="col">
+                            <label>Sort Order of Results:</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="item_sort" id="by_relevance"
+                                       value="BestMatch" checked>
+                                <label class="form-check-label text-muted" for="by_relevance">Best Match</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="item_sort" id="higher_price"
+                                       value="CurrentPriceHighest">
+                                <label class="form-check-label text-muted" for="higher_price">Highest Prices First</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="item_sort"  id="most_bids"
+                                       value="BidCountMost">
+                                <label class="form-check-label text-muted" for="most_bids">Highest Bid Counts</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button type="submit" class="btn btn-success btn-lg">Get Item Data!</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
