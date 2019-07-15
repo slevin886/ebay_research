@@ -12,8 +12,6 @@ from ebaysdk.finding import Connection as Finding
 # getSearchKeywordsRecommendation
 # Eventually use this: 'GetCategoryInfo' to get valid category ids
 # findItemsByCategory (max: 3, will need to be specified separately for each one i)
-# Item filter should look like:
-# 'itemFilter':[{'name':'SoldItemsOnly', 'value': 'true'}],
 # search variation:
 # baseball card  (both words) baseball,card (exact phrase baseball card)
 # (baseball,card) (items with either baseball or card)  baseball -card (baseball but NOT card)
@@ -22,8 +20,8 @@ from ebaysdk.finding import Connection as Finding
 
 class EasyEbayData:
 
-    def __init__(self, api_id: str, keywords: str, excluded_words: str, sort_order: str,
-                 search_type: str = "findItemsByKeywords", wanted_pages: int = False,
+    def __init__(self, api_id: str, keywords: str, excluded_words: str = None, sort_order: str = "BestMatch",
+                 search_type: str = "findItemsByKeywords", wanted_pages: int = None,
                  usa_only: bool = True, min_price: float = 0.0, max_price: float = None):
         """
         A class that returns a clean data set of items for sale based on a keyword search from ebay
@@ -44,7 +42,7 @@ class EasyEbayData:
         self.search_url = ""  # will be the result url of the first searched page
         self.total_pages = 0  # the total number of available pages
         self.total_entries = 0  # the total number of items available given keywords
-        if len(excluded_words) > 2:
+        if excluded_words and len(excluded_words) > 2:
             excluded_words = ",".join(word for word in excluded_words.split(" "))
             self.full_query = keywords + " -(" + excluded_words + ")"
         else:
@@ -78,7 +76,7 @@ class EasyEbayData:
             unembedded.append(unembedded_dict)
         return unembedded
 
-    def test_connection(self):
+    def _test_connection(self):
         """Tests that an initial API connection is successful"""
         try:
             # Might simplify this
@@ -109,10 +107,10 @@ class EasyEbayData:
             pages2pull = self.total_pages
         return pages2pull
 
-    def get_ebay_item_info(self):
+    def get_data(self):
         all_items = []
 
-        response = self.test_connection()
+        response = self._test_connection()
 
         if response in ["connection_error", "no_results_error"]:
             return response

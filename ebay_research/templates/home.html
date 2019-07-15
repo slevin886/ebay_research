@@ -75,4 +75,7 @@
         </form>
     </div>
 </div>
+{% if map_plot %}
+    {{ map_plot|safe }}
+{% endif %}
 {% endblock %}

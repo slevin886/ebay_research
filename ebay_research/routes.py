@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, url_for, session, request
+from flask import Blueprint, render_template, url_for, session, request, flash
 from ebay_research.data_analysis import EasyEbayData
 from ebay_research.forms import FreeSearch
+from ebay_research.plot_maker import create_us_county_map
 import pandas as pd
 import os
 
@@ -25,5 +26,13 @@ def home():
         usa_check = request.form.get("usa_check")
         search = EasyEbayData(api_id=APP_ID, keywords=keywords, excluded_words=excluded_words, sort_order=sort_order,
                               usa_only=usa_check, wanted_pages=1, min_price=min_price, max_price=max_price)
-        test = search.get_ebay_item_info()
+        df = search.get_data()
+        # CATCH CONNECTION ERROR AND NO DATA WHICH RETURN AS STR
+        if isinstance(df, str):
+            if df == "connection_error":
+                flash("Uh oh! There seems to be a problem connecting to the API, try again later!")
+            else:
+                flash("There were no results for those search parameters, try a different search.")
+            return render_template('home.html', form=form)
+        return render_template('home.html', form=form, map_plot=create_us_county_map(df), df=df)
     return render_template('home.html', form=form)
