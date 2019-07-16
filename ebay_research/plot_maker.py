@@ -13,9 +13,9 @@ def create_us_county_map(df):
     df = pd.merge(df, zipcode_map, left_on='postalCode', right_on='zip').dropna()
     if df.shape[0] < 2:
         return None
-    df['text'] = 'items: ' + df['itemId'].astype(str) + '<br>' + df['county_name'] + ' County, ' + df['state_id']
+    df['text'] = '# of Items: ' + df['itemId'].astype(str) + '<br>' + df['county_name'] + ' County, ' + df['state_id']
     data = [go.Scattergeo(locationmode='USA-states', lon=df['lng'], lat=df['lat'],
-                          text=df['text'], mode='markers',
+                          text=df['text'], mode='markers', hoverinfo='text',
                           marker=dict(size=df['itemId'],
                                       sizemode='area',
                                       sizeref=2. * max(df['itemId']) / (40. ** 2),
@@ -23,13 +23,14 @@ def create_us_county_map(df):
                                       opacity=0.8,
                                       autocolorscale=True,
                                       line=dict(width=1, color='rgba(102, 102, 102)'),
-                          cmin=0,
-                          color=df['itemId'],
-                          cmax=df['itemId'].max(),
-                          colorbar=dict(title="<b>Number of Items</b>")))]
+                                      cmin=0,
+                                      color=df['itemId'],
+                                      cmax=df['itemId'].max())
+                          )]
 
     layout = dict(
         margin=dict(r=0, t=0, b=0, l=0),
+        paper_bgcolor="#EBEBEB",
         geo=dict(
             scope='usa',
             projection=dict(type='albers usa'),
