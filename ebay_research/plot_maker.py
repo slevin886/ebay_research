@@ -26,7 +26,7 @@ def create_us_county_map(df):
                           cmin=0,
                           color=df['itemId'],
                           cmax=df['itemId'].max(),
-                          colorbar=dict(title="<strong>Number of Items</strong>")))]
+                          colorbar=dict(title="<b>Number of Items</b>")))]
 
     layout = dict(
         margin=dict(r=0, t=0, b=0, l=0),

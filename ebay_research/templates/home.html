@@ -75,7 +75,21 @@
         </form>
     </div>
 </div>
-{% if map_plot %}
-    {{ map_plot|safe }}
+{% if tab_data %}
+<div class="row mt-3">
+    <div class="col">
+        <div id="tab_location"></div>
+    </div>
+    <script>var tab_data = {{ tab_data | tojson }};</script>
+    <script src="{{ url_for('static', filename='home.js') }}"></script>
+</div>
 {% endif %}
+{% if map_plot %}
+<div class="row mt-3">
+    <div class="col">
+        {{ map_plot|safe }}
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}

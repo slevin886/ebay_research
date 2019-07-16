@@ -34,5 +34,8 @@ def home():
             else:
                 flash("There were no results for those search parameters, try a different search.")
             return render_template('home.html', form=form)
-        return render_template('home.html', form=form, map_plot=create_us_county_map(df), df=df)
+        tab_data = df[['title', 'location', 'sellingStatus_bidCount',
+                       'sellingStatus_timeLeft', 'currentPrice_value']].copy()
+        return render_template('home.html', form=form, map_plot=create_us_county_map(df),
+                               tab_data=tab_data.to_dict(orient='records'))
     return render_template('home.html', form=form)
