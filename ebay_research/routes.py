@@ -35,7 +35,7 @@ def home():
             else:
                 flash("There were no results for those search parameters, try a different search.")
             return render_template('home.html', form=form)
-
-        return render_template('home.html', form=form, map_plot=create_us_county_map(df),
+        df = create_us_county_map(df)
+        return render_template('home.html', form=form, map_plot=df.to_dict(orient='list'),
                                tab_data=tab_data.to_dict(orient='records'))
     return render_template('home.html', form=form)

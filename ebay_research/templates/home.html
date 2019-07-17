@@ -75,6 +75,7 @@
         </form>
     </div>
 </div>
+<hr>
 {% if tab_data %}
 <div class="row mt-3">
     <div class="col">
@@ -86,9 +87,15 @@
 {% endif %}
 {% if map_plot %}
 <div class="row mt-3">
-    <div class="col-6">
-        <h5>Seller Location Density</h5>
-        {{ map_plot|safe }}
+    <div class="col">
+        <h4>Seller Location Map</h4><hr>
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col">
+        <div id="usaMAP"></div>
+        <script>var df = {{ map_plot|tojson }} </script>
+        <script src=" {{ url_for('static', filename='usa_map.js') }}"></script>
     </div>
 </div>
 {% endif %}

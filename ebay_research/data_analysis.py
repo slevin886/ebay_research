@@ -150,7 +150,7 @@ class EasyEbayData:
 def data_clean(df):
     # make a separate function later...
     tab_data = df[['title', 'location', 'sellingStatus_bidCount', 'galleryURL', 'sellingStatus_timeLeft',
-                   'currentPrice_value', 'listingInfo_startTime', 'listingInfo_endTime']].copy()
+                   'viewItemURL', 'currentPrice_value', 'listingInfo_startTime', 'listingInfo_endTime']].copy()
     tab_data['listingInfo_startTime'] = pd.to_datetime(tab_data['listingInfo_startTime'])
     tab_data['listingInfo_endTime'] = pd.to_datetime(tab_data['listingInfo_endTime'])
     return tab_data
