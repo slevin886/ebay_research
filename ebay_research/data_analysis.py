@@ -79,7 +79,6 @@ class EasyEbayData:
     def _test_connection(self):
         """Tests that an initial API connection is successful"""
         try:
-            # Might simplify this
             response = self.api.execute(self.search_type, {'keywords': self.full_query,
                                                            'paginationInput': {'pageNumber': 1,
                                                                                'entriesPerPage': 100},
@@ -147,10 +146,18 @@ class EasyEbayData:
         return pd.DataFrame(all_items)
 
 
-def data_clean(df):
-    # make a separate function later...
-    tab_data = df[['title', 'location', 'sellingStatus_bidCount', 'galleryURL', 'sellingStatus_timeLeft',
-                   'viewItemURL', 'currentPrice_value', 'listingInfo_startTime', 'listingInfo_endTime']].copy()
+def prep_tab_data(df):
+    """
+    Isolates principal item categories for display in tabular data on home page
+    :param df: full dataframe of ebay item data
+    :return: dataframe
+    """
+    topics_for_tab = ['title', 'location', 'sellingStatus_bidCount', 'galleryURL', 'sellingStatus_timeLeft',
+                      'viewItemURL', 'currentPrice_value', 'listingInfo_startTime', 'listingInfo_endTime']
+    for topic in topics_for_tab:
+        if topic not in df.columns:
+            topics_for_tab.remove(topic)
+    tab_data = df[topics_for_tab].copy()
     tab_data['listingInfo_startTime'] = pd.to_datetime(tab_data['listingInfo_startTime'])
     tab_data['listingInfo_endTime'] = pd.to_datetime(tab_data['listingInfo_endTime'])
     return tab_data

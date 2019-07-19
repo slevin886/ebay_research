@@ -3,11 +3,11 @@ import os
 
 
 def create_us_county_map(df):
-    df = df.groupby('postalCode', as_index=False)['itemId'].count()
+    # Upload keys for zipcode to lat/lon location
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'zipcode_data.csv')
     zipcode_map = pd.read_csv(path)
     zipcode_map['zip'] = zipcode_map['zip'].astype(str)
-    # the command below is inner and drops nulls, probably want to collect this later
+    df = df.groupby('postalCode', as_index=False)['itemId'].count()
     df = pd.merge(df, zipcode_map, left_on='postalCode', right_on='zip').dropna()
     if df.shape[0] < 2:
         return None
