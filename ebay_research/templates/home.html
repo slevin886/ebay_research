@@ -26,7 +26,38 @@
                     <div class="form-group">{{ form.minimum_price.label }}:
                         {{ form.minimum_price(class="form-control", placeholder="optional") }}</div>
                 </div>
-                <div class="col-6">
+                <!--Sort Order of Results-->
+                <div class="col-3">
+                    <div class="row">
+                        <div class="col">
+                            <label>Sort Order of Results:</label>
+                            <select class="form-control" id="item_sort" name="item_sort">
+                                <option value="BestMatch">Best Match</option>
+                                <option value="CurrentPriceHighest">Highest Price First</option>
+                                <option value="BidCountMost"> Highest Bid Count</option>
+                                <option value="BidCountFewest">Bid Count Fewest</option>
+                                <option value="EndTimeSoonest">End Time Soonest</option>
+                                <option value="StartTimeNewest">Start Time Newest</option>
+                                <option value="WatchCountDecreaseSort">Highest Watch Count</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!--Listing TYPE-->
+                    <div class="row mt-3">
+                        <div class="col">
+                            <label>Listing Type:</label>
+                            <select class="form-control" id="listing_type" name="listing_type">
+                                <option value="" disable>All Listing Types</option>
+                                <option value="Auction">Auction</option>
+                                <option value="StoreInventory">Store Inventory</option>
+                                <option value="FixedPrice">Fixed Price</option>
+                                <option value="AuctionWithBIN">Auction (w/ Buy Now)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!--SELLER LOCATION-->
+                <div class="col">
                     <div class="row">
                         <div class="col">
                             <label>Seller Location:</label>
@@ -38,30 +69,6 @@
                                 <input class="form-check-input" type="checkbox" name="usa_check" id="usa_check"
                                        value="usa_only" checked>
                                 <label class="form-check-label text-muted" for="usa_check">USA Sellers ONLY</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-4" style="padding-top:4px;">
-                        <div class="col">
-                            <label>Sort Order of Results:</label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="item_sort" id="by_relevance"
-                                       value="BestMatch" checked>
-                                <label class="form-check-label text-muted" for="by_relevance">Best Match</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="item_sort" id="higher_price"
-                                       value="CurrentPriceHighest">
-                                <label class="form-check-label text-muted" for="higher_price">Highest Prices First</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="item_sort"  id="most_bids"
-                                       value="BidCountMost">
-                                <label class="form-check-label text-muted" for="most_bids">Highest Bid Counts</label>
                             </div>
                         </div>
                     </div>
@@ -81,11 +88,19 @@
     <div class="col">
         <div id="tab_location"></div>
     </div>
-    <script>var tab_data = {{ tab_data | tojson }};</script>
-    <script src="{{ url_for('static', filename='home.js') }}"></script>
 </div>
-{% endif %}
-{% if map_plot %}
+<div class="row mt-3">
+    <div class="col-6">
+        <h5>Price Distribution</h5>
+        <hr>
+        <div id="histData"></div>
+    </div>
+    <div class="col-6">
+        <h5>Price Distribution (by Listing Type)</h5>
+        <hr>
+        <div id="dfTypePlot"></div>
+    </div>
+</div>
 <div class="row mt-3">
     <div class="col">
         <h4>Seller Location Map</h4><hr>
@@ -94,10 +109,16 @@
 <div class="row mt-3">
     <div class="col">
         <div id="usaMAP"></div>
-        <script>var df = {{ map_plot|tojson }} </script>
-        <script src=" {{ url_for('static', filename='usa_map.js') }}"></script>
     </div>
 </div>
+<!--TODO: change 'df' to more descriptive name-->
+<script>var df_type = {{ df_type|tojson }};
+        var df_hist = {{ hist_plot|tojson }};
+        var df = {{ map_plot|tojson }};
+        var tab_data = {{ tab_data | tojson }};</script>
+<script src="{{ url_for('static', filename='home.js') }}"></script>
+<script src="{{ url_for('static', filename='boxplot_price.js') }}"></script>
+<script src=" {{ url_for('static', filename='usa_map.js') }}"></script>
 {% endif %}
 
 {% endblock %}

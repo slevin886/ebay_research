@@ -21,14 +21,15 @@ from ebaysdk.finding import Connection as Finding
 class EasyEbayData:
 
     def __init__(self, api_id: str, keywords: str, excluded_words: str = None, sort_order: str = "BestMatch",
-                 search_type: str = "findItemsByKeywords", wanted_pages: int = None,
+                 search_type: str = "findItemsByKeywords", wanted_pages: int = None, listing_type: str = None,
                  usa_only: bool = True, min_price: float = 0.0, max_price: float = None):
         """
         A class that returns a clean data set of items for sale based on a keyword search from ebay
         :param api_id: eBay developer app's ID
         :param keywords: Keywords should be between 2 & 350 characters, not case sensitive
         :param wanted_pages: The number of desired pages to return w/ 100 items per page
-        :param search_type: Search type, for now only findItemsbyKeywords accepted
+        :param search_type: Search type, for now only findItemsByKeywords accepted
+        :param listing_type: A string for listing type (Auction, etc.) or None to search all
         """
         self.api = Finding(appid=api_id, config_file=None)
         self.search_type = search_type
@@ -39,6 +40,7 @@ class EasyEbayData:
         self.min_price = min_price if min_price else 0.0
         self.max_price = max_price
         self.sort_order = sort_order
+        self.listing_type = listing_type
         self.search_url = ""  # will be the result url of the first searched page
         self.total_pages = 0  # the total number of available pages
         self.total_entries = 0  # the total number of items available given keywords
@@ -50,10 +52,15 @@ class EasyEbayData:
         self.item_filter = self._create_item_filter()
 
     def _create_item_filter(self):
+        if self.sort_order in ['BidCountMost', 'BidCountFewest']:
+            if self.listing_type not in ['Auction', 'AuctionWithBIN']:
+                self.listing_type = 'Auction'  # sort order without that listing type returns nothing
         item_filter = list()
         item_filter.append({'name': 'MinPrice', 'value': self.min_price})
         if self.max_price and self.max_price > self.min_price:
             item_filter.append({'name': 'MaxPrice', 'value': self.max_price})
+        if self.listing_type:
+            item_filter.append({'name': 'ListingType', 'value': self.listing_type})
         if self.usa_only:
             item_filter.append({'name': 'LocatedIn', 'value': 'US'})
         return item_filter
@@ -87,6 +94,7 @@ class EasyEbayData:
             assert response.reply.ack == 'Success'
             print('Successfully Connected to API!')
             self.search_url = response.dict()['itemSearchURL']
+            print(self.search_url)
             return response
         except ConnectionError:
             print('Connection Error! Ensure that your API key was correctly entered.')
@@ -144,20 +152,3 @@ class EasyEbayData:
                     return pd.DataFrame(all_items)
 
         return pd.DataFrame(all_items)
-
-
-def prep_tab_data(df):
-    """
-    Isolates principal item categories for display in tabular data on home page
-    :param df: full dataframe of ebay item data
-    :return: dataframe
-    """
-    topics_for_tab = ['title', 'location', 'sellingStatus_bidCount', 'galleryURL', 'sellingStatus_timeLeft',
-                      'viewItemURL', 'currentPrice_value', 'listingInfo_startTime', 'listingInfo_endTime']
-    for topic in topics_for_tab:
-        if topic not in df.columns:
-            topics_for_tab.remove(topic)
-    tab_data = df[topics_for_tab].copy()
-    tab_data['listingInfo_startTime'] = pd.to_datetime(tab_data['listingInfo_startTime'])
-    tab_data['listingInfo_endTime'] = pd.to_datetime(tab_data['listingInfo_endTime'])
-    return tab_data

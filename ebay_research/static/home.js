@@ -10,16 +10,17 @@ var table = new Tabulator("#tab_location", {
 	paginationSize:5,         //allow 7 rows per page of data
 	movableColumns:true,      //allow column order to be changed
 	resizableRows:true,       //allow row order to be changed
-//	initialSort:[{column:"currentPrice_value", dir:"asc"}],
+	headerFilterPlaceholder: "search/filter...",
 	columns:[                 //define the table columns
 	    {formatter:"rownum"},
 		{title:"Current Price", field:"currentPrice_value", formatter:"money", formatterParams:{symbol: "$"}},
 		{title:"Title", field:"title", formatter:"textarea", width:150, headerFilter:"input"},
 		{title:"Image", field:"galleryURL", formatter:"image", width:150},
-		{title:"Location", field:"location"},
+		{title:"Location", field:"location", headerFilter:"input"},
 		{title:"Bid Count", field:"sellingStatus_bidCount"},
-		{title:"Start Time", field:"listingInfo_startTime", sorter:"date"},
-		{title:"End Time", field:"listingInfo_endTime", sorter:"date"},
+		{title:"Start Time", field:"listingInfo_startTime"},
+		{title:"End Time", field:"listingInfo_endTime"},
+		{title:"Listing Type", field:"listingInfo_listingType", headerFilter:"input"},
 		{title:"View Item on eBay", field:"viewItemURL", formatter:"link", width:200},
 	],
 });
