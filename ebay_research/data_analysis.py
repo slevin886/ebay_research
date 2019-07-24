@@ -66,7 +66,8 @@ class EasyEbayData:
             item_filter.append({'name': 'LocatedIn', 'value': 'US'})
         return item_filter
 
-    def unembed_ebay_item_data(self, list_of_item_dics):
+    @staticmethod
+    def unembed_ebay_item_data(list_of_item_dics):
         unembedded = []
         for ebay_item in list_of_item_dics:
             assert isinstance(ebay_item, dict), "The data should be returning a list of dictionaries."
@@ -84,6 +85,21 @@ class EasyEbayData:
             unembedded.append(unembedded_dict)
         return unembedded
 
+    @staticmethod
+    def clean_aspect_dictionary(aspects):
+        """
+        There is also a second key 'domainDisplayName' for these aspects
+        :param aspects:
+        :return:
+        """
+        all_aspects = {}
+        for asp in aspects['aspect']:
+            sub_aspect = {}
+            for name in asp['valueHistogram']:
+                sub_aspect[name['_valueName']] = int(name['count'])
+            all_aspects[asp['_name']] = sub_aspect
+        return all_aspects
+
     def _test_connection(self):
         """Tests that an initial API connection is successful"""
         try:
@@ -99,7 +115,7 @@ class EasyEbayData:
             print('Successfully Connected to API!')
             response = response.dict()
             self.search_url = response['itemSearchURL']
-            self.item_aspects = response['aspectHistogramContainer']
+            self.item_aspects = self.clean_aspect_dictionary(response['aspectHistogramContainer'])
             self.category_info = response['categoryHistogramContainer']
             return response
         except ConnectionError:
@@ -109,7 +125,7 @@ class EasyEbayData:
             print('There are no results for that search!')
             return "no_results_error"
 
-    def get_wanted_pages(self, response):
+    def _get_wanted_pages(self, response):
         """response comes from test_connection to access total pages without making another API call"""
         self.total_pages = int(response['paginationOutput']['totalPages'])
         self.total_entries = int(response['paginationOutput']['totalEntries'])
@@ -132,7 +148,7 @@ class EasyEbayData:
         data = response['searchResult']['item']
         all_items.extend(self.unembed_ebay_item_data(data))
 
-        pages2pull = self.get_wanted_pages(response)
+        pages2pull = self._get_wanted_pages(response)
 
         if pages2pull < 2:  # stop if only pulling one page or only one page exists
             return pd.DataFrame(all_items)

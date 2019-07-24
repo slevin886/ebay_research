@@ -43,6 +43,28 @@ def make_price_by_type(df):
     return data
 
 
+def make_sunburst(dic):
+    labels = []
+    parents = []
+    values = []
+
+    for key in dic.keys():
+        labels.append(key)
+        parents.append("")
+        values.append(1)
+        for name, count in dic[key].items():
+            if name == 'Not Specified':
+                labels.append(name + '<br>' + key)
+            else:
+                labels.append(name)
+            parents.append(key)
+            values.append(count)
+
+    return [dict(type='sunburst', labels=labels, parents=parents, values=values,
+                outsidetextfont={"size": 20, "color": "#377eb8"},
+                marker={"line": {"width": 0.5, "color": "black"}})]
+
+
 def prep_tab_data(df):
     """
     Isolates principal item categories for display in tabular data on home page

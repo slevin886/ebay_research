@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, url_for, session, request, flash
 from ebay_research.data_analysis import EasyEbayData
 from ebay_research.forms import FreeSearch
-from ebay_research.plot_maker import create_us_county_map, make_price_by_type, prep_tab_data
+from ebay_research.plot_maker import create_us_county_map, make_price_by_type, prep_tab_data, make_sunburst
 import pandas as pd
 import os
 
@@ -43,6 +43,6 @@ def home():
                                map_plot=df_map.to_dict(orient='list'),
                                tab_data=tab_data.to_dict(orient='records'),
                                hist_plot=df['currentPrice_value'].tolist(),
-                               df_type=df_type,
+                               df_type=df_type, make_sunburst=make_sunburst(search.item_aspects),
                                page_url=search.search_url, total_entries=search.total_entries)
     return render_template('home.html', form=form)

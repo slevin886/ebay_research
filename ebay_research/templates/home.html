@@ -110,19 +110,22 @@
     </div>
 </div>
 <div class="row mt-3">
-    <div class="col">
-        <h4>Seller Location Map</h4><hr>
-    </div>
-</div>
-<div class="row mt-3">
-    <div class="col">
+    <div class="col-6">
+        <h5>Seller Location Map</h5>
+        <hr>
         <div id="usaMAP"></div>
+    </div>
+    <div class="col-6">
+        <h5>Item Aspect Counts</h5>
+        <hr>
+        <div id="sunBurst"></div>
     </div>
 </div>
 <!--TODO: change 'df' to more descriptive name-->
 <script>var df_type = {{ df_type|tojson }};
         var df_hist = {{ hist_plot|tojson }};
         var df = {{ map_plot|tojson }};
+        var make_sunburst = {{ make_sunburst|tojson }};
         var tab_data = {{ tab_data | tojson }};</script>
 <script src="{{ url_for('static', filename='home.js') }}"></script>
 <script src="{{ url_for('static', filename='boxplot_price.js') }}"></script>

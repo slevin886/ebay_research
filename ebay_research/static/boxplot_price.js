@@ -24,3 +24,10 @@ var layout2 =  {'xaxis': {'title': 'Item Price', 'tickprefix': '$'},
                 };
 
 Plotly.newPlot('histData', data2, layout2, {"displayModeBar": false});
+
+
+// Sunburst Plot
+
+var layout3 = {'margin': {'t': 0, 'l': 0, 'r': 0, 'b': 0}}
+
+Plotly.newPlot('sunBurst', make_sunburst, layout3, {"displayModeBar": false});
