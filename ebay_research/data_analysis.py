@@ -1,5 +1,4 @@
 import pandas as pd
-from typing import List
 from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection as Finding
 
@@ -42,6 +41,8 @@ class EasyEbayData:
         self.sort_order = sort_order
         self.listing_type = listing_type
         self.search_url = ""  # will be the result url of the first searched page
+        self.item_aspects = None  # dictionary of item features
+        self.category_info = None  # dictionary of category id and subcategories
         self.total_pages = 0  # the total number of available pages
         self.total_entries = 0  # the total number of items available given keywords
         if excluded_words and len(excluded_words) > 2:
@@ -90,11 +91,16 @@ class EasyEbayData:
                                                            'paginationInput': {'pageNumber': 1,
                                                                                'entriesPerPage': 100},
                                                            'itemFilter': self.item_filter,
-                                                           'sortOrder': self.sort_order})
+                                                           'sortOrder': self.sort_order,
+                                                           'outputSelector': ['SellerInfo', 'StoreInfo',
+                                                                              'AspectHistogram', 'CategoryHistogram']
+                                                           })
             assert response.reply.ack == 'Success'
             print('Successfully Connected to API!')
-            self.search_url = response.dict()['itemSearchURL']
-            print(self.search_url)
+            response = response.dict()
+            self.search_url = response['itemSearchURL']
+            self.item_aspects = response['aspectHistogramContainer']
+            self.category_info = response['categoryHistogramContainer']
             return response
         except ConnectionError:
             print('Connection Error! Ensure that your API key was correctly entered.')
@@ -105,8 +111,8 @@ class EasyEbayData:
 
     def get_wanted_pages(self, response):
         """response comes from test_connection to access total pages without making another API call"""
-        self.total_pages = int(response.reply.paginationOutput.totalPages)
-        self.total_entries = int(response.reply.paginationOutput.totalEntries)
+        self.total_pages = int(response['paginationOutput']['totalPages'])
+        self.total_entries = int(response['paginationOutput']['totalEntries'])
         if self.wanted_pages:
             # can't pull more than max pages
             pages2pull = min([self.total_pages, self.wanted_pages])
@@ -123,7 +129,7 @@ class EasyEbayData:
             return response
 
         # Add initial items from test
-        data = response.dict()['searchResult']['item']
+        data = response['searchResult']['item']
         all_items.extend(self.unembed_ebay_item_data(data))
 
         pages2pull = self.get_wanted_pages(response)
@@ -138,7 +144,8 @@ class EasyEbayData:
                                                            'paginationInput': {'pageNumber': page,
                                                                                'entriesPerPage': 100},
                                                            'itemFilter': self.item_filter,
-                                                           'sortOrder': self.sort_order
+                                                           'sortOrder': self.sort_order,
+                                                           'outputSelector': ['SellerInfo', 'StoreInfo']  # histograms only needed once
                                                            })
             if response.reply.ack == 'Success':
                 data = response.dict()['searchResult']['item']

@@ -39,8 +39,10 @@ def home():
         tab_data = prep_tab_data(df)
         df_map = create_us_county_map(df)
         df_type = make_price_by_type(df)
-        return render_template('home.html', form=form, map_plot=df_map.to_dict(orient='list'),
+        return render_template('home.html', form=form,
+                               map_plot=df_map.to_dict(orient='list'),
                                tab_data=tab_data.to_dict(orient='records'),
                                hist_plot=df['currentPrice_value'].tolist(),
-                               df_type=df_type)
+                               df_type=df_type,
+                               page_url=search.search_url, total_entries=search.total_entries)
     return render_template('home.html', form=form)

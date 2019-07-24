@@ -86,6 +86,14 @@
 {% if tab_data %}
 <div class="row mt-3">
     <div class="col">
+        <h5>Result Summary</h5>
+        <a href="{{ page_url }}"><p>See all of the items on eBay!</p></a>
+        <p>Items returned: 100</p>
+        <p>Items Available: {{ total_entries }}</p>
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col">
         <div id="tab_location"></div>
     </div>
 </div>

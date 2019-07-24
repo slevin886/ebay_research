@@ -21,6 +21,11 @@ COLORS = {'StoreInventory': 'blue', 'Auction': 'red', 'FixedPrice': 'green', 'Au
 
 
 def make_price_by_type(df):
+    """
+    Prepares traces for price by listing type scatter plot
+    :param df: full dataframe
+    :return: list of dictionaries representing different traces
+    """
     df = df[['listingInfo_listingType', 'currentPrice_value']].copy()
     df = df.sort_values(by='listingInfo_listingType').reset_index(drop=True)
     data = []
@@ -54,6 +59,7 @@ def prep_tab_data(df):
     tab_data['listingInfo_startTime'] = pd.to_datetime(tab_data['listingInfo_startTime'])
     tab_data['listingInfo_endTime'] = pd.to_datetime(tab_data['listingInfo_endTime'])
     return tab_data
+
 
 # def make_box_plot_prices(df):
 #     prices = df[['currentPrice_value', 'listingInfo_endTime']]
