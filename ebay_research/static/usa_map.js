@@ -22,16 +22,16 @@ var data = [{
 
 
 var layout = {
-        'margin': {'r':0, 't':0, 'l':0, 'b':0},
-        'geo': {'scope':'usa',
+        'margin': {'r': 0, 't': 0, 'l': 0, 'b': 0},
+        'geo': {'scope': 'usa',
              'projection': {'type': 'albers usa'},
              'showland': true,
-             'showlakes':false,
-             'landcolor':"rgb(240, 248, 255)",
-             'subunitcolor':"rgb(0, 0, 0)",
-             'countrycolor':"rgb(202, 225, 255)",
-             'countrywidth':0.5,
-             'subunitwidth':0.5}
+             'showlakes': false,
+             'landcolor': "rgb(240, 248, 255)",
+             'subunitcolor': "rgb(0, 0, 0)",
+             'countrycolor': "rgb(202, 225, 255)",
+             'countrywidth': 0.5,
+             'subunitwidth': 0.5}
     };
 
 Plotly.newPlot('usaMAP', data, layout, {"displayModeBar": false});

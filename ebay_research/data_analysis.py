@@ -114,15 +114,23 @@ class EasyEbayData:
             assert response.reply.ack == 'Success'
             print('Successfully Connected to API!')
             response = response.dict()
+            if response['paginationOutput']['totalPages'] == '0':
+                print(f'There are no results for a search of: {self.full_query}')
+                return "no_results_error"
             self.search_url = response['itemSearchURL']
-            self.item_aspects = self.clean_aspect_dictionary(response['aspectHistogramContainer'])
-            self.category_info = response['categoryHistogramContainer']
+            # Not all searches, particularly empty searches, have subcategories/item aspects
+            try:
+                self.item_aspects = self.clean_aspect_dictionary(response['aspectHistogramContainer'])
+                self.category_info = response['categoryHistogramContainer']
+            except KeyError:
+                print(f'There are no category aspects for a search of: {self.full_query}')
+                pass
             return response
         except ConnectionError:
             print('Connection Error! Ensure that your API key was correctly entered.')
             return "connection_error"
         except AssertionError:
-            print('There are no results for that search!')
+            print(f'There are no results for a search of: {self.full_query}')
             return "no_results_error"
 
     def _get_wanted_pages(self, response):
