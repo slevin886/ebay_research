@@ -20,14 +20,14 @@
                         {{ form.keywords_exclude(class="form-control", placeholder="optional") }}</div>
                 </div>
                 <!--MIN & MAX PRICE-->
-                <div class="col-2">
+                <div class="col">
                     <div class="form-group">{{ form.maximum_price.label }}:
                         {{ form.maximum_price(class="form-control", placeholder="optional") }}</div>
                     <div class="form-group">{{ form.minimum_price.label }}:
                         {{ form.minimum_price(class="form-control", placeholder="optional") }}</div>
                 </div>
                 <!--Sort Order of Results-->
-                <div class="col-3">
+                <div class="col">
                     <div class="row">
                         <div class="col">
                             <label>Sort Order of Results:</label>
@@ -87,9 +87,33 @@
 <div class="row mt-3">
     <div class="col">
         <h5>Result Summary</h5>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <img src="{{ url_for('static', filename='icons/item_img.png') }}" class="img-fluid" alt="Responsive image"
+            style="width:20px;float:left;margin-right:5px;">
+        <p>Items in Search: <strong>{{ stats['returned_count'] }}</strong></p>
+        <img src="{{ url_for('static', filename='icons/item_img.png') }}" class="img-fluid" alt="Responsive image"
+            style="width:20px;float:left;margin-right:5px;">
+        <p>Total Items Available: <strong>{{ total_entries }}</strong></p>
         <a href="{{ page_url }}"><p>See all of the items on eBay!</p></a>
-        <p>Items returned: 100</p>
-        <p>Items Available: {{ total_entries }}</p>
+    </div>
+    <div class="col">
+        <img src="{{ url_for('static', filename='icons/seller_icon.png') }}" class="img-fluid" alt="Responsive image"
+            style="width:20px;float:left;margin-right:5px;">
+        <p>Top Seller: <strong>{{ stats['top_seller'] }}</strong></p>
+        <img src="{{ url_for('static', filename='icons/seller_icon.png') }}" class="img-fluid" alt="Responsive image"
+            style="width:20px;float:left;margin-right:5px;">
+        <p>Top Seller Item Count: <strong>{{ stats['top_count'] }}</strong></p>
+    </div>
+    <div class="col">
+        <img src="{{ url_for('static', filename='icons/avg_price.png') }}" class="img-fluid" alt="Responsive image"
+            style="width:20px;float:left;margin-right:5px;">
+        <p>Average price of all items: <strong>${{ stats['avg_price'] }}</strong></p>
+        <img src="{{ url_for('static', filename='icons/top_rated.png') }}" class="img-fluid" alt="Responsive image"
+            style="width:20px;float:left;margin-right:5px;">
+        <p>% Items from Top Rated Seller: <strong>{{ stats['top_rated'] }}%</strong></p>
     </div>
 </div>
 <div class="row mt-3">
@@ -110,23 +134,26 @@
     </div>
 </div>
 <div class="row mt-3">
-    <div class="col-6">
+    <div class="col">
         <h5>Seller Location Map</h5>
         <hr>
         <div id="usaMAP"></div>
     </div>
-    <div class="col-6">
-        <h5>Item Aspect Counts</h5>
-        <hr>
-        <div id="sunBurst"></div>
-    </div>
+    {% if make_sunburst %}
+        <div class="col">
+            <h5>Item Aspect Counts</h5>
+            <hr>
+            <div id="sunBurst"></div>
+        </div>
+    {% endif %}
 </div>
 <!--TODO: change 'df' to more descriptive name-->
 <script>var df_type = {{ df_type|tojson }};
         var df_hist = {{ hist_plot|tojson }};
         var df = {{ map_plot|tojson }};
         var make_sunburst = {{ make_sunburst|tojson }};
-        var tab_data = {{ tab_data | tojson }};</script>
+        var tab_data = {{ tab_data | tojson }};
+</script>
 <script src="{{ url_for('static', filename='home.js') }}"></script>
 <script src="{{ url_for('static', filename='boxplot_price.js') }}"></script>
 <script src=" {{ url_for('static', filename='usa_map.js') }}"></script>

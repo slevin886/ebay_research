@@ -83,6 +83,19 @@ def prep_tab_data(df):
     return tab_data
 
 
+def summary_stats(df):
+    stats = dict()
+    avg_price = str(df['currentPrice_value'].astype(float).mean().round(2))
+    if len(avg_price.split('.')[-1]) < 2:
+        avg_price = avg_price + '0'
+    stats['avg_price'] = avg_price
+    stats['returned_count'] = df.shape[0]
+    stats['top_rated'] = df.loc[df.topRatedListing == 'true'].shape[0] / df.shape[0] * 100
+    biggest_seller = df['sellerInfo_sellerUserName'].value_counts()
+    stats['top_seller'], stats['top_count'] = biggest_seller.idxmax(), biggest_seller.max()
+    return stats
+
+
 # def make_box_plot_prices(df):
 #     prices = df[['currentPrice_value', 'listingInfo_endTime']]
 #     prices['listingInfo_endTime'] = pd.to_datetime(prices['listingInfo_endTime'], utc=True)
