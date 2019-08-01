@@ -45,9 +45,9 @@
                     <!--Listing TYPE-->
                     <div class="row mt-3">
                         <div class="col">
-                            <label>Listing Type:</label>
+                            <label for="listing_type">Listing Type:</label>
                             <select class="form-control" id="listing_type" name="listing_type">
-                                <option value="" disable>All Listing Types</option>
+                                <option value="" selected>All Listing Types</option>
                                 <option value="Auction">Auction</option>
                                 <option value="StoreInventory">Store Inventory</option>
                                 <option value="FixedPrice">Fixed Price</option>
@@ -60,16 +60,19 @@
                 <div class="col">
                     <div class="row">
                         <div class="col">
-                            <label>Seller Location:</label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="usa_check" id="usa_check"
-                                       value="usa_only" checked>
-                                <label class="form-check-label text-muted" for="usa_check">USA Sellers ONLY</label>
-                            </div>
+                            <label for="condition">Item Condition:</label>
+                            <select class="form-control" id="condition" name="condition">
+                                <option value="" selected>All Conditions</option>
+                                <option value="1000">New</option>
+                                <option value="Unspecified">Unspecified</option>
+                                <option value="1750">New (w/ defects)</option>
+                                <option value="2000">Manufacturer Refurbished</option>
+                                <option value="2500">Seller Refurbished</option>
+                                <option value="3000">Used</option>
+                                <option value="4000">Very Good</option>
+                                <option value="5000">Good</option>
+                                <option value="6000">Acceptable</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -97,6 +100,7 @@
         <img src="{{ url_for('static', filename='icons/item_img.png') }}" class="img-fluid" alt="Responsive image"
             style="width:20px;float:left;margin-right:5px;">
         <p>Total Items Available: <strong>{{ total_entries }}</strong></p>
+        <a href="{{ url_for('main.get_csv') }}"><p>Download the Full Dataset</p></a>
         <a href="{{ page_url }}"><p>See all of the items on eBay!</p></a>
     </div>
     <div class="col">
@@ -122,28 +126,28 @@
     </div>
 </div>
 <div class="row mt-3">
-    <div class="col-6">
+    <div class="col">
         <h5>Price Distribution</h5>
         <hr>
-        <div id="histData"></div>
+        <div id="histData" class="d-flex justify-content-center"></div>
     </div>
-    <div class="col-6">
+    <div class="col">
         <h5>Price Distribution (by Listing Type)</h5>
         <hr>
-        <div id="dfTypePlot"></div>
+        <div id="dfTypePlot" class="d-flex justify-content-center"></div>
     </div>
 </div>
 <div class="row mt-3">
     <div class="col">
         <h5>Seller Location Map</h5>
         <hr>
-        <div id="usaMAP"></div>
+        <div id="usaMAP" class="d-flex justify-content-center"></div>
     </div>
     {% if make_sunburst %}
         <div class="col">
             <h5>Item Aspect Counts</h5>
             <hr>
-            <div id="sunBurst"></div>
+            <div id="sunBurst" class="d-flex justify-content-center"></div>
         </div>
     {% endif %}
 </div>

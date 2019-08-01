@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from datetime import datetime
 import pytz
 import os
@@ -26,17 +27,17 @@ def make_price_by_type(df):
     :param df: full dataframe
     :return: list of dictionaries representing different traces
     """
-    df = df[['listingInfo_listingType', 'currentPrice_value']].copy()
-    df = df.sort_values(by='listingInfo_listingType').reset_index(drop=True)
+    df = df[['listingType', 'currentPrice_value']].copy()
+    df = df.sort_values(by='listingType').reset_index(drop=True)
     data = []
 
-    for i in df.listingInfo_listingType.unique():
-        sub = df.loc[df['listingInfo_listingType'] == i]
+    for i in df['listingType'].unique():
+        sub = df.loc[df['listingType'] == i]
         trace = {'x': list(sub.index + 1), 'y': sub['currentPrice_value'].tolist(),
                  'mode': 'markers',
                  'name': i,
                  'showlegend': True,
-                 'marker': {'color': [COLORS[i] for i in sub['listingInfo_listingType']],
+                 'marker': {'color': [COLORS[i] for i in sub['listingType']],
                             'size': 10, 'line': {'color': 'black', 'width': 1.5}}}
         data.append(trace)
 
@@ -71,15 +72,15 @@ def prep_tab_data(df):
     :param df: full dataframe of ebay item data
     :return: dataframe
     """
-    topics_for_tab = ['title', 'location', 'sellingStatus_bidCount', 'galleryURL', 'sellingStatus_timeLeft',
-                      'viewItemURL', 'currentPrice_value', 'listingInfo_startTime', 'listingInfo_endTime',
-                      'listingInfo_listingType']
+    topics_for_tab = ['title', 'location', 'bidCount', 'galleryURL',
+                      'viewItemURL', 'currentPrice_value', 'startTime', 'endTime',
+                      'listingType']
     for topic in topics_for_tab:
         if topic not in df.columns:
             topics_for_tab.remove(topic)
     tab_data = df[topics_for_tab].copy()
-    tab_data['listingInfo_startTime'] = pd.to_datetime(tab_data['listingInfo_startTime'])
-    tab_data['listingInfo_endTime'] = pd.to_datetime(tab_data['listingInfo_endTime'])
+    tab_data['startTime'] = pd.to_datetime(tab_data['startTime'])
+    tab_data['endTime'] = pd.to_datetime(tab_data['endTime'])
     return tab_data
 
 
@@ -90,8 +91,8 @@ def summary_stats(df):
         avg_price = avg_price + '0'
     stats['avg_price'] = avg_price
     stats['returned_count'] = df.shape[0]
-    stats['top_rated'] = df.loc[df.topRatedListing == 'true'].shape[0] / df.shape[0] * 100
-    biggest_seller = df['sellerInfo_sellerUserName'].value_counts()
+    stats['top_rated'] = np.round(df.loc[df['topRatedListing'] == 'true'].shape[0] / df.shape[0] * 100, 1)
+    biggest_seller = df['sellerUserName'].value_counts()
     stats['top_seller'], stats['top_count'] = biggest_seller.idxmax(), biggest_seller.max()
     return stats
 

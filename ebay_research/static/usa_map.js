@@ -1,4 +1,4 @@
-var sizeRef = 2. * Math.max.apply(null, df['itemId']) / (40. ** 2);
+var sizeRef = 2. * Math.max.apply(null, df['itemId']) / (Math.pow(40., 2));
 
 var data = [{
         type:'scattergeo',
@@ -23,6 +23,7 @@ var data = [{
 
 var layout = {
         'margin': {'r': 0, 't': 0, 'l': 0, 'b': 0},
+        'height': 350, 'width': 450,
         'geo': {'scope': 'usa',
              'projection': {'type': 'albers usa'},
              'showland': true,

@@ -1,3 +1,7 @@
 body {
     background: rgba(242, 241, 239, 0.5);
 }
+
+.dashboard {
+    border: 1px solid black;
+}

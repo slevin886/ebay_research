@@ -6,8 +6,6 @@ from ebaysdk.finding import Connection as Finding
 # TODO:
 # TO Support In Future:
 # findItemsByCategory
-# findItemsByKeywords
-# getHistograms
 # getSearchKeywordsRecommendation
 # Eventually use this: 'GetCategoryInfo' to get valid category ids
 # findItemsByCategory (max: 3, will need to be specified separately for each one i)
@@ -21,7 +19,8 @@ class EasyEbayData:
 
     def __init__(self, api_id: str, keywords: str, excluded_words: str = None, sort_order: str = "BestMatch",
                  search_type: str = "findItemsByKeywords", wanted_pages: int = None, listing_type: str = None,
-                 usa_only: bool = True, min_price: float = 0.0, max_price: float = None):
+                 usa_only: bool = True, min_price: float = 0.0, max_price: float = None,
+                 item_condition: str = None):
         """
         A class that returns a clean data set of items for sale based on a keyword search from ebay
         :param api_id: eBay developer app's ID
@@ -29,6 +28,7 @@ class EasyEbayData:
         :param wanted_pages: The number of desired pages to return w/ 100 items per page
         :param search_type: Search type, for now only findItemsByKeywords accepted
         :param listing_type: A string for listing type (Auction, etc.) or None to search all
+        :param item_condition: A string representing the item condition code
         """
         self.api = Finding(appid=api_id, config_file=None)
         self.search_type = search_type
@@ -40,6 +40,7 @@ class EasyEbayData:
         self.max_price = max_price
         self.sort_order = sort_order
         self.listing_type = listing_type
+        self.item_condition = item_condition
         self.search_url = ""  # will be the result url of the first searched page
         self.item_aspects = None  # dictionary of item features
         self.category_info = None  # dictionary of category id and subcategories
@@ -62,28 +63,40 @@ class EasyEbayData:
             item_filter.append({'name': 'MaxPrice', 'value': self.max_price})
         if self.listing_type:
             item_filter.append({'name': 'ListingType', 'value': self.listing_type})
+        if self.item_condition:
+            item_filter.append({'name': 'Condition', 'value': self.item_condition})
         if self.usa_only:
             item_filter.append({'name': 'LocatedIn', 'value': 'US'})
         return item_filter
 
-    @staticmethod
-    def unembed_ebay_item_data(list_of_item_dics):
-        unembedded = []
-        for ebay_item in list_of_item_dics:
-            assert isinstance(ebay_item, dict), "The data should be returning a list of dictionaries."
-            unembedded_dict = dict()
-            for key, val in ebay_item.items():
-                if isinstance(val, dict):
-                    for key2, val2 in val.items():
-                        if isinstance(val2, dict):
-                            for key3, val3 in val2.items():
-                                unembedded_dict[key2 + '_' + key3] = val3
-                        else:
-                            unembedded_dict[key + '_' + key2] = val2
+    def flatten_dict(self, item, acc=None, parent_key='', sep='_'):
+        """
+        The ebay API returns items as nested dictionaries, this recursive function flattens them
+        :param item: dictionary for individual item
+        :param acc: a dictionary that is used to pass through keys
+        :param parent_key: nested parent key in dictionary
+        :param sep: separates parent & nested keys if necessary
+        :return: flat item dictionary
+        """
+        double_keys = ('_currencyId', 'value')  # known doubles where want always show parent key
+        final = dict() if acc is None else acc
+        for key, val in item.items():
+            if isinstance(val, dict):
+                self.flatten_dict(val, final, parent_key=key)
+            else:
+                if key in final or key in double_keys:
+                    final[parent_key + sep + key] = val
                 else:
-                    unembedded_dict[key] = val
-            unembedded.append(unembedded_dict)
-        return unembedded
+                    final[key] = val
+        return final
+
+    @staticmethod
+    def get_category_info(category):
+        # Leaves out subcategories found through key childCategoryHistogram
+        clean_categories = {}
+        for cat in category['categoryHistogram']:
+            clean_categories[cat['categoryName']] = {'categoryId': cat['categoryId'], 'count': cat['count']}
+        return clean_categories
 
     @staticmethod
     def clean_aspect_dictionary(aspects):
@@ -121,7 +134,7 @@ class EasyEbayData:
             # Not all searches, particularly empty searches, have subcategories/item aspects
             try:
                 self.item_aspects = self.clean_aspect_dictionary(response['aspectHistogramContainer'])
-                self.category_info = response['categoryHistogramContainer']
+                self.category_info = self.get_category_info(response['categoryHistogramContainer'])
             except KeyError:
                 print(f'There are no category aspects for a search of: {self.full_query}')
                 pass
@@ -154,8 +167,8 @@ class EasyEbayData:
 
         # Add initial items from test
         data = response['searchResult']['item']
-        all_items.extend(self.unembed_ebay_item_data(data))
 
+        all_items.extend([self.flatten_dict(i) for i in data])
         pages2pull = self._get_wanted_pages(response)
 
         if pages2pull < 2:  # stop if only pulling one page or only one page exists
@@ -169,11 +182,11 @@ class EasyEbayData:
                                                                                'entriesPerPage': 100},
                                                            'itemFilter': self.item_filter,
                                                            'sortOrder': self.sort_order,
-                                                           'outputSelector': ['SellerInfo', 'StoreInfo']  # histograms only needed once
+                                                           'outputSelector': ['SellerInfo', 'StoreInfo']
                                                            })
             if response.reply.ack == 'Success':
                 data = response.dict()['searchResult']['item']
-                all_items.extend(self.unembed_ebay_item_data(data))
+                all_items.extend([self.flatten_dict(i) for i in data])
 
             else:
                 print('Unable to connect to page #: ', page)

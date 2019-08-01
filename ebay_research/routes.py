@@ -1,13 +1,15 @@
-from flask import Blueprint, render_template, url_for, session, request, flash
+from flask import Blueprint, render_template, url_for, session, request, flash, current_app, Response
+import os
+import pandas as pd
 from ebay_research.data_analysis import EasyEbayData
 from ebay_research.forms import FreeSearch
 from ebay_research.plot_maker import (create_us_county_map, make_price_by_type, prep_tab_data, make_sunburst,
                                       summary_stats)
-import os
 
+# TODO: Eventually I will set the redis key to a specific user
 # TODO: Implement additional item filters
 # TODO: Write test functions
-# TODO: Capture occurrence of no results for search or API error
+# TODO: Create figure or data for Category ID info & get sub category info for biggest category
 # TODO: Create ability to hide/show different plots in the results
 # TODO: Provide credit to https://www.flaticon.com/ for icons
 
@@ -24,12 +26,14 @@ def home():
         min_price = form.minimum_price.data
         max_price = form.maximum_price.data
         sort_order = request.form.get("item_sort")
-        usa_check = request.form.get("usa_check")
         listing_type = request.form.get("listing_type")
-        search = EasyEbayData(api_id=APP_ID, keywords=keywords, excluded_words=excluded_words, sort_order=sort_order,
-                              usa_only=usa_check, wanted_pages=1, min_price=min_price, max_price=max_price,
-                              listing_type=listing_type)
+        condition = request.form.get("condition")
+        search = EasyEbayData(api_id=current_app.config['EBAY_API'], keywords=keywords, excluded_words=excluded_words,
+                              sort_order=sort_order,
+                              wanted_pages=1, min_price=min_price, max_price=max_price, listing_type=listing_type,
+                              item_condition=condition)
         df = search.get_data()
+        current_app.redis.set('change_me', df.to_msgpack(compress='zlib'))
         # CATCH CONNECTION ERROR AND NO RESULTS- WHICH RETURN AS STRINGS
         if isinstance(df, str):
             if df == "connection_error":
@@ -52,3 +56,10 @@ def home():
                                df_type=df_type, make_sunburst=sunburst_plot, stats=stats,
                                page_url=search.search_url, total_entries=search.total_entries)
     return render_template('home.html', form=form)
+
+
+@main.route('/get_csv', methods=['GET'])
+def get_csv():
+    df = pd.read_msgpack(current_app.redis.get('change_me'))
+    return Response(df.to_csv(index=False), content_type="text/csv",
+                    headers={"Content-Disposition": "attachment;filename=ebay_research.csv"})

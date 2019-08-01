@@ -8,6 +8,8 @@ class Config(object):
     MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB limit of file uploads
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    REDIS_URL = os.environ.get('REDIS_URL') or 'redis://'
+    EBAY_API = os.environ.get('EBAY_API')
 
 
 class ProductionConfig(Config):

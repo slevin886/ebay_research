@@ -4,7 +4,8 @@
 
 var layout = {'yaxis': {'title': 'Item Price', 'tickprefix': '$'},
               'xaxis': {'showticklabels': false,},
-              'margin': {'t': 0},
+              'height': 350, 'width': 450,
+              'margin': {'t': 10},
               'legend': {"orientation": "h"}};
 
 Plotly.newPlot('dfTypePlot', df_type, layout, {"displayModeBar": false});
@@ -20,7 +21,8 @@ var data2 = [{'x': df_hist, 'type': 'histogram',
 
 var layout2 =  {'xaxis': {'title': 'Item Price', 'tickprefix': '$'},
                 'yaxis': {'title': '# of Items'},
-                'margin': {'t': 0}
+                'margin': {'t': 0},
+                'height': 350, 'width': 450,
                 };
 
 Plotly.newPlot('histData', data2, layout2, {"displayModeBar": false});
@@ -28,6 +30,8 @@ Plotly.newPlot('histData', data2, layout2, {"displayModeBar": false});
 
 // Sunburst Plot
 
-var layout3 = {'margin': {'t': 0, 'l': 0, 'r': 0, 'b': 0}}
+var layout3 = {'margin': {'t': 10, 'l': 0, 'r': 0, 'b': 10},
+               'height': 350,
+                'width': 450}
 
 Plotly.newPlot('sunBurst', make_sunburst, layout3, {"displayModeBar": false});

@@ -7,7 +7,7 @@ var table = new Tabulator("#tab_location", {
 	addRowPos:"top",          //when adding a new row, add it to the top of the table
 	history:true,             //allow undo and redo actions on the table
 	pagination:"local",       //paginate the data
-	paginationSize:5,         //allow 7 rows per page of data
+	paginationSize:3,         //allow 7 rows per page of data
 	movableColumns:true,      //allow column order to be changed
 	resizableRows:true,       //allow row order to be changed
 	headerFilterPlaceholder: "search/filter...",
@@ -17,10 +17,10 @@ var table = new Tabulator("#tab_location", {
 		{title:"Title", field:"title", formatter:"textarea", width:150, headerFilter:"input"},
 		{title:"Image", field:"galleryURL", formatter:"image", width:150},
 		{title:"Location", field:"location", headerFilter:"input"},
-		{title:"Bid Count", field:"sellingStatus_bidCount"},
-		{title:"Start Time", field:"listingInfo_startTime"},
-		{title:"End Time", field:"listingInfo_endTime"},
-		{title:"Listing Type", field:"listingInfo_listingType", headerFilter:"input"},
+		{title:"Bid Count", field:"bidCount"},
+		{title:"Start Time", field:"startTime"},
+		{title:"End Time", field:"endTime"},
+		{title:"Listing Type", field:"listingType", headerFilter:"input"},
 		{title:"View Item on eBay", field:"viewItemURL", formatter:"link", width:200},
 	],
 });
