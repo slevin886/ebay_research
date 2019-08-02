@@ -5,3 +5,12 @@ body {
 .dashboard {
     border: 1px solid black;
 }
+
+a {
+    font-size: large;
+}
+
+a:hover {
+    cursor: pointer;
+    background-color: white;
+}

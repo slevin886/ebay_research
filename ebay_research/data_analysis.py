@@ -44,8 +44,10 @@ class EasyEbayData:
         self.search_url = ""  # will be the result url of the first searched page
         self.item_aspects = None  # dictionary of item features
         self.category_info = None  # dictionary of category id and subcategories
+        self.largest_sub_category = None
+        self.largest_category = None
         self.total_pages = 0  # the total number of available pages
-        self.total_entries = 0  # the total number of items available given keywords
+        self.total_entries = 0  # the total number of items available given keywords (all categories)
         if excluded_words and len(excluded_words) > 2:
             excluded_words = ",".join(word for word in excluded_words.split(" "))
             self.full_query = keywords + " -(" + excluded_words + ")"
@@ -90,9 +92,15 @@ class EasyEbayData:
                     final[key] = val
         return final
 
-    @staticmethod
-    def get_category_info(category):
-        # Leaves out subcategories found through key childCategoryHistogram
+    def get_category_info(self, category):
+        try:
+            largest = category['categoryHistogram'][0]
+            self.largest_category = [largest['categoryName'], largest['count']]
+            sub = largest['childCategoryHistogram'][0]
+            self.largest_sub_category = [sub['categoryName'], sub['count']]
+        except (IndexError, KeyError):
+            print('No subcategories for search')
+            pass
         clean_categories = {}
         for cat in category['categoryHistogram']:
             clean_categories[cat['categoryName']] = {'categoryId': cat['categoryId'], 'count': cat['count']}

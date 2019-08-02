@@ -84,7 +84,7 @@ def prep_tab_data(df):
     return tab_data
 
 
-def summary_stats(df):
+def summary_stats(df, largest_cat, largest_sub_cat):
     stats = dict()
     avg_price = str(df['currentPrice_value'].astype(float).mean().round(2))
     if len(avg_price.split('.')[-1]) < 2:
@@ -94,6 +94,10 @@ def summary_stats(df):
     stats['top_rated'] = np.round(df.loc[df['topRatedListing'] == 'true'].shape[0] / df.shape[0] * 100, 1)
     biggest_seller = df['sellerUserName'].value_counts()
     stats['top_seller'], stats['top_count'] = biggest_seller.idxmax(), biggest_seller.max()
+    if largest_cat:
+        stats['largest_cat_name'], stats['largest_cat_count'] = largest_cat[0], largest_cat[1]
+    if largest_sub_cat:
+        stats['largest_sub_name'], stats['largest_sub_count'] = largest_sub_cat[0], largest_sub_cat[1]
     return stats
 
 

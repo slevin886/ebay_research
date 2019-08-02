@@ -6,7 +6,8 @@ from ebay_research.forms import FreeSearch
 from ebay_research.plot_maker import (create_us_county_map, make_price_by_type, prep_tab_data, make_sunburst,
                                       summary_stats)
 
-# TODO: Eventually I will set the redis key to a specific user
+# TODO: set the redis key to a specific user, with a timeout
+# TODO: better css classes for see it on ebay & download file
 # TODO: Implement additional item filters
 # TODO: Write test functions
 # TODO: Create figure or data for Category ID info & get sub category info for biggest category
@@ -23,8 +24,7 @@ def home():
     if form.validate_on_submit():
         keywords = form.keywords_include.data.strip()
         excluded_words = form.keywords_exclude.data.strip()
-        min_price = form.minimum_price.data
-        max_price = form.maximum_price.data
+        min_price, max_price = form.minimum_price.data, form.maximum_price.data
         sort_order = request.form.get("item_sort")
         listing_type = request.form.get("listing_type")
         condition = request.form.get("condition")
@@ -44,7 +44,8 @@ def home():
         tab_data = prep_tab_data(df)
         df_map = create_us_county_map(df)
         df_type = make_price_by_type(df)
-        stats = summary_stats(df)
+        stats = summary_stats(df, search.largest_category, search.largest_sub_category)
+        print(stats)
         if search.item_aspects is None:
             sunburst_plot = None
         else:

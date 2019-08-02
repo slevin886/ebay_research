@@ -100,8 +100,6 @@
         <img src="{{ url_for('static', filename='icons/item_img.png') }}" class="img-fluid" alt="Responsive image"
             style="width:20px;float:left;margin-right:5px;">
         <p>Total Items Available: <strong>{{ total_entries }}</strong></p>
-        <a href="{{ url_for('main.get_csv') }}"><p>Download the Full Dataset</p></a>
-        <a href="{{ page_url }}"><p>See all of the items on eBay!</p></a>
     </div>
     <div class="col">
         <img src="{{ url_for('static', filename='icons/seller_icon.png') }}" class="img-fluid" alt="Responsive image"
@@ -120,6 +118,26 @@
         <p>% Items from Top Rated Seller: <strong>{{ stats['top_rated'] }}%</strong></p>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-4">
+        {%  if 'largest_cat_name' in stats.keys() %}
+            {#            ADD IMG HERE#}
+            <p>Largest Category: <strong>{{ stats['largest_cat_name'] }}<br>
+                ({{ stats['largest_cat_count'] }} items)</strong></p>
+        {% endif %}
+        <a href="{{ url_for('main.get_csv') }}">Download the Full Dataset</a>
+    </div>
+    <div class="col-4">
+        {%  if 'largest_sub_name' in stats.keys() %}
+            {#            ADD IMG HERE#}
+            <p>Largest Subcategory: <strong>{{ stats['largest_sub_name'] }}<br>
+                ({{ stats['largest_sub_count'] }} items)</strong></p>
+        {% endif %}
+        <a href="{{ page_url }}" target="_blank">See the search results on eBay</a>
+    </div>
+</div>
+
 <div class="row mt-3">
     <div class="col">
         <div id="tab_location"></div>
