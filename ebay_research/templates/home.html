@@ -120,20 +120,27 @@
 </div>
 
 <div class="row">
-    <div class="col-4">
-        {%  if 'largest_cat_name' in stats.keys() %}
-            {#            ADD IMG HERE#}
-            <p>Largest Category: <strong>{{ stats['largest_cat_name'] }}<br>
-                ({{ stats['largest_cat_count'] }} items)</strong></p>
+    {%  if 'largest_cat_name' in stats.keys() %}
+    <div class="col">
+        <img src="{{ url_for('static', filename='icons/categories.png') }}" class="img-fluid" alt="Responsive image"
+             style="width:20px;float:left;margin-right:5px;margin-top:4px;">
+        <p>Largest Category: <strong>{{ stats['largest_cat_name'] }}
+            ({{ stats['largest_cat_count'] }} items)</strong></p>
+        {%  if 'largest_sub_name' in stats.keys() %}
+        <img src="{{ url_for('static', filename='icons/categories.png') }}" class="img-fluid" alt="Responsive image"
+             style="width:20px;float:left;margin-right:5px;margin-top:4px;">
+        <p>Largest Subcategory: <strong>{{ stats['largest_sub_name'] }}
+            ({{ stats['largest_sub_count'] }} items)</strong></p>
         {% endif %}
+    </div>
+    {%  endif %}
+</div>
+
+<div class="row">
+    <div class="col-4">
         <a href="{{ url_for('main.get_csv') }}">Download the Full Dataset</a>
     </div>
     <div class="col-4">
-        {%  if 'largest_sub_name' in stats.keys() %}
-            {#            ADD IMG HERE#}
-            <p>Largest Subcategory: <strong>{{ stats['largest_sub_name'] }}<br>
-                ({{ stats['largest_sub_count'] }} items)</strong></p>
-        {% endif %}
         <a href="{{ page_url }}" target="_blank">See the search results on eBay</a>
     </div>
 </div>
@@ -161,20 +168,30 @@
         <hr>
         <div id="usaMAP" class="d-flex justify-content-center"></div>
     </div>
-    {% if make_sunburst %}
-        <div class="col">
-            <h5>Item Aspect Counts</h5>
-            <hr>
-            <div id="sunBurst" class="d-flex justify-content-center"></div>
-        </div>
-    {% endif %}
+    <div class="col">
+        <h5>Listing Type Composition</h5>
+        <hr>
+        <div id="dfPie" class="d-flex justify-content-center"></div>
+    </div>
 </div>
+
+{% if make_sunburst %}
+<div class="row mt-3">
+    <div class="col">
+        <h5>Item Aspect Counts</h5>
+        <hr>
+        <div id="sunBurst" class="d-flex justify-content-center"></div>
+    </div>
+</div>
+{% endif %}
+
 <!--TODO: change 'df' to more descriptive name-->
 <script>var df_type = {{ df_type|tojson }};
         var df_hist = {{ hist_plot|tojson }};
         var df = {{ map_plot|tojson }};
         var make_sunburst = {{ make_sunburst|tojson }};
         var tab_data = {{ tab_data | tojson }};
+        var df_pie = {{ df_pie | tojson }};
 </script>
 <script src="{{ url_for('static', filename='home.js') }}"></script>
 <script src="{{ url_for('static', filename='boxplot_price.js') }}"></script>

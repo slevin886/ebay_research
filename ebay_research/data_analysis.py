@@ -3,10 +3,9 @@ from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection as Finding
 
 
-# TODO:
+# TODO: Separate collection of category and aspect data from test_function
 # TO Support In Future:
 # findItemsByCategory
-# getSearchKeywordsRecommendation
 # Eventually use this: 'GetCategoryInfo' to get valid category ids
 # findItemsByCategory (max: 3, will need to be specified separately for each one i)
 # search variation:
@@ -93,6 +92,12 @@ class EasyEbayData:
         return final
 
     def get_category_info(self, category):
+        """
+        Executes once from the test connection function to retrieve the categories that returned items
+        belong to. Also sets attributes that reveal largest category and sub category.
+        :param category: response['categoryHistogramContainer'] from the response dictionary object
+        :return: Dictionary of categories and their counts
+        """
         try:
             largest = category['categoryHistogram'][0]
             self.largest_category = [largest['categoryName'], largest['count']]
@@ -141,11 +146,13 @@ class EasyEbayData:
             self.search_url = response['itemSearchURL']
             # Not all searches, particularly empty searches, have subcategories/item aspects
             try:
-                self.item_aspects = self.clean_aspect_dictionary(response['aspectHistogramContainer'])
                 self.category_info = self.get_category_info(response['categoryHistogramContainer'])
             except KeyError:
-                print(f'There are no category aspects for a search of: {self.full_query}')
-                pass
+                print(f'There are no categories for a search of: {self.full_query}')
+            try:
+                self.item_aspects = self.clean_aspect_dictionary(response['aspectHistogramContainer'])
+            except KeyError:
+                print(f'There are no aspects for a search of: {self.full_query}')
             return response
         except ConnectionError:
             print('Connection Error! Ensure that your API key was correctly entered.')

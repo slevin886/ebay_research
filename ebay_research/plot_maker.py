@@ -84,6 +84,18 @@ def prep_tab_data(df):
     return tab_data
 
 
+def make_listing_pie_chart(listing_type):
+    """
+
+    :param listing_type: df['listingType'] from main frame
+    :return:
+    """
+    listings = listing_type.value_counts()
+    return [{'type': 'pie', 'labels': list(listings.index),
+             'values': list(map(int, listings.values)),
+             'hole': '0.4', 'marker': {'line': {'color': 'black', 'width': '2'}}}]
+
+
 def summary_stats(df, largest_cat, largest_sub_cat):
     stats = dict()
     avg_price = str(df['currentPrice_value'].astype(float).mean().round(2))

@@ -28,10 +28,19 @@ var layout2 =  {'xaxis': {'title': 'Item Price', 'tickprefix': '$'},
 Plotly.newPlot('histData', data2, layout2, {"displayModeBar": false});
 
 
-// Sunburst Plot
+// Pie Listing Chart
 
 var layout3 = {'margin': {'t': 10, 'l': 0, 'r': 0, 'b': 10},
-               'height': 350,
-                'width': 450}
+              'legend': {"orientation": "h"},
+               'height': 350, 'width': 450};
 
-Plotly.newPlot('sunBurst', make_sunburst, layout3, {"displayModeBar": false});
+Plotly.newPlot('dfPie', df_pie, layout3, {"displayModeBar": false});
+
+
+// Sunburst Plot
+
+var layout4 = {'margin': {'t': 10, 'l': 0, 'r': 0, 'b': 10},
+               'height': 350,
+                'width': 450};
+
+Plotly.newPlot('sunBurst', make_sunburst, layout4, {"displayModeBar": false});
