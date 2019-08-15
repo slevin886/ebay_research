@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, url_for, session, request, flash, current_app, Response
+from flask import (Blueprint, render_template, url_for, request, session, redirect, flash, current_app, Response)
 import pandas as pd
 from ebay_research.data_analysis import EasyEbayData
-from ebay_research.forms import FreeSearch
+from ebay_research.forms import FreeSearch, EmailForm
 from ebay_research.plot_maker import (create_us_county_map, make_price_by_type, prep_tab_data, make_sunburst,
                                       summary_stats, make_listing_pie_chart)
 
@@ -18,6 +18,18 @@ main = Blueprint('main', __name__)
 
 @main.route('/', methods=['GET', 'POST'])
 def home():
+    # TODO: Save email in posgres table
+    # TODO: Possibly add geographic location as necessary parameter here
+    # TODO: Possibly add a counter on table to limit to 5 free searches
+    form = EmailForm()
+    if form.validate_on_submit():
+        session['email'] = form.confirm_email.data
+        return redirect(url_for('main.basic_search'))
+    return render_template('home.html', form=form)
+
+
+@main.route('/basic_search', methods=['GET', 'POST'])
+def basic_search():
     form = FreeSearch()
     if form.validate_on_submit():
         keywords = form.keywords_include.data.strip()
@@ -37,7 +49,7 @@ def home():
                 flash("Uh oh! There seems to be a problem connecting to the API, please try again later!", 'danger')
             else:
                 flash("There were no results for those search parameters, please try a different search.", 'danger')
-            return render_template('home.html', form=form)
+            return render_template('basic_search.html', form=form)
         current_app.redis.set('change_me', df.to_msgpack(compress='zlib'))
         tab_data = prep_tab_data(df)
         df_map = create_us_county_map(df)
@@ -48,13 +60,13 @@ def home():
             sunburst_plot = None
         else:
             sunburst_plot = make_sunburst(search.item_aspects)
-        return render_template('home.html', form=form,
+        return render_template('basic_search.html', form=form,
                                map_plot=df_map.to_dict(orient='list'),
                                tab_data=tab_data.to_dict(orient='records'),
                                hist_plot=df['currentPrice_value'].tolist(), df_pie=df_pie,
                                df_type=df_type, make_sunburst=sunburst_plot, stats=stats,
                                page_url=search.search_url, total_entries=search.total_entries)
-    return render_template('home.html', form=form)
+    return render_template('basic_search.html', form=form)
 
 
 @main.route('/get_csv', methods=['GET'])
