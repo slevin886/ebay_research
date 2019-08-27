@@ -4,10 +4,11 @@ from ebaysdk.finding import Connection as Finding
 
 
 # TODO: Separate collection of category and aspect data from test_function
+# TODO: Fix _test_connection (i.e. break into multiple pieces)
 # TO Support In Future:
 # findItemsByCategory
 # Eventually use this: 'GetCategoryInfo' to get valid category ids
-# findItemsByCategory (max: 3, will need to be specified separately for each one i)
+# findItemsByCategory (max: 3, will need to be specified separately for each one)
 # search variation:
 # baseball card  (both words) baseball,card (exact phrase baseball card)
 # (baseball,card) (items with either baseball or card)  baseball -card (baseball but NOT card)
@@ -17,7 +18,7 @@ from ebaysdk.finding import Connection as Finding
 class EasyEbayData:
 
     def __init__(self, api_id: str, keywords: str, excluded_words: str = None, sort_order: str = "BestMatch",
-                 search_type: str = "findItemsByKeywords", wanted_pages: int = None, listing_type: str = None,
+                 search_type: str = "findItemsByKeywords", get_category_info: bool = True, wanted_pages: int = None, listing_type: str = None,
                  usa_only: bool = True, min_price: float = 0.0, max_price: float = None,
                  item_condition: str = None):
         """
@@ -40,6 +41,7 @@ class EasyEbayData:
         self.sort_order = sort_order
         self.listing_type = listing_type
         self.item_condition = item_condition
+        self.get_category_info = get_category_info
         self.search_url = None  # will be the result url of the first searched page
         self.item_aspects = None  # dictionary of item features
         self.category_info = None  # dictionary of category id and subcategories
@@ -92,7 +94,7 @@ class EasyEbayData:
                     final[key] = val
         return final
 
-    def get_category_info(self, category):
+    def clean_category_info(self, category):
         """
         Executes once from the test connection function to retrieve the categories that returned items
         belong to. Also sets attributes that reveal largest category and sub category.
@@ -145,16 +147,8 @@ class EasyEbayData:
                 print(f'There are no results for a search of: {self.full_query}')
                 return "no_results_error"
             self.search_url = response['itemSearchURL']
-            # Not all searches, particularly empty searches, have subcategories/item aspects
-            try:
-                self.category_info = self.get_category_info(response['categoryHistogramContainer'])
-            except KeyError:
-                print(f'There are no categories for a search of: {self.full_query}')
-            try:
-                self.item_aspects = self.clean_aspect_dictionary(response['aspectHistogramContainer'])
-            except KeyError:
-                print(f'There are no aspects for a search of: {self.full_query}')
             return response
+            # Not all searches, particularly empty searches, have subcategories/item aspects
         except ConnectionError:
             print('Connection Error! Ensure that your API key was correctly entered.')
             return "connection_error"
@@ -174,17 +168,28 @@ class EasyEbayData:
         return pages2pull
 
     def get_data(self):
-        all_items = []
-
         response = self._test_connection()
 
         if response in ["connection_error", "no_results_error"]:
             return response
 
+        if self.get_category_info:
+            try:
+                self.category_info = self.clean_category_info(response['categoryHistogramContainer'])
+            except KeyError:
+                print(f'There are no categories for a search of: {self.full_query}')
+            try:
+                self.item_aspects = self.clean_aspect_dictionary(response['aspectHistogramContainer'])
+            except KeyError:
+                print(f'There are no aspects for a search of: {self.full_query}')
+
         # Add initial items from test
         data = response['searchResult']['item']
 
+        all_items = []
+
         all_items.extend([self.flatten_dict(i) for i in data])
+        
         pages2pull = self._get_wanted_pages(response)
 
         if pages2pull < 2:  # stop if only pulling one page or only one page exists

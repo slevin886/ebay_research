@@ -1,3 +1,4 @@
+import pytest
 import os
 from ebay_research.data_analysis import EasyEbayData
 
@@ -18,3 +19,13 @@ def test_class_init():
     assert ebay_data.total_entries is None
     assert ebay_data.item_aspects is None
     assert ebay_data.max_price is None
+    with pytest.raises(TypeError):
+        assert EasyEbayData(), "can't initialize empty class"
+
+
+def test_flatten_dict():
+    """Tests the flatten_dict function to flatten dictionaries"""
+    dict2flatten = {'a': {'b': 1, 'c': {'b': 1, 'd': 1}}, 'c': 1,  'e': 1}
+    solution = {'b': 1, 'c_b': 1, 'd': 1, 'c': 1, 'e': 1}
+    ebay_data = EasyEbayData(api_id=API_ID, keywords='test class')
+    assert ebay_data.flatten_dict(dict2flatten) == solution, 'should flatten dic and join variable only where necessary'
