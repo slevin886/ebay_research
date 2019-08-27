@@ -51,6 +51,7 @@ def basic_search():
                 flash("There were no results for those search parameters, please try a different search.", 'danger')
             return render_template('basic_search.html', form=form)
         current_app.redis.set('change_me', df.to_msgpack(compress='zlib'))
+        print(df.head())
         tab_data = prep_tab_data(df)
         df_map = create_us_county_map(df)
         df_type = make_price_by_type(df)
@@ -61,7 +62,7 @@ def basic_search():
         else:
             sunburst_plot = make_sunburst(search.item_aspects)
         return render_template('basic_search.html', form=form,
-                               map_plot=df_map.to_dict(orient='list'),
+                               map_plot=df_map,
                                tab_data=tab_data.to_dict(orient='records'),
                                hist_plot=df['currentPrice_value'].tolist(), df_pie=df_pie,
                                df_type=df_type, make_sunburst=sunburst_plot, stats=stats,

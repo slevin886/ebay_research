@@ -40,13 +40,13 @@ class EasyEbayData:
         self.sort_order = sort_order
         self.listing_type = listing_type
         self.item_condition = item_condition
-        self.search_url = ""  # will be the result url of the first searched page
+        self.search_url = None  # will be the result url of the first searched page
         self.item_aspects = None  # dictionary of item features
         self.category_info = None  # dictionary of category id and subcategories
         self.largest_sub_category = None
         self.largest_category = None
-        self.total_pages = 0  # the total number of available pages
-        self.total_entries = 0  # the total number of items available given keywords (all categories)
+        self.total_pages: int = None  # the total number of available pages
+        self.total_entries: int = None  # the total number of items available given keywords (all categories)
         if excluded_words and len(excluded_words) > 2:
             excluded_words = ",".join(word for word in excluded_words.split(" "))
             self.full_query = keywords + " -(" + excluded_words + ")"
@@ -57,6 +57,7 @@ class EasyEbayData:
     def _create_item_filter(self):
         if self.sort_order in ['BidCountMost', 'BidCountFewest']:
             if self.listing_type not in ['Auction', 'AuctionWithBIN']:
+                print("Changing listing type to auction to support a sort order using bid count")
                 self.listing_type = 'Auction'  # sort order without that listing type returns nothing
         item_filter = list()
         item_filter.append({'name': 'MinPrice', 'value': self.min_price})

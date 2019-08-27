@@ -1,7 +1,5 @@
 import pandas as pd
 import numpy as np
-from datetime import datetime
-import pytz
 import os
 
 
@@ -12,10 +10,10 @@ def create_us_county_map(df):
     zipcode_map['zip'] = zipcode_map['zip'].astype(str)
     df = df.groupby('postalCode', as_index=False)['itemId'].count()
     df = pd.merge(df, zipcode_map, left_on='postalCode', right_on='zip').dropna()
-    if df.shape[0] < 2:
+    if df.shape[0] == 0:
         return None
     df['text'] = '# of Items: ' + df['itemId'].astype(str) + '<br>' + df['county_name'] + ' County, ' + df['state_id']
-    return df
+    return df.to_dict(orient='list')
 
 
 COLORS = {'StoreInventory': 'blue', 'Auction': 'red', 'FixedPrice': 'green', 'AuctionWithBIN': 'yellow'}
@@ -111,12 +109,3 @@ def summary_stats(df, largest_cat, largest_sub_cat):
     if largest_sub_cat:
         stats['largest_sub_name'], stats['largest_sub_count'] = largest_sub_cat[0], largest_sub_cat[1]
     return stats
-
-
-# def make_box_plot_prices(df):
-#     prices = df[['currentPrice_value', 'listingInfo_endTime']]
-#     prices['listingInfo_endTime'] = pd.to_datetime(prices['listingInfo_endTime'], utc=True)
-#     prices['time_left'] = prices['listingInfo_endTime'] - datetime.now(tz=pytz.UTC)
-#     prices['days'] = prices['time_left'].dt.days.astype(str)
-#     prices = prices.sort_values(by='currentPrice_value')
-#     return prices[['days', 'currentPrice_value']].copy()
