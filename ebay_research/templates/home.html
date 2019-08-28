@@ -17,6 +17,19 @@
                     <div class="form-group">{{ form.confirm_email.label }}:
                         {{ form.confirm_email(class="form-control", placeholder="Confirm Email") }}</div>
                 </div>
+                <div class="col-4">
+                    <div class="form-group">{{ form.password.label }}:
+                        {{ form.password(class="form-control", placeholder="Enter Password") }}</div>
+                    <div class="form-group">{{ form.confirm_password.label }}:
+                        {{ form.confirm_password(class="form-control", placeholder="Confirm Password") }}</div>
+                </div>
+                <div class="col-4">
+                    <div class="form-group">{{ form.location.label }}:
+                        {{ form.location(class="form-control", id="location", placeholder="") }}</div>
+                    <div class="form-group" style="display: none;" id="state">{{ form.state.label }}:
+                        {{ form.state(class="form-control", placeholder="") }}
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <div class="col">
@@ -26,6 +39,5 @@
         </form>
     </div>
 </div>
-
-
+<script src="{{ url_for('static', filename='home.js') }}"></script>
 {% endblock %}

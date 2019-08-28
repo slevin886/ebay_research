@@ -1,6 +1,14 @@
 from flask import Flask
+from flask_migrate import Migrate
+from flask_login import LoginManager
 from ebay_research.config import ProductionConfig, DevelopmentConfig, TestingConfig
 from redis import Redis
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+migrate = Migrate(compare_type=True)
+login_manager = LoginManager()
+login_manager.login_view = 'main.login'
 
 
 def create_app(settings='production'):
@@ -11,7 +19,26 @@ def create_app(settings='production'):
         app.config.from_object(TestingConfig)
     else:
         app.config.from_object(ProductionConfig)
+    register_shellcontext(app)
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
     app.redis = Redis.from_url(app.config['REDIS_URL'])
     from ebay_research.routes import main
     app.register_blueprint(main)
     return app
+
+
+def register_shellcontext(app):
+    """Register shell context objects."""
+    from ebay_research import models
+
+    def shell_context():
+        """Shell context objects."""
+        return {
+            'db': db,
+            'User': models.User,
+            'Project': models.Search,
+        }
+
+    app.shell_context_processor(shell_context)

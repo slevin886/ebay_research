@@ -4,7 +4,7 @@ from ebaysdk.finding import Connection as Finding
 
 
 # TODO: Separate collection of category and aspect data from test_function
-# TODO: Fix _test_connection (i.e. break into multiple pieces)
+
 # TO Support In Future:
 # findItemsByCategory
 # Eventually use this: 'GetCategoryInfo' to get valid category ids
@@ -22,13 +22,15 @@ class EasyEbayData:
                  usa_only: bool = True, min_price: float = 0.0, max_price: float = None,
                  item_condition: str = None):
         """
-        A class that returns a clean data set of items for sale based on a keyword search from ebay
+        A class that returns a clean data set of items for sale based on a keyword search from ebay. After instantiation,
+        call 'get_data' method to collect all data.
         :param api_id: eBay developer app's ID
         :param keywords: Keywords should be between 2 & 350 characters, not case sensitive
         :param wanted_pages: The number of desired pages to return w/ 100 items per page
         :param search_type: Search type, for now only findItemsByKeywords accepted
         :param listing_type: A string for listing type (Auction, etc.) or None to search all
         :param item_condition: A string representing the item condition code
+        :param get_category_info: A bool, if true, collects item aspects and category information
         """
         self.api = Finding(appid=api_id, config_file=None)
         self.search_type = search_type
@@ -189,7 +191,7 @@ class EasyEbayData:
         all_items = []
 
         all_items.extend([self.flatten_dict(i) for i in data])
-        
+
         pages2pull = self._get_wanted_pages(response)
 
         if pages2pull < 2:  # stop if only pulling one page or only one page exists
