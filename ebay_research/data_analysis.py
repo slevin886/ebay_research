@@ -132,7 +132,10 @@ class EasyEbayData:
         return all_aspects
 
     def _test_connection(self):
-        """Tests that an initial API connection is successful"""
+        """
+        Tests that an initial API connection is successful and returns the initial raw response as a dictionary if
+        successful else returns a string of the error that occurred
+        """
         try:
             response = self.api.execute(self.search_type, {'keywords': self.full_query,
                                                            'paginationInput': {'pageNumber': 1,

@@ -13,7 +13,7 @@ class User(db.Model):
     state = db.Column(db.String(20))
     time_created = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     permissions = db.Column(db.Integer)  # 1 = paid, 0 = unpaid
-    searches = db.relationship('search')
+    searches = db.relationship('Search')
 
 
 class Search(db.Model):

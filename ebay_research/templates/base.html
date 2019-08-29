@@ -16,7 +16,10 @@
 <body>
     <nav class="navbar navbar-light bg-white">
         <div class="container">
-            <a class="navbar-brand" href="#">Ebay Research</a>
+            <a class="navbar-brand" href="{{ url_for('main.home') }}">Ebay Research</a>
+            <div class="navbar-nav ml-auto">
+                <a class="navbar-brand" href="{{ url_for('main.login') }}">Sign In</a>
+            </div>
         </div>
     </nav>
     <div class="container">

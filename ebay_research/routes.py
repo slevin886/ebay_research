@@ -1,17 +1,9 @@
-from flask import (
-    Blueprint,
-    render_template,
-    url_for,
-    request,
-    session,
-    redirect,
-    flash,
-    current_app,
-    Response,
-)
+from flask import (Blueprint, render_template, url_for, request, session, redirect, flash, current_app, Response)
 from flask_login import current_user, login_required
 import pandas as pd
+from ebay_research import db
 from ebay_research.data_analysis import EasyEbayData
+from ebay_research.models import User, Search
 from ebay_research.forms import FreeSearch, EmailForm
 from ebay_research.plot_maker import (
     create_us_county_map,
@@ -40,8 +32,26 @@ def home():
     form = EmailForm()
     if form.validate_on_submit():
         session["email"] = form.confirm_email.data
-        return redirect(url_for("main.basic_search"))
+        user_exists = User.query.filter_by(email=session['email']).first()
+        if user_exists:
+            flash('That email is already registered! Please login or reset password', 'danger')
+        else:
+            new_user = User()
+            new_user.email = session['email']
+            new_user.permissions = 0
+            new_user.password = form.password.data
+            new_user.country = form.location.data
+            new_user.state = form.state.data
+            db.session.add(new_user)
+            db.session.commit()
+            session['id'] = new_user.id
+            return redirect(url_for("main.basic_search"))
     return render_template("home.html", form=form)
+
+
+@main.route("/login", methods=["GET", "POST"])
+def login():
+    return render_template("login.html")
 
 #@login_required
 @main.route("/basic_search", methods=["GET", "POST"])
