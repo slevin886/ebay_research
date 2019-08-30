@@ -9,7 +9,7 @@
     <div class="col-6">
         <h5>Try a Basic Search for free!</h5>
         <form method="POST" action="{{ url_for('main.home') }}">
-            {{ form.csrf_token }}
+            {{ form.hidden_tag() }}
             <div class="row mt-3">
                 <div class="col-6">
                     <div class="form-group">{{ form.email.label }}
@@ -24,15 +24,11 @@
                         {{ form.confirm_email(class="form-control", placeholder="Confirm Email") }}</div>
                     <div class="form-group">{{ form.confirm_password.label }}
                         {{ form.confirm_password(class="form-control", placeholder="Confirm Password") }}</div>
-                    <div class="form-group" style="display: none;" id="state">{{ form.state.label }}
+                    <div class="form-group" style="display: none;" id="state" name="state">{{ form.state.label }}
                         {{ form.state(class="form-control", placeholder="") }}</div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col">
-                    <button type="submit" class="btn btn-success btn-lg">Start Searching!</button>
-                </div>
-            </div>
+            <button type="submit" class="btn btn-success btn-lg">Start Searching!</button>
         </form>
     </div>
 </div>

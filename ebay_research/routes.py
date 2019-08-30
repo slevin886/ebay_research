@@ -1,10 +1,10 @@
 from flask import (Blueprint, render_template, url_for, request, session, redirect, flash, current_app, Response)
-from flask_login import current_user, login_required
+from flask_login import current_user, login_required, login_user
 import pandas as pd
 from ebay_research import db
 from ebay_research.data_analysis import EasyEbayData
 from ebay_research.models import User, Search
-from ebay_research.forms import FreeSearch, EmailForm
+from ebay_research.forms import FreeSearch, EmailForm, LoginForm
 from ebay_research.plot_maker import (
     create_us_county_map,
     make_price_by_type,
@@ -14,8 +14,13 @@ from ebay_research.plot_maker import (
     make_listing_pie_chart,
 )
 
+# TODO: The main login isn't working... 
+
 # TODO: set the redis key to a specific user, with a timeout
+# TODO: add position for flashed warnings
+# TODO: Add logout
 # TODO: better css classes for see it on ebay & download file
+# TODO: look up why you should use flask.g.user & before_request
 # TODO: Implement additional item filters
 # TODO: Write test functions
 # TODO: Create figure or data for Category ID info & get sub category info for biggest category
@@ -30,31 +35,44 @@ def home():
     # TODO: Save email in posgres table
     # TODO: Possibly add a counter on table to limit to 5 free searches
     form = EmailForm()
+    print('0*******')
+    print(form.email.data)
     if form.validate_on_submit():
+        print('1*********')
         session["email"] = form.confirm_email.data
         user_exists = User.query.filter_by(email=session['email']).first()
         if user_exists:
             flash('That email is already registered! Please login or reset password', 'danger')
         else:
-            new_user = User()
-            new_user.email = session['email']
-            new_user.permissions = 0
-            new_user.password = form.password.data
-            new_user.country = form.location.data
-            new_user.state = form.state.data
+            # change default permissions to 0
+            new_user = User(email=session['email'], password=form.password.data, permissions=0,
+                            country=form.location.data, state=form.state.data)
             db.session.add(new_user)
             db.session.commit()
+            login_user(new_user)
             session['id'] = new_user.id
+            print('2*********')
             return redirect(url_for("main.basic_search"))
     return render_template("home.html", form=form)
 
 
 @main.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
+    form = LoginForm()
+    if form.validate_on_submit():
+        email, password = form.email.data, form.password.data
+        user = User.query.filter_by(email=email).first()
+        if user and user.validate_password(password):
+            login_user(user)
+            session['id'] = user.id
+            return redirect(url_for('main.basic_search'))
+        else:
+            flash('Whoops! Check that you entered the correct password & email!', 'danger')
+    return render_template("login.html", form=form)
 
-#@login_required
+
 @main.route("/basic_search", methods=["GET", "POST"])
+@login_required
 def basic_search():
     form = FreeSearch()
     if form.validate_on_submit():
@@ -76,8 +94,11 @@ def basic_search():
             item_condition=condition,
         )
         df = search.get_data()
-        # CATCH CONNECTION ERROR AND NO RESULTS- WHICH RETURN AS STRINGS
+        search_record = Search(user_id=current_user.id, full_query=search.full_query)
         if isinstance(df, str):
+            search_record.is_successful = False
+            db.session.add(search_record)
+            db.session.commit()
             if df == "connection_error":
                 flash(
                     "Uh oh! There seems to be a problem connecting to the API, please try again later!",
@@ -89,7 +110,11 @@ def basic_search():
                     "danger",
                 )
             return render_template("basic_search.html", form=form)
-        current_app.redis.set("change_me", df.to_msgpack(compress="zlib"))
+        search_record.is_successful = True
+        db.session.add(search_record)
+        db.session.commit()
+        # TODO: check if something needs to be deleted here first
+        current_app.redis.set(current_user.id, df.to_msgpack(compress="zlib"), ex=120)
         tab_data = prep_tab_data(df)
         df_map = create_us_county_map(df)
         df_type = make_price_by_type(df)

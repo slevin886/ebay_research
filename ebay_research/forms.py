@@ -63,15 +63,29 @@ class EmailForm(FlaskForm):
             Email(),
             Length(min=4, max=98),
             EqualTo("confirm_email", message="Emails must match"),
+            DataRequired()
         ],
     )
-    confirm_email = StringField(u"Confirm your email address")
+    confirm_email = StringField(
+        u"Confirm your email address",
+        validators=[
+            DataRequired()
+        ]
+    )
     password = PasswordField(
         u"Choose a Password",
         validators=[
-            Length(min=8, max=98),
-            EqualTo("confirm_password", "Passwords must match")])
-    confirm_password = PasswordField(u"Confirm Password")
+            Length(min=6, max=98),
+            EqualTo("confirm_password", "Passwords must match"),
+            DataRequired()
+        ]
+    )
+    confirm_password = PasswordField(
+        u"Confirm Password",
+        validators=[
+            DataRequired()
+        ]
+    )
     location = SelectField(
         u"Select your location",
         choices=[("", ""), ("USA", "USA"), ("International", "International")],
@@ -91,3 +105,21 @@ class FreeSearch(FlaskForm):
     )
     minimum_price = DecimalField("Minimum Price", places=2, validators=[optional()])
     maximum_price = DecimalField("Maximum Price", places=2, validators=[optional()])
+
+
+class LoginForm(FlaskForm):
+    email = StringField(
+        u"Enter your email address",
+        validators=[
+            Email(),
+            Length(min=4, max=98),
+            DataRequired()
+            ]
+    )
+    password = StringField(
+        u"Enter your password",
+        validators=[
+            Length(min=6, max=98),
+            DataRequired()
+        ]
+    )
