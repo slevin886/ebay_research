@@ -1,5 +1,5 @@
 from flask import (Blueprint, render_template, url_for, request, session, redirect, flash, current_app, Response)
-from flask_login import current_user, login_required, login_user
+from flask_login import current_user, login_required, login_user, logout_user
 import pandas as pd
 from ebay_research import db
 from ebay_research.data_analysis import EasyEbayData
@@ -14,16 +14,14 @@ from ebay_research.plot_maker import (
     make_listing_pie_chart,
 )
 
-# TODO: The main login isn't working... 
 
-# TODO: set the redis key to a specific user, with a timeout
-# TODO: add position for flashed warnings
-# TODO: Add logout
+# TODO: set up email confirmation 
 # TODO: better css classes for see it on ebay & download file
 # TODO: look up why you should use flask.g.user & before_request
 # TODO: Implement additional item filters
 # TODO: Write test functions
-# TODO: Create figure or data for Category ID info & get sub category info for biggest category
+# TODO: Create figure or data for Category ID info
+# TODO: Change hover mode to closest, improve text font
 # TODO: Create ability to hide/show different plots in the results
 # TODO: Provide credit to https://www.flaticon.com/ for icons
 
@@ -71,6 +69,14 @@ def login():
     return render_template("login.html", form=form)
 
 
+@main.route("/logout", methods=["GET"])
+def logout():
+    logout_user()
+    session.clear()
+    flash('You have successfully logged out!', 'success')
+    return redirect(url_for('main.home'))
+
+
 @main.route("/basic_search", methods=["GET", "POST"])
 @login_required
 def basic_search():
@@ -113,8 +119,8 @@ def basic_search():
         search_record.is_successful = True
         db.session.add(search_record)
         db.session.commit()
-        # TODO: check if something needs to be deleted here first
-        current_app.redis.set(current_user.id, df.to_msgpack(compress="zlib"), ex=120)
+        current_app.redis.set(current_user.id, df.to_msgpack(compress="zlib"))
+        current_app.redis.expire(current_user.id, 120)
         tab_data = prep_tab_data(df)
         df_map = create_us_county_map(df)
         df_type = make_price_by_type(df)
@@ -142,9 +148,14 @@ def basic_search():
 
 @main.route("/get_csv", methods=["GET"])
 def get_csv():
-    df = pd.read_msgpack(current_app.redis.get("change_me"))
-    return Response(
-        df.to_csv(index=False),
-        content_type="text/csv",
-        headers={"Content-Disposition": "attachment;filename=ebay_research.csv"},
-    )
+    if current_app.redis.exists(current_user.id):
+        df = pd.read_msgpack(current_app.redis.get(current_user.id))
+
+        return Response(
+            df.to_csv(index=False),
+            content_type="text/csv",
+            headers={"Content-Disposition": "attachment;filename=ebay_research.csv"},
+        )
+    else:
+        pass
+        # TODO: perhaps write these files temporarily to s3 and then delete them/pull them from here

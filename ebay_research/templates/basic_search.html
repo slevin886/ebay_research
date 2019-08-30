@@ -144,12 +144,6 @@
         <a href="{{ page_url }}" target="_blank">See the search results on eBay</a>
     </div>
 </div>
-
-<div class="row mt-3">
-    <div class="col">
-        <div id="tab_location"></div>
-    </div>
-</div>
 <div class="row mt-3">
     <div class="col">
         <h5>Price Distribution</h5>
@@ -174,7 +168,11 @@
         <div id="dfPie" class="d-flex justify-content-center"></div>
     </div>
 </div>
-
+<div class="row mt-3">
+    <div class="col">
+        <div id="tab_location"></div>
+    </div>
+</div>
 {% if make_sunburst %}
 <div class="row mt-3">
     <div class="col">
@@ -195,7 +193,6 @@
 </script>
 <script src="{{ url_for('static', filename='basic_search/tabulate_script.js') }}"></script>
 <script src="{{ url_for('static', filename='basic_search/basic_plots.js') }}"></script>
-<script src="{{ url_for('static', filename='basic_search/usa_map.js') }}"></script>
 {% endif %}
 
 {% endblock %}
