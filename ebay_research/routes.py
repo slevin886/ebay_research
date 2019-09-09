@@ -1,10 +1,10 @@
-from flask import (Blueprint, render_template, url_for, request, session, redirect, flash, current_app, Response)
-from flask_login import current_user, login_required, login_user, logout_user
+from flask import (Blueprint, render_template, request, flash, current_app, Response)
+from flask_login import current_user, login_required
 import pandas as pd
 from ebay_research import db
 from ebay_research.data_analysis import EasyEbayData
-from ebay_research.models import User, Search
-from ebay_research.forms import FreeSearch, EmailForm, LoginForm
+from ebay_research.models import  Search
+from ebay_research.forms import FreeSearch, EmailForm, LoginForm, SendConfirmation
 from ebay_research.plot_maker import (
     create_us_county_map,
     make_price_by_type,
@@ -14,10 +14,10 @@ from ebay_research.plot_maker import (
     make_listing_pie_chart,
 )
 
-
-# TODO: set up email confirmation 
+# TODO: check if aspects are appearing again
+# TODO: set up email confirmation
+# TODO: add error pages
 # TODO: better css classes for see it on ebay & download file
-# TODO: look up why you should use flask.g.user & before_request
 # TODO: Implement additional item filters
 # TODO: Write test functions
 # TODO: Create figure or data for Category ID info
@@ -28,53 +28,9 @@ from ebay_research.plot_maker import (
 main = Blueprint("main", __name__)
 
 
-@main.route("/", methods=["GET", "POST"])
+@main.route('/', methods=["GET"])
 def home():
-    # TODO: Save email in posgres table
-    # TODO: Possibly add a counter on table to limit to 5 free searches
-    form = EmailForm()
-    print('0*******')
-    print(form.email.data)
-    if form.validate_on_submit():
-        print('1*********')
-        session["email"] = form.confirm_email.data
-        user_exists = User.query.filter_by(email=session['email']).first()
-        if user_exists:
-            flash('That email is already registered! Please login or reset password', 'danger')
-        else:
-            # change default permissions to 0
-            new_user = User(email=session['email'], password=form.password.data, permissions=0,
-                            country=form.location.data, state=form.state.data)
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user)
-            session['id'] = new_user.id
-            print('2*********')
-            return redirect(url_for("main.basic_search"))
-    return render_template("home.html", form=form)
-
-
-@main.route("/login", methods=["GET", "POST"])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        email, password = form.email.data, form.password.data
-        user = User.query.filter_by(email=email).first()
-        if user and user.validate_password(password):
-            login_user(user)
-            session['id'] = user.id
-            return redirect(url_for('main.basic_search'))
-        else:
-            flash('Whoops! Check that you entered the correct password & email!', 'danger')
-    return render_template("login.html", form=form)
-
-
-@main.route("/logout", methods=["GET"])
-def logout():
-    logout_user()
-    session.clear()
-    flash('You have successfully logged out!', 'success')
-    return redirect(url_for('main.home'))
+    return render_template('home.html')
 
 
 @main.route("/basic_search", methods=["GET", "POST"])

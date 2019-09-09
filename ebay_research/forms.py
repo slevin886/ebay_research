@@ -123,3 +123,23 @@ class LoginForm(FlaskForm):
             DataRequired()
         ]
     )
+
+
+class SendConfirmation(FlaskForm):
+    email = StringField(
+        u"Enter your email address",
+        validators=[
+            Email(),
+            Length(min=4, max=98),
+            EqualTo("confirm_email", "Emails must match"),
+            DataRequired()
+        ]
+    )
+    confirm_email = StringField(
+        u"Confirm email address",
+        validators=[
+            Email(),
+            Length(min=4, max=98),
+            DataRequired()
+        ]
+    )

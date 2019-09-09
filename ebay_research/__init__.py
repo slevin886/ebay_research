@@ -5,12 +5,14 @@ from ebay_research.config import ProductionConfig, DevelopmentConfig, TestingCon
 from redis import Redis
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_mail import Mail
 
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
 login_manager = LoginManager()
 login_manager.login_view = 'main.login'
 bcrypt = Bcrypt()
+mail = Mail()
 
 
 def create_app(settings='production'):
@@ -26,9 +28,12 @@ def create_app(settings='production'):
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     login_manager.init_app(app)
+    mail.init_app(app)
     app.redis = Redis.from_url(app.config['REDIS_URL'])
     from ebay_research.routes import main
+    from ebay_research.auth import auth
     app.register_blueprint(main)
+    app.register_blueprint(auth)
     return app
 
 
