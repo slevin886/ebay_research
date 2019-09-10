@@ -5,7 +5,7 @@
 const layout = {'yaxis': {'title': 'Item Price', 'tickprefix': '$'},
               'xaxis': {'showticklabels': false,},
               'height': 350, 'width': 450,
-              'margin': {'t': 10},
+              'margin': {'t': 10}, 'hovermode': 'closest', 'font': {'family': 'Helvetica Neue'},
               'plot_bgcolor': '#F8F8F8' , 'paper_bgcolor':'#F8F8F8',
               'legend': {"orientation": "h"}};
 
@@ -22,8 +22,9 @@ var data2 = [{'x': df_hist, 'type': 'histogram',
 
 const layout2 =  {'xaxis': {'title': 'Item Price', 'tickprefix': '$'},
                 'yaxis': {'title': '# of Items'},
-                'margin': {'t': 0},
+                'margin': {'t': 10},
                 'height': 350, 'width': 450,
+                'hovermode': 'closest', 'font': {'family': 'Helvetica Neue'},
                 'plot_bgcolor': '#F8F8F8' , 'paper_bgcolor':'#F8F8F8'
                 };
 
@@ -35,6 +36,7 @@ Plotly.newPlot('histData', data2, layout2, {"displayModeBar": false});
 const layout3 = {'margin': {'t': 10, 'l': 0, 'r': 0, 'b': 10},
               'legend': {"orientation": "h"},
               'plot_bgcolor': '#F8F8F8' , 'paper_bgcolor':'#F8F8F8',
+              'hovermode': 'closest', 'font': {'family': 'Helvetica Neue'},
               'height': 350, 'width': 450};
 
 Plotly.newPlot('dfPie', df_pie, layout3, {"displayModeBar": false});
@@ -42,12 +44,13 @@ Plotly.newPlot('dfPie', df_pie, layout3, {"displayModeBar": false});
 
 // Sunburst Plot
 
-// const layout4 = {'margin': {'t': 10, 'l': 0, 'r': 0, 'b': 10},
-//                'plot_bgcolor': '#F8F8F8' , 'paper_bgcolor':'#F8F8F8',
-//                'height': 350,
-//                 'width': 450};
-//
-// Plotly.newPlot('sunBurst', make_sunburst, layout4, {"displayModeBar": false});
+const layout4 = {'margin': {'t': 10, 'l': 0, 'r': 0, 'b': 10},
+               'plot_bgcolor': '#F8F8F8' , 'paper_bgcolor':'#F8F8F8',
+                'hovermode': 'closest', 'font': {'family': 'Helvetica Neue'},
+               'height': 350,
+                'width': 450};
+
+Plotly.newPlot('sunBurst', make_sunburst, layout4, {"displayModeBar": false});
 
 
 // USA MAP PLOT
@@ -79,6 +82,7 @@ const layout5 = {
         'plot_bgcolor': '#F8F8F8' , 'paper_bgcolor':'#F8F8F8',
         'margin': {'r': 0, 't': 0, 'l': 0, 'b': 0},
         'height': 350, 'width': 450,
+        'hovermode': 'closest', 'font': {'family': 'Helvetica Neue'},
         'geo': {'scope': 'usa',
              'projection': {'type': 'albers usa'},
              'showland': true,

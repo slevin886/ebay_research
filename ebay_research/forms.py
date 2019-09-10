@@ -98,13 +98,13 @@ class EmailForm(FlaskForm):
 
 class FreeSearch(FlaskForm):
     keywords_include = StringField(
-        u"Keywords to Include", validators=[DataRequired(), Length(min=2, max=60)]
+        u"Keywords to Include:", validators=[DataRequired(), Length(min=2, max=60)]
     )
     keywords_exclude = StringField(
-        u"Keywords to Exclude", validators=[optional(), Length(min=2, max=60)]
+        u"Keywords to Exclude:", validators=[optional(), Length(min=2, max=60)]
     )
-    minimum_price = DecimalField("Minimum Price", places=2, validators=[optional()])
-    maximum_price = DecimalField("Maximum Price", places=2, validators=[optional()])
+    minimum_price = DecimalField("Minimum Price:", places=2, validators=[optional()])
+    maximum_price = DecimalField("Maximum Price:", places=2, validators=[optional()])
 
 
 class LoginForm(FlaskForm):
@@ -140,6 +140,23 @@ class SendConfirmation(FlaskForm):
         validators=[
             Email(),
             Length(min=4, max=98),
+            DataRequired()
+        ]
+    )
+
+
+class ChangePassword(FlaskForm):
+    password = PasswordField(
+        u"Choose a Password",
+        validators=[
+            Length(min=6, max=98),
+            EqualTo("confirm_password", "Passwords must match"),
+            DataRequired()
+        ]
+    )
+    confirm_password = PasswordField(
+        u"Confirm Password",
+        validators=[
             DataRequired()
         ]
     )

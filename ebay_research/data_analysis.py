@@ -175,7 +175,8 @@ class EasyEbayData:
     def get_data(self):
         response = self._test_connection()
 
-        if response in ["connection_error", "no_results_error"]:
+        if isinstance(response, str):
+            print(response)
             return response
 
         if self.get_category_info:

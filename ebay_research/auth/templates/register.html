@@ -1,13 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row">
-    <div class="col">
-        <h1>Register</h1>
-    </div>
-</div>
-<div class="row">
+<div class="row mt-5 ml-5">
     <div class="col-6">
-        <h5>Try a Basic Search for free!</h5>
+        <h2>Register</h2>
         <form method="POST" action="{{ url_for('auth.register') }}">
             {{ form.hidden_tag() }}
             <div class="row mt-3">
@@ -28,7 +23,7 @@
                         {{ form.state(class="form-control", placeholder="") }}</div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-success btn-lg">Start Searching!</button>
+            <button type="submit" class="btn btn-success btn-lg">Register!</button>
         </form>
     </div>
 </div>

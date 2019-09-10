@@ -1,0 +1,12 @@
+Hello,
+
+To reset your password click on the following link:
+
+{{ url_for('auth.change_password', token=token, _external=True) }}
+
+If you have not registered for Genius Bidding simply ignore this message.
+
+Sincerely,
+
+Scott
+Genius Bidding

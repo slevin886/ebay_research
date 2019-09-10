@@ -1,4 +1,4 @@
-from flask import (Blueprint, render_template, request, flash, current_app, Response)
+from flask import (Blueprint, render_template, request, flash, current_app, Response, redirect, url_for)
 from flask_login import current_user, login_required
 import pandas as pd
 from ebay_research import db
@@ -15,7 +15,6 @@ from ebay_research.plot_maker import (
 )
 
 # TODO: check if aspects are appearing again
-# TODO: set up email confirmation
 # TODO: add error pages
 # TODO: better css classes for see it on ebay & download file
 # TODO: Implement additional item filters
@@ -76,7 +75,7 @@ def basic_search():
         db.session.add(search_record)
         db.session.commit()
         current_app.redis.set(current_user.id, df.to_msgpack(compress="zlib"))
-        current_app.redis.expire(current_user.id, 120)
+        current_app.redis.expire(current_user.id, 30)
         tab_data = prep_tab_data(df)
         df_map = create_us_county_map(df)
         df_type = make_price_by_type(df)
@@ -113,5 +112,5 @@ def get_csv():
             headers={"Content-Disposition": "attachment;filename=ebay_research.csv"},
         )
     else:
-        pass
-        # TODO: perhaps write these files temporarily to s3 and then delete them/pull them from here
+        flash('Your session has timed out and the data is no longer saved! Please search again!', 'warning')
+        return redirect(url_for('main.basic_search'))

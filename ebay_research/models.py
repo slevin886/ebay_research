@@ -39,6 +39,10 @@ class User(db.Model, UserMixin):
         self.confirmed_on = confirmed_on
         self.admin = admin
 
+    def set_password(self, password):
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+        db.session.add(self)
+
     def validate_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
 
@@ -57,6 +61,7 @@ class User(db.Model, UserMixin):
     def confirm_account(self):
         self.confirmed = True
         self.confirmed_on = datetime.utcnow()
+        db.session.add(self)
 
     def __repr__(self):
         return f"<User(email={self.email}, country={self.country}, state={self.state}, permissions={self.permissions})>"

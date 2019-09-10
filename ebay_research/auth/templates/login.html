@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row">
+<div class="row mt-5 ml-5">
     <div class="col-6">
+        <h2>Login</h2>
         <form method="POST" action="{{ url_for('auth.login') }}">
             {{ form.csrf_token }}
-            <div class="form-group">{{ form.email.label }}
+            <div class="form-group mt-3"><strong>{{ form.email.label }}</strong>
                 {{ form.email(class="form-control", placeholder="Enter Email") }}</div>
-            <div class="form-group">{{ form.password.label }}
+            <div class="form-group mb-1"><strong>{{ form.password.label }}</strong>
                 {{ form.password(class="form-control", placeholder="Enter Password") }}</div>
+            <div class="form-group">
+                <p style="color: blue;">Forgotten password?
+                    <a href="{{ url_for('auth.password_reset') }}" style="color: red;">click here</a></p>
+            </div>
             <button type="submit" class="btn btn-success btn-lg">Start Searching!</button>
         </form>
     </div>

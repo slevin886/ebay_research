@@ -14,23 +14,23 @@
             {{ form.csrf_token }}
             <div class="row mt-3">
                 <div class="col-4">
-                    <div class="form-group">{{ form.keywords_include.label }}:
+                    <div class="form-group"><strong>{{ form.keywords_include.label }}</strong>
                         {{ form.keywords_include(class="form-control", placeholder="Enter Keywords") }}</div>
-                    <div class="form-group">{{ form.keywords_exclude.label }}:
+                    <div class="form-group"><strong>{{ form.keywords_exclude.label }}</strong>
                         {{ form.keywords_exclude(class="form-control", placeholder="optional") }}</div>
                 </div>
                 <!--MIN & MAX PRICE-->
                 <div class="col">
-                    <div class="form-group">{{ form.maximum_price.label }}:
+                    <div class="form-group"><strong>{{ form.maximum_price.label }}</strong>
                         {{ form.maximum_price(class="form-control", placeholder="optional") }}</div>
-                    <div class="form-group">{{ form.minimum_price.label }}:
+                    <div class="form-group"><strong>{{ form.minimum_price.label }}</strong>
                         {{ form.minimum_price(class="form-control", placeholder="optional") }}</div>
                 </div>
                 <!--Sort Order of Results-->
                 <div class="col">
                     <div class="row">
                         <div class="col">
-                            <label>Sort Order of Results:</label>
+                            <label><strong>Sort Order of Results:</strong></label>
                             <select class="form-control" id="item_sort" name="item_sort">
                                 <option value="BestMatch">Best Match</option>
                                 <option value="CurrentPriceHighest">Highest Price First</option>
@@ -45,7 +45,7 @@
                     <!--Listing TYPE-->
                     <div class="row mt-3">
                         <div class="col">
-                            <label for="listing_type">Listing Type:</label>
+                            <label for="listing_type"><strong>Listing Type:</strong></label>
                             <select class="form-control" id="listing_type" name="listing_type">
                                 <option value="" selected>All Listing Types</option>
                                 <option value="Auction">Auction</option>
@@ -60,7 +60,7 @@
                 <div class="col">
                     <div class="row">
                         <div class="col">
-                            <label for="condition">Item Condition:</label>
+                            <label for="condition"><strong>Item Condition:</strong></label>
                             <select class="form-control" id="condition" name="condition">
                                 <option value="" selected>All Conditions</option>
                                 <option value="1000">New</option>
@@ -168,11 +168,6 @@
         <div id="dfPie" class="d-flex justify-content-center"></div>
     </div>
 </div>
-<div class="row mt-3">
-    <div class="col">
-        <div id="tab_location"></div>
-    </div>
-</div>
 {% if make_sunburst %}
 <div class="row mt-3">
     <div class="col">
@@ -182,6 +177,11 @@
     </div>
 </div>
 {% endif %}
+<div class="row mt-3">
+    <div class="col">
+        <div id="tab_location"></div>
+    </div>
+</div>
 
 <!--TODO: change 'df' to more descriptive name-->
 <script>var df_type = {{ df_type|tojson }};
