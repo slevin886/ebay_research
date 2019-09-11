@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from ebay_research import create_app
 import os
 
