@@ -14,3 +14,11 @@ a:hover {
     cursor: pointer;
     background-color: white;
 }
+
+.page_button {
+    border: 2px solid black;
+}
+
+.page_header {
+    color: darkviolet;
+}

@@ -16,13 +16,19 @@
 <body>
     <nav class="navbar navbar-light bg-white">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('main.home') }}">Ebay Research</a>
+            <a class="navbar-brand" href="{{ url_for('main.home') }}">
+                <img src="{{ url_for('static', filename='genius_logo.png') }}" height="75" alt="genius bidding logo">
+            </a>
             <div class="navbar-nav ml-auto" style="flex-direction: row;">
                 {% if current_user.is_authenticated %}
-                <a class="navbar-brand" href="{{ url_for('auth.logout') }}">Logout</a>
+                <a class="navbar-brand" href="{{ url_for('main.basic_search') }}"><strong>Search</strong></a>
+                <a class="navbar-brand btn btn-danger" href="{{ url_for('auth.logout') }}">
+                    <span style="color: white;">Logout</span></a>
                 {% else %}
-                <a class="navbar-brand" href="{{ url_for('auth.register') }}">Register</a>
-                <a class="navbar-brand" href="{{ url_for('auth.login') }}">Login</a>
+                <a class="navbar-brand btn btn-info" href="{{ url_for('auth.register') }}">
+                    <span style="color: white;">Register</span></a>
+                <a class="navbar-brand btn btn-success" href="{{ url_for('auth.login') }}">
+                    <span style="color: white;">Login</span></a>
                 {% endif %}
             </div>
         </div>

@@ -35,8 +35,33 @@ def test_class_init():
         assert EasyEbayData(), "can't initialize empty class"
 
 
+
+    # def _create_item_filter(self):
+    #     if self.sort_order in ['BidCountMost', 'BidCountFewest']:
+    #         if self.listing_type not in ['Auction', 'AuctionWithBIN']:
+    #             print("Changing listing type to auction to support a sort order using bid count")
+    #             self.listing_type = 'Auction'  # sort order without that listing type returns nothing
+    #     item_filter = list()
+    #     item_filter.append({'name': 'MinPrice', 'value': self.min_price})
+    #     if self.max_price and self.max_price > self.min_price:
+    #         item_filter.append({'name': 'MaxPrice', 'value': self.max_price})
+    #     if self.listing_type:
+    #         item_filter.append({'name': 'ListingType', 'value': self.listing_type})
+    #     if self.item_condition:
+    #         item_filter.append({'name': 'Condition', 'value': self.item_condition})
+    #     if self.usa_only:
+    #         item_filter.append({'name': 'LocatedIn', 'value': 'US'})
+    #     return item_filter
+
+
+def test_create_item_filter():
+    """Tests the _create_item_filter method"""
+    ebay_data = EasyEbayData(api_id=API_ID)
+    # TODO: continue building from here
+
+
 def test_flatten_dict():
-    """Tests the flatten_dict function to flatten dictionaries"""
+    """Tests the flatten_dict method to flatten dictionaries"""
     dict2flatten = {
         "a": {"b": 1, "c": {"b": 1, "d": 1}},
         "c": 1,
@@ -84,3 +109,4 @@ def test_clean_category_info():
     assert clean_category == solution, 'should pull all categories, ids, counts'
     assert ebay_data.largest_sub_category == ['test_child', '1'], 'sets largest sub category as attribute'
     assert ebay_data.largest_category == ['test_data_1', '1'], 'set largest category as attribute'
+

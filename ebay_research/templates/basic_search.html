@@ -14,7 +14,8 @@
             {{ form.csrf_token }}
             <div class="row mt-3">
                 <div class="col-4">
-                    <div class="form-group"><strong>{{ form.keywords_include.label }}</strong>
+                    <div class="form-group">
+                        <label><strong>Keywords to include<span style="color: red; vertical-align: top; font-size: 10px;">✱</span>:</strong></label>
                         {{ form.keywords_include(class="form-control", placeholder="Enter Keywords") }}</div>
                     <div class="form-group"><strong>{{ form.keywords_exclude.label }}</strong>
                         {{ form.keywords_exclude(class="form-control", placeholder="optional") }}</div>
@@ -79,7 +80,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <button type="submit" class="btn btn-success btn-lg">Get Item Data!</button>
+                    <button type="submit" class="btn btn-success btn-lg page_button">Get Item Data!</button>
                 </div>
             </div>
         </form>
@@ -89,10 +90,10 @@
 {% if tab_data %}
 <div class="row mt-3">
     <div class="col">
-        <h5>Result Summary</h5>
+        <h3 class="page_header">Result Summary</h3>
     </div>
 </div>
-<div class="row">
+<div class="row mt-3">
     <div class="col">
         <img src="{{ url_for('static', filename='icons/item_img.png') }}" class="img-fluid" alt="Responsive image"
             style="width:20px;float:left;margin-right:5px;">
@@ -138,10 +139,16 @@
 
 <div class="row">
     <div class="col-4">
-        <a href="{{ url_for('main.get_csv') }}">Download the Full Dataset</a>
+        <a class="btn btn-success page_button" href="{{ url_for('main.get_csv') }}">Download the Full Dataset</a>
     </div>
     <div class="col-4">
-        <a href="{{ page_url }}" target="_blank">See the search results on eBay</a>
+        <a class="btn btn-success page_button" href="{{ page_url }}" target="_blank">See the search results on eBay</a>
+    </div>
+</div>
+<hr>
+<div class="row mt-3">
+    <div class="col">
+        <h3 class="page_header">Dashboard</h3>
     </div>
 </div>
 <div class="row mt-3">

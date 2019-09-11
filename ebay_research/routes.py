@@ -75,7 +75,7 @@ def basic_search():
         db.session.add(search_record)
         db.session.commit()
         current_app.redis.set(current_user.id, df.to_msgpack(compress="zlib"))
-        current_app.redis.expire(current_user.id, 30)
+        current_app.redis.expire(current_user.id, 600)
         tab_data = prep_tab_data(df)
         df_map = create_us_county_map(df)
         df_type = make_price_by_type(df)

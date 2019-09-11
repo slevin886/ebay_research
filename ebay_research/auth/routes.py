@@ -2,7 +2,7 @@ from ebay_research import db
 from ebay_research.models import User
 from ebay_research.forms import EmailForm, SendConfirmation, LoginForm, ChangePassword
 from ebay_research.auth import auth
-from ebay_research.auth.email import send_confirmation_email
+from ebay_research.auth.email import send_email
 
 from flask import flash, render_template, url_for, redirect, session
 from flask_login import logout_user, login_user
@@ -23,7 +23,7 @@ def register():
                             country=form.location.data, state=form.state.data, confirmed=False)
             db.session.add(new_user)
             db.session.commit()
-            send_confirmation_email(new_user, 'email/confirm_email.txt', 'email/confirm_email.html')
+            send_email(new_user, 'Confirm Email Address', 'email/confirm_email')
             flash('Please check your email to confirm your account and begin researching!', 'success')
             return redirect(url_for("main.home"))
     return render_template("register.html", form=form)
@@ -55,7 +55,7 @@ def password_reset():
         if not user:
             flash('That email has not been registered. Please check your spelling or register that account.', 'warning')
             return render_template('password_reset.html')
-        send_confirmation_email(user, 'email/reset_email.txt', 'email/reset_email.html')
+        send_email(user, 'Reset Password', 'email/reset_email')
         flash('An email has been sent to that address. Please follow the enclosed link to reset your password', 'warning')
         return redirect(url_for('main.home'))
     return render_template('password_reset.html', form=form)
@@ -89,7 +89,7 @@ def resend_confirmation():
             flash('You are already confirmed! Login to begin searching', 'warning')
             return redirect(url_for('auth.login'))
         else:
-            send_confirmation_email(user, 'email/confirm_email.txt', 'email/confirm_email.html')
+            send_email(user, 'Confirm Email', 'email/confirm_email')
             flash('Please check your email to confirm your account and begin searching!', 'success')
             return redirect(url_for("main.home"))
     return render_template('confirmation.html', form=form)

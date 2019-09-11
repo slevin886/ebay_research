@@ -4,6 +4,7 @@ from ebaysdk.finding import Connection as Finding
 
 
 # TODO: Separate collection of category and aspect data from test_function
+# TODO: You can only pull 100 pages for 10000 items. Set this as a hard max.
 
 # TO Support In Future:
 # findItemsByCategory
@@ -57,6 +58,9 @@ class EasyEbayData:
         else:
             self.full_query = keywords
         self.item_filter = self._create_item_filter()
+
+    def __repr__(self):
+        return f"[EasyEbayData] query: {self.full_query}"
 
     def _create_item_filter(self):
         if self.sort_order in ['BidCountMost', 'BidCountFewest']:
@@ -201,8 +205,6 @@ class EasyEbayData:
         if pages2pull < 2:  # stop if only pulling one page or only one page exists
             return pd.DataFrame(all_items)
 
-        total_errors = 0
-
         for page in range(2, pages2pull + 1):
             response = self.api.execute(self.search_type, {'keywords': self.full_query,
                                                            'paginationInput': {'pageNumber': page,
@@ -217,9 +219,7 @@ class EasyEbayData:
 
             else:
                 print('Unable to connect to page #: ', page)
-                total_errors += 1
-                if total_errors == 2:
-                    print('API limit reached or pull finished. Pulled {} pages'.format(page - 2))
-                    return pd.DataFrame(all_items)
+                print('Check that you have not surpassed your API limit. Pulled {} pages'.format(page - 1))
+                return pd.DataFrame(all_items)
 
         return pd.DataFrame(all_items)

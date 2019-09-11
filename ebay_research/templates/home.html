@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row">
+<div class="row justify-content-center mt-3">
     <div class="col">
-        <h1>Welcome to Ebay Research</h1>
-    </div>
-</div>
-<div class="row">
-    <div class="col-6">
-        <h1>Home Page</h1>
+        <div class="text-center">
+            <img src="{{ url_for('static', filename='genius_logo.png') }}" height="225">
+            <h2>market research for active sales on
+                <span style="color: hotpink">e</span><span style="color: deepskyblue">b</span><span style="color: palevioletred">a</span><span style="color: cadetblue">y</span>
+            </h2>
+        </div>
     </div>
 </div>
 {% endblock %}
