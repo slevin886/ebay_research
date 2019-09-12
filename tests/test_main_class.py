@@ -35,29 +35,21 @@ def test_class_init():
         assert EasyEbayData(), "can't initialize empty class"
 
 
-
-    # def _create_item_filter(self):
-    #     if self.sort_order in ['BidCountMost', 'BidCountFewest']:
-    #         if self.listing_type not in ['Auction', 'AuctionWithBIN']:
-    #             print("Changing listing type to auction to support a sort order using bid count")
-    #             self.listing_type = 'Auction'  # sort order without that listing type returns nothing
-    #     item_filter = list()
-    #     item_filter.append({'name': 'MinPrice', 'value': self.min_price})
-    #     if self.max_price and self.max_price > self.min_price:
-    #         item_filter.append({'name': 'MaxPrice', 'value': self.max_price})
-    #     if self.listing_type:
-    #         item_filter.append({'name': 'ListingType', 'value': self.listing_type})
-    #     if self.item_condition:
-    #         item_filter.append({'name': 'Condition', 'value': self.item_condition})
-    #     if self.usa_only:
-    #         item_filter.append({'name': 'LocatedIn', 'value': 'US'})
-    #     return item_filter
-
-
 def test_create_item_filter():
     """Tests the _create_item_filter method"""
-    ebay_data = EasyEbayData(api_id=API_ID)
-    # TODO: continue building from here
+    ebay_data = EasyEbayData(api_id=API_ID, keywords='test item filter', sort_order='BidCountMost',
+                             max_price=72, min_price=10, item_condition='used')
+    test_filter = ebay_data.item_filter
+    assert len(test_filter) == 5, "not all expected item filters are present"
+    filter_names = set()
+    filter_values = set()
+    for filter in test_filter:
+        assert 'name' in filter, "missing necessary key 'name'"
+        assert 'value' in filter, "missing necessary key 'value'"
+        filter_names.add(filter['name'])
+        filter_values.add(filter['value'])
+    assert filter_names == {'MinPrice', 'MaxPrice', 'ListingType', 'Condition', 'LocatedIn'}, 'wrong filters present'
+    assert filter_values == {10, 72, 'Auction', 'used', 'US'}, 'wrong values present'
 
 
 def test_flatten_dict():

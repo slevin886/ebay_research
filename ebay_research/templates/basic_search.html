@@ -181,6 +181,8 @@
         <h5>Item Aspect Counts</h5>
         <hr>
         <div id="sunBurst" class="d-flex justify-content-center"></div>
+        <script>var make_sunburst = {{ make_sunburst|tojson }};</script>
+        <script src="{{ url_for('static', filename='basic_search/sunburst_plot.js') }}"></script>
     </div>
 </div>
 {% endif %}
@@ -194,7 +196,6 @@
 <script>var df_type = {{ df_type|tojson }};
         var df_hist = {{ hist_plot|tojson }};
         var df = {{ map_plot|tojson }};
-        var make_sunburst = {{ make_sunburst|tojson }};
         var tab_data = {{ tab_data | tojson }};
         var df_pie = {{ df_pie | tojson }};
 </script>

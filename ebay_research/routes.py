@@ -3,8 +3,8 @@ from flask_login import current_user, login_required
 import pandas as pd
 from ebay_research import db
 from ebay_research.data_analysis import EasyEbayData
-from ebay_research.models import  Search
-from ebay_research.forms import FreeSearch, EmailForm, LoginForm, SendConfirmation
+from ebay_research.models import Search
+from ebay_research.forms import FreeSearch
 from ebay_research.plot_maker import (
     create_us_county_map,
     make_price_by_type,
@@ -14,14 +14,14 @@ from ebay_research.plot_maker import (
     make_listing_pie_chart,
 )
 
-# TODO: check if aspects are appearing again
+# TODO: add account page where users can change password, see past searches
+# TODO: have the number of wanted pages be a part of get data
+# TODO: add search result information
 # TODO: add error pages
-# TODO: better css classes for see it on ebay & download file
 # TODO: Implement additional item filters
 # TODO: Write test functions
 # TODO: Create figure or data for Category ID info
-# TODO: Change hover mode to closest, improve text font
-# TODO: Create ability to hide/show different plots in the results
+# TODO: Create ability to hide/show different plots in the results, make look more like a dashboard
 # TODO: Provide credit to https://www.flaticon.com/ for icons
 
 main = Blueprint("main", __name__)
@@ -32,30 +32,27 @@ def home():
     return render_template('home.html')
 
 
+def ingest_free_search_form(form):
+    final = dict()
+    final['keywords'] = form.keywords_include.data.strip()
+    final['excluded_words'] = form.keywords_exclude.data.strip()
+    final['min_price'] = form.minimum_price.data
+    final['max_price'] = form.maximum_price.data
+    final['sort_order'] = request.form.get("item_sort")
+    final['listing_type'] = request.form.get("listing_type")
+    final['item_condition'] = request.form.get("condition")
+    return final
+
+
 @main.route("/basic_search", methods=["GET", "POST"])
 @login_required
 def basic_search():
     form = FreeSearch()
     if form.validate_on_submit():
-        keywords = form.keywords_include.data.strip()
-        excluded_words = form.keywords_exclude.data.strip()
-        min_price, max_price = form.minimum_price.data, form.maximum_price.data
-        sort_order = request.form.get("item_sort")
-        listing_type = request.form.get("listing_type")
-        condition = request.form.get("condition")
-        search = EasyEbayData(
-            api_id=current_app.config["EBAY_API"],
-            keywords=keywords,
-            excluded_words=excluded_words,
-            sort_order=sort_order,
-            wanted_pages=1,
-            min_price=min_price,
-            max_price=max_price,
-            listing_type=listing_type,
-            item_condition=condition,
-        )
+        form_data = ingest_free_search_form(form)
+        search = EasyEbayData(api_id=current_app.config["EBAY_API"], wanted_pages=1, **form_data)
+        search_record = Search(user_id=current_user.id, **form_data)
         df = search.get_data()
-        search_record = Search(user_id=current_user.id, full_query=search.full_query)
         if isinstance(df, str):
             search_record.is_successful = False
             db.session.add(search_record)
@@ -71,7 +68,6 @@ def basic_search():
                     "danger",
                 )
             return render_template("basic_search.html", form=form)
-        search_record.is_successful = True
         db.session.add(search_record)
         db.session.commit()
         current_app.redis.set(current_user.id, df.to_msgpack(compress="zlib"))
@@ -103,6 +99,7 @@ def basic_search():
 
 @main.route("/get_csv", methods=["GET"])
 def get_csv():
+    # TODO: change downloaded in Search table
     if current_app.redis.exists(current_user.id):
         df = pd.read_msgpack(current_app.redis.get(current_user.id))
 

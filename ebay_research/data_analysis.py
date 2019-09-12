@@ -19,9 +19,8 @@ from ebaysdk.finding import Connection as Finding
 class EasyEbayData:
 
     def __init__(self, api_id: str, keywords: str, excluded_words: str = None, sort_order: str = "BestMatch",
-                 search_type: str = "findItemsByKeywords", get_category_info: bool = True, wanted_pages: int = None, listing_type: str = None,
-                 usa_only: bool = True, min_price: float = 0.0, max_price: float = None,
-                 item_condition: str = None):
+                 search_type: str = "findItemsByKeywords", get_category_info: bool = True, wanted_pages: int = None,
+                 listing_type: str = None, min_price: float = 0.0, max_price: float = None, item_condition: str = None):
         """
         A class that returns a clean data set of items for sale based on a keyword search from ebay. After instantiation,
         call 'get_data' method to collect all data.
@@ -38,7 +37,7 @@ class EasyEbayData:
         self.keywords = keywords  # keywords only search item titles
         self.exclude_words = excluded_words
         self.wanted_pages = wanted_pages  # must be at least 1 & integer
-        self.usa_only = True if usa_only else False
+        self.usa_only = True  # for now, only support us sellers and removing kwarg from init
         self.min_price = min_price if min_price else 0.0
         self.max_price = max_price
         self.sort_order = sort_order
@@ -170,10 +169,10 @@ class EasyEbayData:
         self.total_pages = int(response['paginationOutput']['totalPages'])
         self.total_entries = int(response['paginationOutput']['totalEntries'])
         if self.wanted_pages:
-            # can't pull more than max pages
-            pages2pull = min([self.total_pages, self.wanted_pages])
+            # can't pull more than max pages or 100 total pages
+            pages2pull = min([self.total_pages, self.wanted_pages, 100])
         else:
-            pages2pull = self.total_pages
+            pages2pull = min([self.total_pages, 100])
         return pages2pull
 
     def get_data(self):

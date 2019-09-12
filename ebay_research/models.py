@@ -5,7 +5,8 @@ import os
 from time import time
 import jwt
 
-# TODO: add email confirmation of user perhaps
+# TODO: Save all search information so it could be replicated
+# TODO: Save search result statistics
 
 
 @login_manager.user_loader
@@ -71,9 +72,23 @@ class Search(db.Model):
     __tablename__ = 'search'
     id = db.Column(db.Integer, primary_key=True)
     time_searched = db.Column(db.DateTime, default=datetime.utcnow, index=True)
-    full_query = db.Column(db.String(125))
-    is_successful = db.Column(db.Boolean)
+    keywords = db.Column(db.String(80), nullable=False)
+    excluded_words = db.Column(db.String(80), nullable=True)
+    sort_order = db.Column(db.String(50), nullable=False)
+    listing_type = db.Column(db.String(50), nullable=True)
+    min_price = db.Column(db.Float, default=0.0, nullable=False)
+    max_price = db.Column(db.Float, nullable=True)
+    item_condition = db.Column(db.String(50), nullable=True)
+    is_successful = db.Column(db.Boolean, nullable=False, default=True)
+    downloaded = db.Column(db.Boolean, default=False, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    search_results = db.relationship('Results')
 
     def __repr__(self):
-        return f"<Search(full_query={self.full_query}, time_searched={self.time_searched}, user_id={self.user_id})>"
+        return f"<Search(full_query={self.keywords}, time_searched={self.time_searched}, user_id={self.user_id})>"
+
+
+class Results(db.Model):
+    __tablename__ = 'results'
+    id = db.Column(db.Integer, primary_key=True)
+    search_id = db.Column(db.Integer, db.ForeignKey('search.id'))
