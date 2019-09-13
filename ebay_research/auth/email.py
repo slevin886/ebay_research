@@ -20,20 +20,3 @@ def send_email(user, subject, template):
     thr = Thread(target=send_async_email, args=[app, msg])
     thr.start()
     return thr
-
-
-# def send_email(subject, sender, recipients, text_body, html_body):
-#     msg = Message(subject, sender=sender, recipients=recipients)
-#     msg.body = text_body
-#     msg.html = html_body
-#     mail.send(msg)
-#
-#
-# def send_confirmation_email(user, email_text, email_html):
-#     token = user.get_confirmation_token()
-#     send_email('[Genius Bidding] Confirm Your Email',
-#                sender=os.environ.get('MAIL_DEFAULT_SENDER'),
-#                recipients=[user.email],
-#                text_body=render_template(email_text, user=user, token=token),
-#                html_body=render_template(email_html, user=user, token=token)
-#                )

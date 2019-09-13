@@ -3,8 +3,7 @@ from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection as Finding
 
 
-# TODO: Separate collection of category and aspect data from test_function
-# TODO: You can only pull 100 pages for 10000 items. Set this as a hard max.
+# TODO: Add an optional feature to select a starting page (i.e. start collecting results from page 7)
 
 # TO Support In Future:
 # findItemsByCategory
@@ -19,14 +18,13 @@ from ebaysdk.finding import Connection as Finding
 class EasyEbayData:
 
     def __init__(self, api_id: str, keywords: str, excluded_words: str = None, sort_order: str = "BestMatch",
-                 search_type: str = "findItemsByKeywords", get_category_info: bool = True, wanted_pages: int = None,
+                 search_type: str = "findItemsByKeywords", get_category_info: bool = True,
                  listing_type: str = None, min_price: float = 0.0, max_price: float = None, item_condition: str = None):
         """
         A class that returns a clean data set of items for sale based on a keyword search from ebay. After instantiation,
         call 'get_data' method to collect all data.
         :param api_id: eBay developer app's ID
         :param keywords: Keywords should be between 2 & 350 characters, not case sensitive
-        :param wanted_pages: The number of desired pages to return w/ 100 items per page
         :param search_type: Search type, for now only findItemsByKeywords accepted
         :param listing_type: A string for listing type (Auction, etc.) or None to search all
         :param item_condition: A string representing the item condition code
@@ -36,7 +34,7 @@ class EasyEbayData:
         self.search_type = search_type
         self.keywords = keywords  # keywords only search item titles
         self.exclude_words = excluded_words
-        self.wanted_pages = wanted_pages  # must be at least 1 & integer
+        self.pages_wanted: int = None  # must be at least 1 & integer
         self.usa_only = True  # for now, only support us sellers and removing kwarg from init
         self.min_price = min_price if min_price else 0.0
         self.max_price = max_price
@@ -164,18 +162,18 @@ class EasyEbayData:
             print(f'There are no results for a search of: {self.full_query}')
             return "no_results_error"
 
-    def _get_wanted_pages(self, response):
+    def _get_wanted_pages(self, response: dict, pages_wanted: int):
         """response comes from test_connection to access total pages without making another API call"""
         self.total_pages = int(response['paginationOutput']['totalPages'])
         self.total_entries = int(response['paginationOutput']['totalEntries'])
-        if self.wanted_pages:
+        if pages_wanted:
             # can't pull more than max pages or 100 total pages
-            pages2pull = min([self.total_pages, self.wanted_pages, 100])
+            pages2pull = min([self.total_pages, pages_wanted, 100])
         else:
             pages2pull = min([self.total_pages, 100])
         return pages2pull
 
-    def get_data(self):
+    def get_data(self, pages_wanted: int = None):
         response = self._test_connection()
 
         if isinstance(response, str):
@@ -199,9 +197,9 @@ class EasyEbayData:
 
         all_items.extend([self.flatten_dict(i) for i in data])
 
-        pages2pull = self._get_wanted_pages(response)
+        pages2pull = self._get_wanted_pages(response, pages_wanted)
 
-        if pages2pull < 2:  # stop if only pulling one page or only one page exists
+        if pages2pull < 2:  # stop if only pulling one/zero pages or only one page exists
             return pd.DataFrame(all_items)
 
         for page in range(2, pages2pull + 1):

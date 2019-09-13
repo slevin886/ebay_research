@@ -70,16 +70,18 @@ def prep_tab_data(df):
     :param df: full dataframe of ebay item data
     :return: dataframe
     """
-    topics_for_tab = ['title', 'location', 'bidCount', 'galleryURL',
-                      'viewItemURL', 'currentPrice_value', 'startTime', 'endTime',
-                      'listingType']
+    topics_for_tab = ['title', 'watchCount', 'galleryURL', 'viewItemURL',
+                      'currentPrice_value', 'endTime']
     for topic in topics_for_tab:
         if topic not in df.columns:
             topics_for_tab.remove(topic)
-    tab_data = df[topics_for_tab].copy()
-    tab_data['startTime'] = pd.to_datetime(tab_data['startTime'])
-    tab_data['endTime'] = pd.to_datetime(tab_data['endTime'])
-    return tab_data
+    df = df[topics_for_tab].dropna(subset=['watchCount'])
+    if df.empty:
+        return None
+    df = df.sort_values(by='watchCount', ascending=False)
+    if 'endTime' in topics_for_tab:
+        df['endTime'] = pd.to_datetime(df['endTime'])
+    return df
 
 
 def make_listing_pie_chart(listing_type):
@@ -92,20 +94,3 @@ def make_listing_pie_chart(listing_type):
     return [{'type': 'pie', 'labels': list(listings.index),
              'values': list(map(int, listings.values)),
              'hole': '0.4', 'marker': {'line': {'color': 'black', 'width': '2'}}}]
-
-
-def summary_stats(df, largest_cat, largest_sub_cat):
-    stats = dict()
-    avg_price = str(df['currentPrice_value'].astype(float).mean().round(2))
-    if len(avg_price.split('.')[-1]) < 2:
-        avg_price = avg_price + '0'
-    stats['avg_price'] = avg_price
-    stats['returned_count'] = df.shape[0]
-    stats['top_rated'] = np.round(df.loc[df['topRatedListing'] == 'true'].shape[0] / df.shape[0] * 100, 1)
-    biggest_seller = df['sellerUserName'].value_counts()
-    stats['top_seller'], stats['top_count'] = biggest_seller.idxmax(), biggest_seller.max()
-    if largest_cat:
-        stats['largest_cat_name'], stats['largest_cat_count'] = largest_cat[0], largest_cat[1]
-    if largest_sub_cat:
-        stats['largest_sub_name'], stats['largest_sub_count'] = largest_sub_cat[0], largest_sub_cat[1]
-    return stats

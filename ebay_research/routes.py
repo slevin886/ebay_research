@@ -1,21 +1,23 @@
-from flask import (Blueprint, render_template, request, flash, current_app, Response, redirect, url_for)
+from flask import (Blueprint, render_template, request, flash, current_app, Response, redirect, url_for, session)
 from flask_login import current_user, login_required
 import pandas as pd
+from sqlalchemy.orm import load_only
 from ebay_research import db
 from ebay_research.data_analysis import EasyEbayData
-from ebay_research.models import Search
+from ebay_research.support_functions import ingest_free_search_form, summary_stats
+from ebay_research.models import Search, Results
 from ebay_research.forms import FreeSearch
 from ebay_research.plot_maker import (
     create_us_county_map,
     make_price_by_type,
     prep_tab_data,
     make_sunburst,
-    summary_stats,
     make_listing_pie_chart,
 )
 
 # TODO: add account page where users can change password, see past searches
-# TODO: have the number of wanted pages be a part of get data
+# TODO: fix basic search table to show ordered by most watched items
+# TODO: do something with the feedback score, feedbackRatingStar
 # TODO: add search result information
 # TODO: add error pages
 # TODO: Implement additional item filters
@@ -32,16 +34,12 @@ def home():
     return render_template('home.html')
 
 
-def ingest_free_search_form(form):
-    final = dict()
-    final['keywords'] = form.keywords_include.data.strip()
-    final['excluded_words'] = form.keywords_exclude.data.strip()
-    final['min_price'] = form.minimum_price.data
-    final['max_price'] = form.maximum_price.data
-    final['sort_order'] = request.form.get("item_sort")
-    final['listing_type'] = request.form.get("listing_type")
-    final['item_condition'] = request.form.get("condition")
-    return final
+@main.route('/account/<user_id>', methods=['GET', 'POST'])
+@login_required
+def account(user_id):
+    searches = Search.query.filter_by(user_id=current_user.id).order_by(Search.time_searched.desc()).limit(5)\
+        .options(load_only('time_searched', 'keywords', 'id')).all()
+    return render_template('account.html', user_id=user_id, searches=searches)
 
 
 @main.route("/basic_search", methods=["GET", "POST"])
@@ -50,9 +48,9 @@ def basic_search():
     form = FreeSearch()
     if form.validate_on_submit():
         form_data = ingest_free_search_form(form)
-        search = EasyEbayData(api_id=current_app.config["EBAY_API"], wanted_pages=1, **form_data)
+        search = EasyEbayData(api_id=current_app.config["EBAY_API"], **form_data)
         search_record = Search(user_id=current_user.id, **form_data)
-        df = search.get_data()
+        df = search.get_data(pages_wanted=1)
         if isinstance(df, str):
             search_record.is_successful = False
             db.session.add(search_record)
@@ -70,13 +68,20 @@ def basic_search():
             return render_template("basic_search.html", form=form)
         db.session.add(search_record)
         db.session.commit()
-        current_app.redis.set(current_user.id, df.to_msgpack(compress="zlib"))
-        current_app.redis.expire(current_user.id, 600)
+        current_app.redis.set(search_record.id, df.to_msgpack(compress="zlib"))
+        current_app.redis.expire(search_record.id, 600)
+        session['search_id'] = search_record.id
+        stats = summary_stats(df,
+                              search.largest_category,
+                              search.largest_sub_category,
+                              search.total_entries)
+        results = Results(search_id=search_record.id, pages_wanted=1, **stats)
+        db.session.add(results)
+        db.session.commit()
         tab_data = prep_tab_data(df)
         df_map = create_us_county_map(df)
         df_type = make_price_by_type(df)
         df_pie = make_listing_pie_chart(df["listingType"])
-        stats = summary_stats(df, search.largest_category, search.largest_sub_category)
         if search.item_aspects is None:
             sunburst_plot = None
         else:
@@ -91,23 +96,24 @@ def basic_search():
             df_type=df_type,
             make_sunburst=sunburst_plot,
             stats=stats,
-            page_url=search.search_url,
-            total_entries=search.total_entries,
+            page_url=search.search_url
         )
     return render_template("basic_search.html", form=form)
 
 
 @main.route("/get_csv", methods=["GET"])
 def get_csv():
-    # TODO: change downloaded in Search table
-    if current_app.redis.exists(current_user.id):
-        df = pd.read_msgpack(current_app.redis.get(current_user.id))
-
+    if current_app.redis.exists(session['search_id']):
+        df = pd.read_msgpack(current_app.redis.get(session['search_id']))
+        search_record = Search.query.get(session['search_id'])
+        search_record.downloaded = True
+        db.session.commit()
         return Response(
             df.to_csv(index=False),
             content_type="text/csv",
             headers={"Content-Disposition": "attachment;filename=ebay_research.csv"},
         )
     else:
+        # TODO: file will be saved on s3 and can then be read in from there
         flash('Your session has timed out and the data is no longer saved! Please search again!', 'warning')
         return redirect(url_for('main.basic_search'))

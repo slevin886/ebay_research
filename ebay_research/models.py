@@ -5,9 +5,6 @@ import os
 from time import time
 import jwt
 
-# TODO: Save all search information so it could be replicated
-# TODO: Save search result statistics
-
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -91,4 +88,22 @@ class Search(db.Model):
 class Results(db.Model):
     __tablename__ = 'results'
     id = db.Column(db.Integer, primary_key=True)
+    avg_price = db.Column(db.Float)
+    median_price = db.Column(db.Float)
+    returned_count = db.Column(db.Integer)
+    top_rated_percent = db.Column(db.Float)  # top rated seller %
+    top_rated_listing = db.Column(db.Float, nullable=True)  # top rated listing %
+    top_seller = db.Column(db.String(200))
+    top_seller_count = db.Column(db.Integer)
+    largest_cat_name = db.Column(db.String(200))
+    largest_cat_count = db.Column(db.Integer)
+    largest_sub_name = db.Column(db.String(200))
+    largest_sub_count = db.Column(db.Integer)
+    total_entries = db.Column(db.Integer)
+    total_watch_count = db.Column(db.Integer)
+    avg_shipping_price = db.Column(db.Float)
+    pages_wanted = db.Column(db.Integer, nullable=True)
     search_id = db.Column(db.Integer, db.ForeignKey('search.id'))
+
+    def __repr__(self):
+        return f"<Results(id={self.id}, largest_category={self.largest_cat_name}, returned_count={self.returned_count})"
