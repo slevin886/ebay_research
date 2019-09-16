@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DecimalField, SelectField, PasswordField
+from wtforms import StringField, DecimalField, SelectField, PasswordField, IntegerField
 from wtforms.validators import DataRequired, Length, optional, Email, EqualTo
 
 STATES = [
@@ -156,6 +156,39 @@ class ChangePassword(FlaskForm):
     )
     confirm_password = PasswordField(
         u"Confirm Password",
+        validators=[
+            DataRequired()
+        ]
+    )
+
+
+class RepeatSearch(FlaskForm):
+    search_id = IntegerField(
+        u"Enter the search id",
+        validators=[
+            Length(min=1, max=12),
+            DataRequired()
+        ]
+    )
+
+
+class ChooseNewPassword(FlaskForm):
+    old_password = PasswordField(
+        u"Enter current password ",
+        validators=[
+            DataRequired()
+        ]
+    )
+    password = PasswordField(
+        u"Choose a new password",
+        validators=[
+            Length(min=6, max=98),
+            EqualTo("confirm_password", "Passwords must match"),
+            DataRequired()
+        ]
+    )
+    confirm_password = PasswordField(
+        u"Confirm new password",
         validators=[
             DataRequired()
         ]

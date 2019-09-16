@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import os
 
 
@@ -94,3 +93,24 @@ def make_listing_pie_chart(listing_type):
     return [{'type': 'pie', 'labels': list(listings.index),
              'values': list(map(int, listings.values)),
              'hole': '0.4', 'marker': {'line': {'color': 'black', 'width': '2'}}}]
+
+
+def make_seller_bar(df):
+    df['watchCount'] = df['watchCount'].fillna(0).astype(int)
+    if 'feedbackScore' in df.columns:
+        df['feedbackScore'] = df['feedbackScore'].astype(int)
+        df = df.groupby('sellerUserName', as_index=False).agg({'feedbackScore': 'mean',
+                                                               'watchCount': 'sum',
+                                                               'categoryName': 'count'})
+        df['feedbackScore'] = df['feedbackScore'].astype(str)
+        df['watchCount'] = df['watchCount'].astype(str)
+        df['hover'] = 'Total Feedback Score: ' + df['feedbackScore'] + '<br>Total Watch Count: ' + df['watchCount']
+    else:
+        df = df.groupby('sellerUserName', as_index=False).agg({'watchCount': 'sum', 'categoryName': 'count'})
+        df['watchCount'] = df['watchCount'].astype(str)
+        df['hover'] = '<br>Total Watch Count: ' + df['watchCount']
+    df = df.sort_values(by='categoryName', ascending=False).head(10)
+    return [{'x': df['sellerUserName'].tolist(), 'y': df['categoryName'].tolist(),
+             'text': df['hover'].tolist(), 'type': 'bar',
+             'marker': {'line': {'color': 'black', 'width': '2'}}
+             }]

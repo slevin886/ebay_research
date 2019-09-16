@@ -84,3 +84,15 @@ const layout5 = {
     };
 
 Plotly.newPlot('usaMAP', dataMap, layout5, {"displayModeBar": false});
+
+
+// Seller bar plot
+
+const layout7 = {'plot_bgcolor': '#F8F8F8' , 'paper_bgcolor':'#F8F8F8', 'margin': {'t': 10},
+              'hovermode': 'closest', 'font': {'family': 'Helvetica Neue'},
+              'height': 350, 'width': 450, 'xaxis': {'automargin': true, 'tickangle': 45},
+  'yaxis': {'title': '# of listed items'}};
+
+Plotly.newPlot('sellerBar', df_seller, layout7, {"displayModeBar": false});
+
+

@@ -1,15 +1,15 @@
 from flask import (Blueprint, render_template, request, flash, current_app, Response, redirect, url_for, session)
 from flask_login import current_user, login_required
 import pandas as pd
-from sqlalchemy.orm import load_only
 from ebay_research import db
 from ebay_research.data_analysis import EasyEbayData
 from ebay_research.support_functions import ingest_free_search_form, summary_stats
 from ebay_research.models import Search, Results
-from ebay_research.forms import FreeSearch
+from ebay_research.forms import FreeSearch, ChooseNewPassword, RepeatSearch
 from ebay_research.plot_maker import (
     create_us_county_map,
     make_price_by_type,
+    make_seller_bar,
     prep_tab_data,
     make_sunburst,
     make_listing_pie_chart,
@@ -17,6 +17,7 @@ from ebay_research.plot_maker import (
 
 # TODO: add account page where users can change password, see past searches
 # TODO: fix basic search table to show ordered by most watched items
+# TODO: (make nicer) fix form error formatting on top of page on basic_search page
 # TODO: do something with the feedback score, feedbackRatingStar
 # TODO: add search result information
 # TODO: add error pages
@@ -37,9 +38,17 @@ def home():
 @main.route('/account/<user_id>', methods=['GET', 'POST'])
 @login_required
 def account(user_id):
-    searches = Search.query.filter_by(user_id=current_user.id).order_by(Search.time_searched.desc()).limit(5)\
-        .options(load_only('time_searched', 'keywords', 'id')).all()
-    return render_template('account.html', user_id=user_id, searches=searches)
+    search_form = RepeatSearch()
+    password_form = ChooseNewPassword()
+    if search_form.validate_on_submit() and search_form.search_id.data:
+        pass
+    elif password_form.validate_on_submit() and password_form.password.data:
+        # make sure to check password validity
+        pass
+    searches = db.session.query(Search, Results).join(Results).filter(Search.user_id == current_user.id)\
+        .order_by(Search.time_searched.desc()).limit(5).all()
+    return render_template('account.html', user_id=user_id, searches=searches, search_Form=search_form,
+                           password_form=password_form)
 
 
 @main.route("/basic_search", methods=["GET", "POST"])
@@ -79,6 +88,7 @@ def basic_search():
         db.session.add(results)
         db.session.commit()
         tab_data = prep_tab_data(df)
+        df_seller = make_seller_bar(df)
         df_map = create_us_county_map(df)
         df_type = make_price_by_type(df)
         df_pie = make_listing_pie_chart(df["listingType"])
@@ -94,6 +104,7 @@ def basic_search():
             hist_plot=df["currentPrice_value"].tolist(),
             df_pie=df_pie,
             df_type=df_type,
+            df_seller=df_seller,
             make_sunburst=sunburst_plot,
             stats=stats,
             page_url=search.search_url

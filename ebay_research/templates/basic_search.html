@@ -8,6 +8,13 @@
         {% endfor %}
     </ul>
 {% endif %}
+<div class="row mt-3">
+    <div class="col">
+        <hr>
+        <h3 class="page_header">Search</h3>
+        <h5>choose your search criteria</h5>
+    </div>
+</div>
 <div class="row">
     <div class="col">
         <form method="POST" action="{{ url_for('main.basic_search') }}">
@@ -144,22 +151,6 @@
 
     </div>
 </div>
-{#<div class="row">#}
-{#    {%  if 'largest_cat_name' in stats.keys() %}#}
-{#    <div class="col">#}
-{#        <img src="{{ url_for('static', filename='icons/categories.png') }}" class="img-fluid" alt="Responsive image"#}
-{#             style="width:20px;float:left;margin-right:5px;margin-top:4px;">#}
-{#        <p>Largest Category: <strong>{{ stats['largest_cat_name'] }}#}
-{#            ({{ stats['largest_cat_count'] }} items)</strong></p>#}
-{#        {%  if 'largest_sub_name' in stats.keys() %}#}
-{#        <img src="{{ url_for('static', filename='icons/categories.png') }}" class="img-fluid" alt="Responsive image"#}
-{#             style="width:20px;float:left;margin-right:5px;margin-top:4px;">#}
-{#        <p>Largest Subcategory: <strong>{{ stats['largest_sub_name'] }}#}
-{#            ({{ stats['largest_sub_count'] }} items)</strong></p>#}
-{#        {% endif %}#}
-{#    </div>#}
-{#    {%  endif %}#}
-{#</div>#}
 <div class="row">
     <div class="col-4">
         <a class="btn btn-success page_button" href="{{ url_for('main.get_csv') }}">Download the Full Dataset</a>
@@ -176,39 +167,52 @@
 </div>
 <div class="row mt-3">
     <div class="col">
-        <h5>Price Distribution</h5>
+        <h5>price distribution</h5>
         <hr>
         <div id="histData" class="d-flex justify-content-center"></div>
     </div>
     <div class="col">
-        <h5>Price Distribution (by Listing Type)</h5>
+        <h5>price distribution (by listing type)</h5>
         <hr>
         <div id="dfTypePlot" class="d-flex justify-content-center"></div>
     </div>
 </div>
 <div class="row mt-3">
     <div class="col">
-        <h5>Seller Location Map</h5>
+        <h5>seller locations by county</h5>
         <hr>
         <div id="usaMAP" class="d-flex justify-content-center"></div>
     </div>
     <div class="col">
-        <h5>Listing Type Composition</h5>
+        <h5>items by listing type</h5>
         <hr>
         <div id="dfPie" class="d-flex justify-content-center"></div>
     </div>
 </div>
-{% if make_sunburst %}
 <div class="row mt-3">
     <div class="col">
-        <h5>Item Aspect Counts</h5>
+        <h5>largest sellers</h5>
+        <hr>
+        <div id="sellerBar" class="d-flex justify-content-center"></div>
+    </div>
+    {% if make_sunburst %}
+    <div class="col">
+        <h5>listed item characteristics</h5>
         <hr>
         <div id="sunBurst" class="d-flex justify-content-center"></div>
+        <p class="text-center">click the inside labels of the pie to enlarge each aspect</p>
         <script>var make_sunburst = {{ make_sunburst|tojson }};</script>
         <script src="{{ url_for('static', filename='basic_search/sunburst_plot.js') }}"></script>
     </div>
+    {% endif %}
 </div>
-{% endif %}
+<div class="row mt-3">
+    <div class="col">
+        <hr>
+        <h3 class="page_header">popular items</h3>
+        <h5>sorted by <strong>highest watch count</strong></h5>
+    </div>
+</div>
 <div class="row mt-3">
     <div class="col">
         <div id="tab_location"></div>
@@ -221,6 +225,7 @@
         var df = {{ map_plot|tojson }};
         var tab_data = {{ tab_data | tojson }};
         var df_pie = {{ df_pie | tojson }};
+        var df_seller = {{ df_seller | tojson }};
 </script>
 <script src="{{ url_for('static', filename='basic_search/tabulate_script.js') }}"></script>
 <script src="{{ url_for('static', filename='basic_search/basic_plots.js') }}"></script>

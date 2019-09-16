@@ -18,11 +18,11 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(120), nullable=False)
     country = db.Column(db.String(20), nullable=False)
     state = db.Column(db.String(20), nullable=True)
-    registered_on = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    registered_on = db.Column(db.DateTime, default=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"), nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
     permissions = db.Column(db.Integer)  # 1 = paid, 0 = unpaid
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
-    confirmed_on = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+    confirmed_on = db.Column(db.DateTime, nullable=True, default=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
     searches = db.relationship('Search')
 
     def __init__(self, email, password, country, state, permissions, registered_on=datetime.utcnow(), confirmed=False,
@@ -68,7 +68,7 @@ class User(db.Model, UserMixin):
 class Search(db.Model):
     __tablename__ = 'search'
     id = db.Column(db.Integer, primary_key=True)
-    time_searched = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    time_searched = db.Column(db.DateTime, default=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"), index=True)
     keywords = db.Column(db.String(80), nullable=False)
     excluded_words = db.Column(db.String(80), nullable=True)
     sort_order = db.Column(db.String(50), nullable=False)

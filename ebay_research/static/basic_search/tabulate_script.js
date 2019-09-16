@@ -2,7 +2,7 @@
 var table = new Tabulator("#tab_location", {
 	data:tab_data,           //load row data from array
 	layout:"fitColumns",      //fit columns to width of table
-//	responsiveLayout:"hide",  //hide columns that dont fit on the table
+	responsiveLayout:"hide",  //hide columns that dont fit on the table
 	tooltips:true,            //show tool tips on cells
 	initialSort:[{column:"watchCount", dir:"desc"}],
 	pagination:"local",       //paginate the data
