@@ -102,3 +102,27 @@ def test_clean_category_info():
     assert ebay_data.largest_sub_category == ['test_child', '1'], 'sets largest sub category as attribute'
     assert ebay_data.largest_category == ['test_data_1', '1'], 'set largest category as attribute'
 
+
+def test_clean_aspect_dictionary():
+    fake_aspects = {'aspect': {'domainDisplayName': 'aspect subject',
+                               'aspect': [
+                                    {'valueHistogram': [
+                                        {'count': '1', '_valueName': 'val1'},
+                                        {'count': '1', '_valueName': 'val2'},
+                                    ],
+                                     '_name': 'name1'},
+                                    {'valueHistogram': [
+                                        {'count': '2', '_valueName': 'val3'},
+                                        {'count': '2', '_valueName': 'val4'}
+                                    ],
+                                     '_name': 'name2'}
+                               ]
+                               }
+                    }
+    ebay_data = EasyEbayData(api_id=API_ID, keywords="test class")
+    test_results = ebay_data.clean_aspect_dictionary(fake_aspects)
+    assert 'name1' in test_results.keys(), 'aspect names should be present in keys'
+    assert 'name2' in test_results.keys(), 'aspect names should be present in keys'
+    assert 'val1' in test_results['name1'].keys(), '_name values should be nested keys'
+    assert isinstance(test_results['name1']['val1'], int), 'string counts should be converted to integers'
+    assert test_results['name2']['val3'] == 2, 'aspect counts should be values to _valueName key'

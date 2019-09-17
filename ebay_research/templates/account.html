@@ -3,13 +3,14 @@
 <div class="row mt-3">
     <div class="col">
         <h2 class="page_header">my account</h2>
-        <h5>{{ current_user.email }}</h5>
-        <h5>Account created: {{ current_user.registered_on }}</h5>
+        <h5><span style="color: darkred;">username</span>: {{ current_user.email }}</h5>
+        <h5><span style="color: darkred;">account created</span>: {{ current_user.registered_on }}</h5>
+        <h5><span style="color: darkred;">total searches</span>: {{ number_searches }}</h5>
     </div>
 </div>
 {% if searches %}
 <div class="row mt-3">
-    <div class="col-6">
+    <div class="col">
         <h3 class="page_header">recent searches</h3>
         <table class="table table-striped table-bordered">
             <tr class="table-info">
@@ -18,6 +19,7 @@
                 <th>search time</th>
                 <th>average price</th>
                 <th>items returned</th>
+                <th>items available</th>
             </tr>
             {% for search, result in searches %}
             <tr>
@@ -26,10 +28,13 @@
                 <td>{{ search.time_searched }}</td>
                 <td>${{ result.avg_price }}</td>
                 <td>{{ result.returned_count }}</td>
+                <td>{{ result.total_entries }}</td>
             </tr>
             {% endfor %}
         </table>
     </div>
+</div>
+<div class="row mt-3 mb-5">
     <div class="col-4">
         <h3 class="page_header">change password</h3>
         <form method="POST" action="{{ url_for('main.account', user_id=current_user.id) }}">

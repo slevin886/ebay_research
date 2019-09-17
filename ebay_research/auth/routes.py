@@ -4,7 +4,7 @@ from ebay_research.forms import EmailForm, SendConfirmation, LoginForm, ChangePa
 from ebay_research.auth import auth
 from ebay_research.auth.email import send_email
 
-from flask import flash, render_template, url_for, redirect, session
+from flask import flash, render_template, url_for, redirect, session, request
 from flask_login import logout_user, login_user
 
 
@@ -102,7 +102,10 @@ def login():
         email, password = form.email.data, form.password.data
         user = User.query.filter_by(email=email).first()
         if user and user.validate_password(password):
-            login_user(user)
+            if request.form.get('remember_me'):
+                login_user(user, remember=True)
+            else:
+                login_user(user)
             session['id'] = user.id
             return redirect(url_for('main.basic_search'))
         else:

@@ -121,8 +121,7 @@ class EasyEbayData:
     def clean_aspect_dictionary(aspects):
         """
         There is also a second key 'domainDisplayName' for these aspects
-        :param aspects:
-        :return:
+        :param aspects: dictionary of item aspects
         """
         all_aspects = {}
         for asp in aspects['aspect']:

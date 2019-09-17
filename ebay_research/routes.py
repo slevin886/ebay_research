@@ -4,7 +4,7 @@ import pandas as pd
 from ebay_research import db
 from ebay_research.data_analysis import EasyEbayData
 from ebay_research.support_functions import ingest_free_search_form, summary_stats
-from ebay_research.models import Search, Results
+from ebay_research.models import Search, Results, User
 from ebay_research.forms import FreeSearch, ChooseNewPassword, RepeatSearch
 from ebay_research.plot_maker import (
     create_us_county_map,
@@ -15,11 +15,7 @@ from ebay_research.plot_maker import (
     make_listing_pie_chart,
 )
 
-# TODO: add account page where users can change password, see past searches
-# TODO: fix basic search table to show ordered by most watched items
-# TODO: (make nicer) fix form error formatting on top of page on basic_search page
-# TODO: do something with the feedback score, feedbackRatingStar
-# TODO: add search result information
+# TODO: implement repeat search on account page and possibly something do download search result metadata
 # TODO: add error pages
 # TODO: Implement additional item filters
 # TODO: Write test functions
@@ -38,17 +34,26 @@ def home():
 @main.route('/account/<user_id>', methods=['GET', 'POST'])
 @login_required
 def account(user_id):
+    # TODO: eliminate or implement RepeatSearch
     search_form = RepeatSearch()
     password_form = ChooseNewPassword()
     if search_form.validate_on_submit() and search_form.search_id.data:
         pass
-    elif password_form.validate_on_submit() and password_form.password.data:
-        # make sure to check password validity
-        pass
+    elif password_form.validate_on_submit():
+        password = password_form.old_password.data
+        # user = User.query.filter_by(id=current_user.id).first()
+        if current_user.validate_password(password):
+            new_password = password_form.password.data
+            current_user.set_password(new_password)
+            db.session.commit()
+            flash('You have successfully changed your password!', 'success')
+        else:
+            flash("Whoops! You entered the wrong password, please try again or reset it from the login page", 'danger')
     searches = db.session.query(Search, Results).join(Results).filter(Search.user_id == current_user.id)\
         .order_by(Search.time_searched.desc()).limit(5).all()
-    return render_template('account.html', user_id=user_id, searches=searches, search_Form=search_form,
-                           password_form=password_form)
+    number_searches = len(User.query.filter_by(id=current_user.id).first().searches)
+    return render_template('account.html', user_id=user_id, searches=searches, number_searches=number_searches,
+                           search_Form=search_form, password_form=password_form)
 
 
 @main.route("/basic_search", methods=["GET", "POST"])
