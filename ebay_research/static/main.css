@@ -1,5 +1,5 @@
 body {
-    background: #F8F8F8;
+    background: white;
 }
 
 .dashboard {
@@ -20,5 +20,5 @@ a:hover {
 }
 
 .page_header {
-    color: darkviolet;
+    color: black;
 }

@@ -2,13 +2,8 @@ import pandas as pd
 from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection as Finding
 
-
-# TODO: Add an optional feature to select a starting page (i.e. start collecting results from page 7)
-
 # TO Support In Future:
-# findItemsByCategory
-# Eventually use this: 'GetCategoryInfo' to get valid category ids
-# findItemsByCategory (max: 3, will need to be specified separately for each one)
+# implement findItemsByCategory: ('GetCategoryInfo' to get valid category ids, max: 3)
 # search variation:
 # baseball card  (both words) baseball,card (exact phrase baseball card)
 # (baseball,card) (items with either baseball or card)  baseball -card (baseball but NOT card)
@@ -18,20 +13,18 @@ from ebaysdk.finding import Connection as Finding
 class EasyEbayData:
 
     def __init__(self, api_id: str, keywords: str, excluded_words: str = None, sort_order: str = "BestMatch",
-                 search_type: str = "findItemsByKeywords", get_category_info: bool = True,
+                 get_category_info: bool = True,
                  listing_type: str = None, min_price: float = 0.0, max_price: float = None, item_condition: str = None):
         """
         A class that returns a clean data set of items for sale based on a keyword search from ebay. After instantiation,
         call 'get_data' method to collect all data.
         :param api_id: eBay developer app's ID
         :param keywords: Keywords should be between 2 & 350 characters, not case sensitive
-        :param search_type: Search type, for now only findItemsByKeywords accepted
         :param listing_type: A string for listing type (Auction, etc.) or None to search all
         :param item_condition: A string representing the item condition code
         :param get_category_info: A bool, if true, collects item aspects and category information
         """
-        self.api = Finding(appid=api_id, config_file=None)
-        self.search_type = search_type
+        self.api_id = api_id
         self.keywords = keywords  # keywords only search item titles
         self.exclude_words = excluded_words
         self.pages_wanted: int = None  # must be at least 1 & integer
@@ -131,37 +124,40 @@ class EasyEbayData:
             all_aspects[asp['_name']] = sub_aspect
         return all_aspects
 
-    def _test_connection(self):
+    def single_page_query(self, page_number=1, include_meta_data=True):
         """
         Tests that an initial API connection is successful and returns the initial raw response as a dictionary if
-        successful else returns a string of the error that occurred
+        successful else returns a string of the error that occurred. Should generally be the first search used.
         """
+        output_selection = ['SellerInfo', 'StoreInfo']
+
+        if include_meta_data:
+            output_selection.extend(['AspectHistogram', 'CategoryHistogram'])
+
         try:
-            response = self.api.execute(self.search_type, {'keywords': self.full_query,
-                                                           'paginationInput': {'pageNumber': 1,
+            api = Finding(appid=self.api_id, config_file=None)
+            response = api.execute('findItemsByKeywords', {'keywords': self.full_query,
+                                                           'paginationInput': {'pageNumber': page_number,
                                                                                'entriesPerPage': 100},
                                                            'itemFilter': self.item_filter,
                                                            'sortOrder': self.sort_order,
-                                                           'outputSelector': ['SellerInfo', 'StoreInfo',
-                                                                              'AspectHistogram', 'CategoryHistogram']
-                                                           })
+                                                           'outputSelector': output_selection})
+        except ConnectionError:
+            print('Connection Error! Ensure that your API key was correctly and you have web connectivity.')
+            return "connection_error"
+        try:
             assert response.reply.ack == 'Success'
-            print('Successfully Connected to API!')
             response = response.dict()
             if response['paginationOutput']['totalPages'] == '0':
                 print(f'There are no results for a search of: {self.full_query}')
                 return "no_results_error"
             self.search_url = response['itemSearchURL']
             return response
-            # Not all searches, particularly empty searches, have subcategories/item aspects
-        except ConnectionError:
-            print('Connection Error! Ensure that your API key was correctly entered.')
-            return "connection_error"
         except AssertionError:
-            print(f'There are no results for a search of: {self.full_query}')
-            return "no_results_error"
+            print(f'There is an API error, please check the parameters of your search or rate limit: {self.full_query}')
+            return "api_error"
 
-    def _get_wanted_pages(self, response: dict, pages_wanted: int):
+    def _get_pages_to_pull(self, response: dict, pages_wanted: int):
         """response comes from test_connection to access total pages without making another API call"""
         self.total_pages = int(response['paginationOutput']['totalPages'])
         self.total_entries = int(response['paginationOutput']['totalEntries'])
@@ -172,11 +168,10 @@ class EasyEbayData:
             pages2pull = min([self.total_pages, 100])
         return pages2pull
 
-    def get_data(self, pages_wanted: int = None):
-        response = self._test_connection()
+    def full_data_pull(self, pages_wanted: int = None):
+        response = self.single_page_query()
 
         if isinstance(response, str):
-            print(response)
             return response
 
         if self.get_category_info:
@@ -196,26 +191,18 @@ class EasyEbayData:
 
         all_items.extend([self.flatten_dict(i) for i in data])
 
-        pages2pull = self._get_wanted_pages(response, pages_wanted)
+        pages2pull = self._get_pages_to_pull(response, pages_wanted)
 
         if pages2pull < 2:  # stop if only pulling one/zero pages or only one page exists
             return pd.DataFrame(all_items)
 
         for page in range(2, pages2pull + 1):
-            response = self.api.execute(self.search_type, {'keywords': self.full_query,
-                                                           'paginationInput': {'pageNumber': page,
-                                                                               'entriesPerPage': 100},
-                                                           'itemFilter': self.item_filter,
-                                                           'sortOrder': self.sort_order,
-                                                           'outputSelector': ['SellerInfo', 'StoreInfo']
-                                                           })
-            if response.reply.ack == 'Success':
+            response = self.single_page_query(page_number=page, include_meta_data=False)
+            if isinstance(response, str):
+                print(f'Unable to connect to page #: {page}\bPulled {page -1 } pages.')
+                return pd.DataFrame(all_items)
+            else:
                 data = response.dict()['searchResult']['item']
                 all_items.extend([self.flatten_dict(i) for i in data])
-
-            else:
-                print('Unable to connect to page #: ', page)
-                print('Check that you have not surpassed your API limit. Pulled {} pages'.format(page - 1))
-                return pd.DataFrame(all_items)
 
         return pd.DataFrame(all_items)

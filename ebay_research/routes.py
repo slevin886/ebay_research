@@ -41,7 +41,6 @@ def account(user_id):
         pass
     elif password_form.validate_on_submit():
         password = password_form.old_password.data
-        # user = User.query.filter_by(id=current_user.id).first()
         if current_user.validate_password(password):
             new_password = password_form.password.data
             current_user.set_password(new_password)
@@ -64,7 +63,7 @@ def basic_search():
         form_data = ingest_free_search_form(form)
         search = EasyEbayData(api_id=current_app.config["EBAY_API"], **form_data)
         search_record = Search(user_id=current_user.id, **form_data)
-        df = search.get_data(pages_wanted=1)
+        df = search.full_data_pull(pages_wanted=1)
         if isinstance(df, str):
             search_record.is_successful = False
             db.session.add(search_record)
