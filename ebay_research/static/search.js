@@ -1,25 +1,54 @@
 
+
+
 function pullData() {
-  console.log('hello?');
   const formData = new FormData(mainForm);
   formData.append('pageNumber', 1);
-  axios.post(
-    '/get_data',
-    formData,
-    {
-      headers: {
-        'Content-type': 'multipart/form-data',
+  let maxPages = formData['items_to_pull'];
+  let firstPull = true;
+  for (let i=1; i < maxPages; i++) {
+    axios.post(
+      '/get_data',
+      formData,
+      {
+        headers: {
+          'Content-type': 'multipart/form-data',
+        }
       }
-  }
     )
-    .then((res) => {
-      document.getElementById('hideDashBoard').style.display = 'block';
-      let myData = res.data;
-      drawFigures(myData.df_type, myData.hist_plot, myData.map_plot, myData.tab_data, myData.df_pie, myData.df_seller);
-    })
-    .catch((error) => {
-      console.log(error);
-    })
+      .then((res) => {
+        document.getElementById('hideDashBoard').style.display = 'block';
+        let myData = res.data;
+        let stats = myData['stats'];
+
+        document.getElementById("returned_count").innerHTML = stats['returned_count'];
+        document.getElementById("total_entries").innerHTML = stats['total_entries'];
+        document.getElementById("top_rated_listing").innerHTML = stats['top_rated_listing'];
+        document.getElementById("top_seller").innerHTML = stats['top_seller'];
+        document.getElementById("top_seller_count").innerHTML = stats['top_seller_count'];
+        document.getElementById("top_rated_percent").innerHTML = stats['top_rated_percent'];
+        document.getElementById("avg_price").innerHTML = stats['avg_price'];
+        document.getElementById("median_price").innerHTML = stats['median_price'];
+        document.getElementById("avg_shipping_price").innerHTML = stats['avg_shipping_price'];
+        document.getElementById("total_watch_count").innerHTML = stats['total_watch_count'];
+        // TODO: Add conditional logic to check these category counts
+        if (firstPull && stats['largest_cat_name'] != null) {
+          document.getElementById("largest_cat_name").innerHTML = stats['largest_cat_name'];
+          document.getElementById("largest_cat_count").innerHTML = stats['largest_cat_count'];
+          document.getElementById("largest_sub_name").innerHTML = stats['largest_sub_name'];
+          document.getElementById("largest_sub_count").innerHTML = stats['largest_sub_count'];
+        }
+        if (myData.sunburst_plot != null && firstPull) {
+          document.getElementById('hideSunBurst').style.display = 'block';
+          drawSunBurst(myData.sunburst_plot);
+        }
+        drawFigures(myData.df_type, myData.hist_plot, myData.map_plot, myData.tab_data, myData.df_pie, myData.df_seller);
+      })
+      .catch((error) => {
+        console.log(error);
+      }
+    )
+  }
 }
 
 
@@ -104,4 +133,9 @@ function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller) 
                    'yaxis': {'title': '# of listed items'}, ...commonLayout};
 
   Plotly.newPlot('sellerBar', df_seller, layout7, {"displayModeBar": false});
+}
+
+function drawSunBurst(make_sunburst) {
+  let layout = {'margin': {'t': 10, 'l': 0, 'r': 0, 'b': 10}, ...commonLayout};
+  Plotly.newPlot('sunBurst', make_sunburst, layout, {"displayModeBar": false});
 }
