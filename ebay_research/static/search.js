@@ -1,9 +1,9 @@
 
-
-
 async function pullData() {
   const formData = new FormData(mainForm);
   formData.append('pageNumber', '1');
+  let errorMessage = '';
+  let showError = false;
   let maxPages = formData.get('items_to_pull');
   let firstPull = true;
   let searchID;
@@ -64,9 +64,22 @@ async function pullData() {
         drawFigures(myData.df_type, myData.hist_plot, myData.map_plot, myData.tab_data, myData.df_pie, myData.df_seller);
       })
       .catch((error) => {
-          console.log(error);
+          errorMessage = error.response.data;
+          showError = true;
         }
-      )
+      );
+    if (showError) {
+      let errorNode = document.createElement('div');
+      errorNode.setAttribute('class', 'alert alert-danger alert-dismissible fade show');
+      errorNode.innerHTML = `
+          <span>${errorMessage}</span>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      `;
+      document.getElementById('main_content').prepend(errorNode);
+      break
+    }
   }
 }
 

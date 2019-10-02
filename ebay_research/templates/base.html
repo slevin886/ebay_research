@@ -9,21 +9,21 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-    <!--TABULATOR-->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/4.4.1/css/bootstrap/tabulator_bootstrap4.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.2.7/dist/js/tabulator.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.home') }}">
-                <img src="{{ url_for('static', filename='genius_logo.png') }}" height="75" alt="genius bidding logo">
+                <img src="{{ url_for('static', filename='brain_logo_white_border.png') }}" height="75" alt="genius bidding logo">
             </a>
             <div class="navbar-nav ml-auto" style="flex-direction: row;">
                 {% if current_user.is_authenticated %}
                 <a class="navbar-brand" href="{{ url_for('main.account', user_id=current_user.id) }}">
                     <strong>account</strong></a>
-                <a class="navbar-brand" href="{{ url_for('main.basic_search') }}">
+                <a class="navbar-brand" href="{{ url_for('main.search') }}">
                     <strong>search</strong></a>
                 <a class="navbar-brand btn btn-danger" href="{{ url_for('auth.logout') }}">
                     <span style="color: white;">Logout</span></a>
@@ -36,7 +36,7 @@
             </div>
         </div>
     </nav>
-    <div class="container">
+    <div class="container" id="main_content">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}

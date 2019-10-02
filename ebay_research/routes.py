@@ -1,5 +1,5 @@
 from flask import (Blueprint, render_template, request, flash, jsonify,
-                   current_app, Response, redirect, url_for, session)
+                   current_app, Response, redirect, url_for, session, abort)
 from flask_login import current_user, login_required
 import pandas as pd
 from ebay_research import db
@@ -56,65 +56,65 @@ def account(user_id):
                            search_Form=search_form, password_form=password_form)
 
 
-@main.route("/basic_search", methods=["GET", "POST"])
-@login_required
-def basic_search():
-    form = FreeSearch()
-    if form.validate_on_submit():
-        form_data = ingest_free_search_form(form)
-        search = EasyEbayData(api_id=current_app.config["EBAY_API"], **form_data)
-        search_record = Search(user_id=current_user.id, **form_data)
-        df = search.full_data_pull(pages_wanted=1)
-        if isinstance(df, str):
-            search_record.is_successful = False
-            db.session.add(search_record)
-            db.session.commit()
-            if df == "connection_error":
-                flash(
-                    "Uh oh! There seems to be a problem connecting to the API, please try again later!",
-                    "danger",
-                )
-            else:
-                flash(
-                    "There were no results for those search parameters, please try a different search.",
-                    "danger",
-                )
-            return render_template("basic_search.html", form=form)
-        db.session.add(search_record)
-        db.session.commit()
-        current_app.redis.set(search_record.id, df.to_msgpack(compress="zlib"))
-        current_app.redis.expire(search_record.id, 600)
-        session['search_id'] = search_record.id
-        stats = summary_stats(df,
-                              search.largest_category,
-                              search.largest_sub_category,
-                              search.total_entries)
-        results = Results(search_id=search_record.id, pages_wanted=1, **stats)
-        db.session.add(results)
-        db.session.commit()
-        tab_data = prep_tab_data(df)
-        df_seller = make_seller_bar(df)
-        df_map = create_us_county_map(df)
-        df_type = make_price_by_type(df)
-        df_pie = make_listing_pie_chart(df["listingType"])
-        if search.item_aspects is None:
-            sunburst_plot = None
-        else:
-            sunburst_plot = make_sunburst(search.item_aspects)
-        return render_template(
-            "basic_search.html",
-            form=form,
-            map_plot=df_map,
-            tab_data=tab_data.to_dict(orient="records"),
-            hist_plot=df["currentPrice_value"].tolist(),
-            df_pie=df_pie,
-            df_type=df_type,
-            df_seller=df_seller,
-            make_sunburst=sunburst_plot,
-            stats=stats,
-            page_url=search.search_url
-        )
-    return render_template("basic_search.html", form=form)
+# @main.route("/basic_search", methods=["GET", "POST"])
+# @login_required
+# def basic_search():
+#     form = FreeSearch()
+#     if form.validate_on_submit():
+#         form_data = ingest_free_search_form(form)
+#         search = EasyEbayData(api_id=current_app.config["EBAY_API"], **form_data)
+#         search_record = Search(user_id=current_user.id, **form_data)
+#         df = search.full_data_pull(pages_wanted=1)
+#         if isinstance(df, str):
+#             search_record.is_successful = False
+#             db.session.add(search_record)
+#             db.session.commit()
+#             if df == "connection_error":
+#                 flash(
+#                     "Uh oh! There seems to be a problem connecting to the API, please try again later!",
+#                     "danger",
+#                 )
+#             else:
+#                 flash(
+#                     "There were no results for those search parameters, please try a different search.",
+#                     "danger",
+#                 )
+#             return render_template("basic_search.html", form=form)
+#         db.session.add(search_record)
+#         db.session.commit()
+#         current_app.redis.set(search_record.id, df.to_msgpack(compress="zlib"))
+#         current_app.redis.expire(search_record.id, 600)
+#         session['search_id'] = search_record.id
+#         stats = summary_stats(df,
+#                               search.largest_category,
+#                               search.largest_sub_category,
+#                               search.total_entries)
+#         results = Results(search_id=search_record.id, pages_wanted=1, **stats)
+#         db.session.add(results)
+#         db.session.commit()
+#         tab_data = prep_tab_data(df)
+#         df_seller = make_seller_bar(df)
+#         df_map = create_us_county_map(df)
+#         df_type = make_price_by_type(df)
+#         df_pie = make_listing_pie_chart(df["listingType"])
+#         if search.item_aspects is None:
+#             sunburst_plot = None
+#         else:
+#             sunburst_plot = make_sunburst(search.item_aspects)
+#         return render_template(
+#             "basic_search.html",
+#             form=form,
+#             map_plot=df_map,
+#             tab_data=tab_data.to_dict(orient="records"),
+#             hist_plot=df["currentPrice_value"].tolist(),
+#             df_pie=df_pie,
+#             df_type=df_type,
+#             df_seller=df_seller,
+#             make_sunburst=sunburst_plot,
+#             stats=stats,
+#             page_url=search.search_url
+#         )
+#     return render_template("basic_search.html", form=form)
 
 
 @main.route("/search", methods=['GET'])
@@ -139,24 +139,20 @@ def get_data():
             existing_records = pd.read_msgpack(current_app.redis.get(session['search_id']))
 
         base_data = searching.single_page_query(page_number=page_number, include_meta_data=include_meta_data)
-        data = base_data['searchResult']['item']
-        df = pd.DataFrame([searching.flatten_dict(i) for i in data])
 
-        if isinstance(df, str):
+        if isinstance(base_data, str):
             search_record.is_successful = False
             db.session.add(search_record)
             db.session.commit()
-            if df == "connection_error":
-                flash(
-                    "Uh oh! There seems to be a problem connecting to the API, please try again later!",
-                    "danger",
-                )
+            if base_data == "connection_error":
+                message = "Uh oh! There seems to be a problem connecting to ebay's API, please try again later!"
             else:
-                flash(
-                    "There were no results for those search parameters, please try a different search.",
-                    "danger",
-                )
-            return render_template("basic_search.html", form=form)
+                message = "There were no results for those search parameters, please try a different search."
+            return Response(response=message, status=400)
+
+        data = base_data['searchResult']['item']
+        df = pd.DataFrame([searching.flatten_dict(i) for i in data])
+
         if page_number == 1:
             db.session.add(search_record)
             db.session.commit()
@@ -211,3 +207,8 @@ def get_csv():
         # TODO: file will be saved on s3 and can then be read in from there
         flash('Your session has timed out and the data is no longer saved! Please search again!', 'warning')
         return redirect(url_for('main.basic_search'))
+
+
+@main.errorhandler(400)
+def custom400(error):
+    return jsonify({'message': error.description})

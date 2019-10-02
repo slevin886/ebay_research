@@ -147,15 +147,31 @@ class EasyEbayData:
             return "connection_error"
         try:
             assert response.reply.ack == 'Success'
-            response = response.dict()
-            if response['paginationOutput']['totalPages'] == '0':
-                print(f'There are no results for a search of: {self.full_query}')
-                return "no_results_error"
-            self.search_url = response['itemSearchURL']
-            return response
         except AssertionError:
             print(f'There is an API error, please check the parameters of your search or rate limit: {self.full_query}')
             return "api_error"
+
+        response = response.dict()
+
+        if response['paginationOutput']['totalPages'] == '0':
+            print(f'There are no results for a search of: {self.full_query}')
+            return "no_results_error"
+        if include_meta_data:
+            self.total_pages = int(response['paginationOutput']['totalPages'])
+            self.total_entries = int(response['paginationOutput']['totalEntries'])
+            self._clean_category_data(response)
+        self.search_url = response['itemSearchURL']
+        return response
+
+    def _clean_category_data(self, response):
+        try:
+            self.category_info = self.clean_category_info(response['categoryHistogramContainer'])
+        except KeyError:
+            print(f'There are no categories for a search of: {self.full_query}')
+        try:
+            self.item_aspects = self.clean_aspect_dictionary(response['aspectHistogramContainer'])
+        except KeyError:
+            print(f'There are no aspects for a search of: {self.full_query}')
 
     def _get_pages_to_pull(self, response: dict, pages_wanted: int):
         """response comes from test_connection to access total pages without making another API call"""
@@ -175,16 +191,8 @@ class EasyEbayData:
             return response
 
         if self.get_category_info:
-            try:
-                self.category_info = self.clean_category_info(response['categoryHistogramContainer'])
-            except KeyError:
-                print(f'There are no categories for a search of: {self.full_query}')
-            try:
-                self.item_aspects = self.clean_aspect_dictionary(response['aspectHistogramContainer'])
-            except KeyError:
-                print(f'There are no aspects for a search of: {self.full_query}')
+            self._clean_category_data(response)
 
-        # Add initial items from test
         data = response['searchResult']['item']
 
         all_items = []
@@ -202,7 +210,7 @@ class EasyEbayData:
                 print(f'Unable to connect to page #: {page}\bPulled {page -1 } pages.')
                 return pd.DataFrame(all_items)
             else:
-                data = response.dict()['searchResult']['item']
+                data = response['searchResult']['item']
                 all_items.extend([self.flatten_dict(i) for i in data])
 
         return pd.DataFrame(all_items)
