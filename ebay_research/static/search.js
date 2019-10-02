@@ -1,13 +1,18 @@
 
 
 
-function pullData() {
+async function pullData() {
   const formData = new FormData(mainForm);
-  formData.append('pageNumber', 1);
-  let maxPages = formData['items_to_pull'];
+  formData.append('pageNumber', '1');
+  let maxPages = formData.get('items_to_pull');
   let firstPull = true;
-  for (let i=1; i < maxPages; i++) {
-    axios.post(
+  let searchID;
+  for (let i = 1; i <= maxPages; i++) {
+    formData.set('pageNumber', i.toString());
+    if (!firstPull) {
+      formData.append('searchID', searchID)
+    }
+    await axios.post(
       '/get_data',
       formData,
       {
@@ -17,12 +22,36 @@ function pullData() {
       }
     )
       .then((res) => {
-        document.getElementById('hideDashBoard').style.display = 'block';
-        let myData = res.data;
-        let stats = myData['stats'];
+        // TODO: might have to write logic in here to check string result, but should probably return fail on server
+        // TODO: perhaps save the searchId here
+        const myData = res.data;
+        const stats = myData['stats'];
+        if (firstPull) {
+          firstPull = false;
+          searchID = myData['search_id'];
+          document.getElementById('hideDashBoard').style.display = 'block';
+          document.getElementById("total_entries").innerHTML = stats['total_entries'];
+          let availablePages = Math.ceil(stats['total_entries'] / 100);
+
+          if (availablePages < maxPages) {
+            maxPages = availablePages;
+          }
+          console.log(stats['largest_cat_name']);
+          if (stats['largest_cat_name'] != null) {
+            console.log(stats['largest_cat_name']);
+            document.getElementById("largest_cat_name").innerHTML = stats['largest_cat_name'];
+            document.getElementById("largest_cat_count").innerHTML = stats['largest_cat_count'];
+            document.getElementById("largest_sub_name").innerHTML = stats['largest_sub_name'];
+            document.getElementById("largest_sub_count").innerHTML = stats['largest_sub_count'];
+          }
+          console.log(myData.sunburst_plot);
+          if (myData.sunburst_plot != null) {
+            document.getElementById('hideSunBurst').style.display = 'block';
+            drawSunBurst(myData.sunburst_plot);
+          }
+        }
 
         document.getElementById("returned_count").innerHTML = stats['returned_count'];
-        document.getElementById("total_entries").innerHTML = stats['total_entries'];
         document.getElementById("top_rated_listing").innerHTML = stats['top_rated_listing'];
         document.getElementById("top_seller").innerHTML = stats['top_seller'];
         document.getElementById("top_seller_count").innerHTML = stats['top_seller_count'];
@@ -32,22 +61,12 @@ function pullData() {
         document.getElementById("avg_shipping_price").innerHTML = stats['avg_shipping_price'];
         document.getElementById("total_watch_count").innerHTML = stats['total_watch_count'];
         // TODO: Add conditional logic to check these category counts
-        if (firstPull && stats['largest_cat_name'] != null) {
-          document.getElementById("largest_cat_name").innerHTML = stats['largest_cat_name'];
-          document.getElementById("largest_cat_count").innerHTML = stats['largest_cat_count'];
-          document.getElementById("largest_sub_name").innerHTML = stats['largest_sub_name'];
-          document.getElementById("largest_sub_count").innerHTML = stats['largest_sub_count'];
-        }
-        if (myData.sunburst_plot != null && firstPull) {
-          document.getElementById('hideSunBurst').style.display = 'block';
-          drawSunBurst(myData.sunburst_plot);
-        }
         drawFigures(myData.df_type, myData.hist_plot, myData.map_plot, myData.tab_data, myData.df_pie, myData.df_seller);
       })
       .catch((error) => {
-        console.log(error);
-      }
-    )
+          console.log(error);
+        }
+      )
   }
 }
 
@@ -75,7 +94,7 @@ function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller) 
   let layout2 =  {'xaxis': {'title': 'Item Price', 'tickprefix': '$'},
                   'yaxis': {'title': '# of Items'},
                   'margin': {'t': 10}, ...commonLayout};
-  console.log(data2);
+
   Plotly.newPlot('histData', data2, layout2, {"displayModeBar": false});
 
 

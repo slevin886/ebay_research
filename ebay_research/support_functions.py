@@ -1,5 +1,4 @@
 from flask import request
-import numpy as np
 
 
 def ingest_free_search_form(form):
@@ -23,7 +22,6 @@ BOOL_MAP = {'true': True, 'false': False}
 
 def summary_stats(df, largest_cat, largest_sub_cat, total_items_available):
     stats = dict()
-    stats['total_entries'] = int(total_items_available)
     stats['avg_price'] = currency_maker(df['currentPrice_value'].astype(float).mean())
     stats['median_price'] = currency_maker(df['currentPrice_value'].astype(float).median())
     stats['avg_shipping_price'] = currency_maker(df['shippingServiceCost_value'].astype(float).mean())
@@ -33,6 +31,8 @@ def summary_stats(df, largest_cat, largest_sub_cat, total_items_available):
     stats['top_rated_listing'] = round(df['topRatedListing'].map(BOOL_MAP).mean() * 100, 2)
     biggest_seller = df['sellerUserName'].value_counts()
     stats['top_seller'], stats['top_seller_count'] = biggest_seller.idxmax(), int(biggest_seller.max())
+    if total_items_available:
+        stats['total_entries'] = int(total_items_available)
     if largest_cat:
         stats['largest_cat_name'], stats['largest_cat_count'] = largest_cat[0], int(largest_cat[1])
     if largest_sub_cat:

@@ -1,4 +1,5 @@
-from flask import (Blueprint, render_template, request, flash, current_app, Response, redirect, url_for, session)
+from flask import (Blueprint, render_template, request, flash, jsonify,
+                   current_app, Response, redirect, url_for, session)
 from flask_login import current_user, login_required
 import pandas as pd
 from ebay_research import db
@@ -48,7 +49,7 @@ def account(user_id):
             flash('You have successfully changed your password!', 'success')
         else:
             flash("Whoops! You entered the wrong password, please try again or reset it from the login page", 'danger')
-    searches = db.session.query(Search, Results).join(Results).filter(Search.user_id == current_user.id)\
+    searches = db.session.query(Search, Results).join(Results).filter(Search.user_id == current_user.id) \
         .order_by(Search.time_searched.desc()).limit(5).all()
     number_searches = len(User.query.filter_by(id=current_user.id).first().searches)
     return render_template('account.html', user_id=user_id, searches=searches, number_searches=number_searches,
@@ -114,6 +115,84 @@ def basic_search():
             page_url=search.search_url
         )
     return render_template("basic_search.html", form=form)
+
+
+@main.route("/search", methods=['GET'])
+def search():
+    form = FreeSearch()
+    return render_template("search.html", form=form)
+
+
+@main.route("/get_data", methods=['POST'])
+def get_data():
+    form = FreeSearch(data=request.get_json())
+    if form.validate():
+        form_data = ingest_free_search_form(form)
+        searching = EasyEbayData(api_id=current_app.config["EBAY_API"], **form_data)
+        page_number = int(request.form.get('pageNumber'))
+        include_meta_data = False
+        if page_number == 1:
+            include_meta_data = True
+            search_record = Search(user_id=current_user.id, **form_data)
+        else:
+            search_record = Search.query.filter_by(id=session['search_id']).first()
+            existing_records = pd.read_msgpack(current_app.redis.get(session['search_id']))
+
+        base_data = searching.single_page_query(page_number=page_number, include_meta_data=include_meta_data)
+        data = base_data['searchResult']['item']
+        df = pd.DataFrame([searching.flatten_dict(i) for i in data])
+
+        if isinstance(df, str):
+            search_record.is_successful = False
+            db.session.add(search_record)
+            db.session.commit()
+            if df == "connection_error":
+                flash(
+                    "Uh oh! There seems to be a problem connecting to the API, please try again later!",
+                    "danger",
+                )
+            else:
+                flash(
+                    "There were no results for those search parameters, please try a different search.",
+                    "danger",
+                )
+            return render_template("basic_search.html", form=form)
+        if page_number == 1:
+            db.session.add(search_record)
+            db.session.commit()
+        else:
+            df = pd.concat([existing_records, df], axis=0, sort=False)
+
+        current_app.redis.set(search_record.id, df.to_msgpack(compress="zlib"))
+        current_app.redis.expire(search_record.id, 600)
+        session['search_id'] = search_record.id
+        stats = summary_stats(df,
+                              searching.largest_category,
+                              searching.largest_sub_category,
+                              searching.total_entries)
+        print(searching.largest_category)
+        # TODO: add logic to only commit results on the last pull
+        # results = Results(search_id=search_record.id, pages_wanted=1, **stats)
+        # db.session.add(results)
+        # db.session.commit()
+        tab_data = prep_tab_data(df)
+        df_seller = make_seller_bar(df)
+        map_plot = create_us_county_map(df)
+        df_type = make_price_by_type(df)
+        df_pie = make_listing_pie_chart(df["listingType"])
+        if searching.item_aspects is None:
+            sunburst_plot = None
+        else:
+            sunburst_plot = make_sunburst(searching.item_aspects)
+        return jsonify(map_plot=map_plot,
+                       tab_data=tab_data.to_dict(orient="records"),
+                       hist_plot=df["currentPrice_value"].tolist(),
+                       df_pie=df_pie,
+                       df_type=df_type,
+                       df_seller=df_seller,
+                       sunburst_plot=sunburst_plot,
+                       stats=stats,
+                       search_id=search_record.id)
 
 
 @main.route("/get_csv", methods=["GET"])
