@@ -1,0 +1,14 @@
+{
+  "name": "ebay_research",
+  "version": "1.0.0",
+  "description": "ebay market research app",
+  "main": "''",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "spin.js": "^4.0.0"
+  }
+}

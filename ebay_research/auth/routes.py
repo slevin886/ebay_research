@@ -16,6 +16,7 @@ def register():
         session["email"] = form.confirm_email.data
         user_exists = User.query.filter_by(email=session['email']).first()
         if user_exists:
+            print('working as expected here')
             flash('That email is already registered! Please login or reset password', 'danger')
         else:
             # change default permissions to 0
@@ -43,7 +44,7 @@ def confirmation(token):
         login_user(user)
         session['id'] = user.id
         flash('You have successfully confirmed your email! Start searching!', 'success')
-        return redirect(url_for('main.basic_search'))
+        return redirect(url_for('main.search'))
 
 
 @auth.route("/password_reset", methods=['GET', 'POST'])
@@ -107,7 +108,7 @@ def login():
             else:
                 login_user(user)
             session['id'] = user.id
-            return redirect(url_for('main.basic_search'))
+            return redirect(url_for('main.search'))
         else:
             flash('Whoops! Check that you entered the correct password & email!', 'danger')
     return render_template("login.html", form=form)

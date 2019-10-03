@@ -16,6 +16,7 @@ from ebay_research.plot_maker import (
     make_listing_pie_chart,
 )
 
+# TODO: correct path to search results on eBay
 # TODO: implement repeat search on account page and possibly something do download search result metadata
 # TODO: add error pages
 # TODO: Implement additional item filters
@@ -54,67 +55,6 @@ def account(user_id):
     number_searches = len(User.query.filter_by(id=current_user.id).first().searches)
     return render_template('account.html', user_id=user_id, searches=searches, number_searches=number_searches,
                            search_Form=search_form, password_form=password_form)
-
-
-# @main.route("/basic_search", methods=["GET", "POST"])
-# @login_required
-# def basic_search():
-#     form = FreeSearch()
-#     if form.validate_on_submit():
-#         form_data = ingest_free_search_form(form)
-#         search = EasyEbayData(api_id=current_app.config["EBAY_API"], **form_data)
-#         search_record = Search(user_id=current_user.id, **form_data)
-#         df = search.full_data_pull(pages_wanted=1)
-#         if isinstance(df, str):
-#             search_record.is_successful = False
-#             db.session.add(search_record)
-#             db.session.commit()
-#             if df == "connection_error":
-#                 flash(
-#                     "Uh oh! There seems to be a problem connecting to the API, please try again later!",
-#                     "danger",
-#                 )
-#             else:
-#                 flash(
-#                     "There were no results for those search parameters, please try a different search.",
-#                     "danger",
-#                 )
-#             return render_template("basic_search.html", form=form)
-#         db.session.add(search_record)
-#         db.session.commit()
-#         current_app.redis.set(search_record.id, df.to_msgpack(compress="zlib"))
-#         current_app.redis.expire(search_record.id, 600)
-#         session['search_id'] = search_record.id
-#         stats = summary_stats(df,
-#                               search.largest_category,
-#                               search.largest_sub_category,
-#                               search.total_entries)
-#         results = Results(search_id=search_record.id, pages_wanted=1, **stats)
-#         db.session.add(results)
-#         db.session.commit()
-#         tab_data = prep_tab_data(df)
-#         df_seller = make_seller_bar(df)
-#         df_map = create_us_county_map(df)
-#         df_type = make_price_by_type(df)
-#         df_pie = make_listing_pie_chart(df["listingType"])
-#         if search.item_aspects is None:
-#             sunburst_plot = None
-#         else:
-#             sunburst_plot = make_sunburst(search.item_aspects)
-#         return render_template(
-#             "basic_search.html",
-#             form=form,
-#             map_plot=df_map,
-#             tab_data=tab_data.to_dict(orient="records"),
-#             hist_plot=df["currentPrice_value"].tolist(),
-#             df_pie=df_pie,
-#             df_type=df_type,
-#             df_seller=df_seller,
-#             make_sunburst=sunburst_plot,
-#             stats=stats,
-#             page_url=search.search_url
-#         )
-#     return render_template("basic_search.html", form=form)
 
 
 @main.route("/search", methods=['GET'])

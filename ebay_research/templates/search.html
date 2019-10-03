@@ -14,7 +14,7 @@
 </ul>
 {% endif %}
 <div class="row mt-3">
-    <div class="col">
+    <div class="col" id="top_search_page">
         <h3 class="page_header">search</h3>
         <h5>choose your search criteria</h5>
     </div>
@@ -100,17 +100,19 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col">
+                <div class="col-3">
                     <button type="submit" class="btn btn-success btn-lg page_button"
                             onclick="return pullData()">Get Item Data!</button>
+                </div>
+                <div class="col">
+                    <div id="loading_spinner"></div>
+                    <script src="{{ url_for('static', filename='node_modules/spin.js/spin.js') }}"></script>
                 </div>
             </div>
         </form>
     </div>
-    <script src="{{ url_for('static', filename='search.js') }}"></script>
 </div>
 <hr>
-
 <div style="display: none;" id="hideDashBoard">
     <div class="row mt-3">
         <div class="col">
@@ -238,26 +240,21 @@
                             aspect</p>
                     </div>
                 </div>
-                <script>var make_sunburst = make_sunburst;</script>
-                <script src="{{ url_for('static', filename='basic_search/sunburst_plot.js') }}"></script>
             </div>
         </div>
     </div>
-{#    <div class="row mt-3">#}
-{#        <div class="col">#}
-{#            <hr>#}
-{#            <h3 class="page_header">popular items</h3>#}
-{#            <h5>sorted by <strong>highest watch count</strong></h5>#}
-{#        </div>#}
-{#    </div>#}
-{#    <div class="row mt-3">#}
-{#        <div class="col">#}
-{#            <div id="tab_location"></div>#}
-{#        </div>#}
-{#    </div>#}
-{#<script src="{{ url_for('static', filename='basic_search/tabulate_script.js') }}"></script>#}
-{#<script src="{{ url_for('static', filename='basic_search/basic_plots.js') }}"></script>#}
+    <div class="row mt-3">
+        <div class="col">
+            <hr>
+            <h3 class="page_header">popular items</h3>
+            <h5>sorted by <strong>highest watch count</strong></h5>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <div id="tab_location"></div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='search.js') }}"></script>
 </div>
-<!--TODO: change 'df' to more descriptive name-->
-
 {% endblock %}

@@ -34,10 +34,9 @@ def make_price_by_type(df):
                  'mode': 'markers',
                  'name': i,
                  'showlegend': True,
-                 'marker': {'color': [COLORS[i] for i in sub['listingType']],
+                 'marker': {'color': [COLORS[i] for i in sub['listingType']], 'opacty': 0.5,
                             'size': 10, 'line': {'color': 'black', 'width': 1.5}}}
         data.append(trace)
-
     return data
 
 

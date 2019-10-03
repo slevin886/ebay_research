@@ -1,7 +1,19 @@
 
+const spinOptions = {
+  lines: 13,
+  length: 38,
+  width: 17,
+  radius: 45,
+  scale: 0.2,
+  left: '0%',
+  color: ['#ff0000', '#000000'],
+};
+
 async function pullData() {
   const formData = new FormData(mainForm);
   formData.append('pageNumber', '1');
+  const target = document.getElementById('loading_spinner');
+  let spinner = new Spinner(spinOptions).spin(target);
   let errorMessage = '';
   let showError = false;
   let maxPages = formData.get('items_to_pull');
@@ -22,8 +34,6 @@ async function pullData() {
       }
     )
       .then((res) => {
-        // TODO: might have to write logic in here to check string result, but should probably return fail on server
-        // TODO: perhaps save the searchId here
         const myData = res.data;
         const stats = myData['stats'];
         if (firstPull) {
@@ -62,6 +72,7 @@ async function pullData() {
         document.getElementById("total_watch_count").innerHTML = stats['total_watch_count'];
         // TODO: Add conditional logic to check these category counts
         drawFigures(myData.df_type, myData.hist_plot, myData.map_plot, myData.tab_data, myData.df_pie, myData.df_seller);
+        drawTable(myData.tab_data);
       })
       .catch((error) => {
           errorMessage = error.response.data;
@@ -77,21 +88,24 @@ async function pullData() {
               <span aria-hidden="true">&times;</span>
           </button>
       `;
-      document.getElementById('main_content').prepend(errorNode);
+      document.getElementById('top_search_page').prepend(errorNode);
+      spinner.stop();
       break
     }
   }
+  spinner.stop();
 }
 
 
 const commonLayout = {'plot_bgcolor': '#F8F8F8', 'paper_bgcolor':'#F8F8F8', 'hovermode': 'closest',
   'font': {'family': 'Helvetica Neue'}, 'height': 350, 'width': 450,};
-// Price by Type of Listing
-
 
 function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller) {
-  const layout = {'yaxis': {'title': 'Item Price', 'tickprefix': '$'}, 'xaxis': {'showticklabels': false,},
-                'margin': {'t': 10}, 'legend': {"orientation": "h"}, ...commonLayout};
+
+  // Price by Type of Listing
+  const layout = {'yaxis': {'title': 'Item Price', 'tickprefix': '$', 'type': 'log'},
+    'xaxis': {'showticklabels': false,},
+    'margin': {'t': 10}, 'legend': {"orientation": "h"}, ...commonLayout};
 
   Plotly.newPlot('dfTypePlot', df_type, layout, {"displayModeBar": false});
 
@@ -104,8 +118,8 @@ function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller) 
                'marker': {'line': {'color': 'black', 'width': 2}}
                }];
 
-  let layout2 =  {'xaxis': {'title': 'Item Price', 'tickprefix': '$'},
-                  'yaxis': {'title': '# of Items'},
+  let layout2 =  {'xaxis': {'title': 'Item Price', 'tickprefix': '$', 'type': 'log'},
+                  'yaxis': {'title': '# of Items',},
                   'margin': {'t': 10}, ...commonLayout};
 
   Plotly.newPlot('histData', data2, layout2, {"displayModeBar": false});
@@ -170,4 +184,29 @@ function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller) 
 function drawSunBurst(make_sunburst) {
   let layout = {'margin': {'t': 10, 'l': 0, 'r': 0, 'b': 10}, ...commonLayout};
   Plotly.newPlot('sunBurst', make_sunburst, layout, {"displayModeBar": false});
+}
+
+function drawTable(tab_data) {
+	const table = new Tabulator("#tab_location", {
+			data: tab_data,           //load row data from array
+			layout: "fitColumns",      //fit columns to width of table
+			responsiveLayout: "hide",  //hide columns that dont fit on the table
+			tooltips: true,            //show tool tips on cells
+			initialSort: [{column: "watchCount", dir: "desc"}],
+			pagination: "local",       //paginate the data
+			paginationSize: 3,         //allow 7 rows per page of data
+			movableColumns: false,      //allow column order to be changed
+			resizableRows: false,       //allow row order to be changed
+			headerFilterPlaceholder: "search/filter...",
+			columns: [                 //define the table columns
+				{formatter: "rownum"},
+				{title: "Price", field: "currentPrice_value", formatter: "money", formatterParams: {symbol: "$"}},
+				{title: "Title", field: "title", formatter: "textarea", headerFilter: "input", width: 200,},
+				{title: "Image", field: "galleryURL", formatter: "image", width: 200},
+				{title: "Watch<br>Count", field: "watchCount"},
+				{title: "End Time", field: "endTime", width: 200, formatter: "textarea"},
+				{title: "View it!", field: "viewItemURL", formatter: "link", formatterParams: {'label': 'see on ebay'}},
+			],
+		}
+	)
 }
