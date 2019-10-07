@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, session
 
 
 def ingest_free_search_form(form):
@@ -35,6 +35,8 @@ def summary_stats(df, largest_cat, largest_sub_cat, total_items_available):
         stats['total_entries'] = int(total_items_available)
     if largest_cat:
         stats['largest_cat_name'], stats['largest_cat_count'] = largest_cat[0], int(largest_cat[1])
+        session['largest_cat_name'], session['largest_cat_count'] = stats['largest_cat_name'], stats['largest_cat_count']
     if largest_sub_cat:
         stats['largest_sub_name'], stats['largest_sub_count'] = largest_sub_cat[0], int(largest_sub_cat[1])
+        session['largest_sub_name'], session['largest_sub_count'] = stats['largest_sub_name'], stats['largest_sub_count']
     return stats

@@ -11,18 +11,24 @@ const spinOptions = {
 
 async function pullData() {
   const formData = new FormData(mainForm);
-  formData.append('pageNumber', '1');
-  const target = document.getElementById('loading_spinner');
-  let spinner = new Spinner(spinOptions).spin(target);
+  let firstPull = true;
   let errorMessage = '';
   let showError = false;
   let maxPages = formData.get('items_to_pull');
-  let firstPull = true;
   let searchID;
+  const target = document.getElementById('loading_spinner');
+  let spinner = new Spinner(spinOptions).spin(target);
+  formData.append('pageNumber', '1');
+  formData.append('first_pull', 'true');
+  formData.append('last_pull', 'false');
+  formData.append('max_pages', maxPages.toString());
+
   for (let i = 1; i <= maxPages; i++) {
+
     formData.set('pageNumber', i.toString());
-    if (!firstPull) {
-      formData.append('searchID', searchID)
+
+    if (i === parseInt(maxPages)) {
+      formData.set('last_pull', 'true')
     }
     await axios.post(
       '/get_data',
@@ -38,6 +44,7 @@ async function pullData() {
         const stats = myData['stats'];
         if (firstPull) {
           firstPull = false;
+          formData.set('first_pull', 'false');
           searchID = myData['search_id'];
           document.getElementById('hideDashBoard').style.display = 'block';
           document.getElementById("total_entries").innerHTML = stats['total_entries'];
@@ -46,7 +53,7 @@ async function pullData() {
           if (availablePages < maxPages) {
             maxPages = availablePages;
           }
-          console.log(stats['largest_cat_name']);
+
           if (stats['largest_cat_name'] != null) {
             console.log(stats['largest_cat_name']);
             document.getElementById("largest_cat_name").innerHTML = stats['largest_cat_name'];
@@ -54,7 +61,7 @@ async function pullData() {
             document.getElementById("largest_sub_name").innerHTML = stats['largest_sub_name'];
             document.getElementById("largest_sub_count").innerHTML = stats['largest_sub_count'];
           }
-          console.log(myData.sunburst_plot);
+
           if (myData.sunburst_plot != null) {
             document.getElementById('hideSunBurst').style.display = 'block';
             drawSunBurst(myData.sunburst_plot);
@@ -70,7 +77,7 @@ async function pullData() {
         document.getElementById("median_price").innerHTML = stats['median_price'];
         document.getElementById("avg_shipping_price").innerHTML = stats['avg_shipping_price'];
         document.getElementById("total_watch_count").innerHTML = stats['total_watch_count'];
-        // TODO: Add conditional logic to check these category counts
+
         drawFigures(myData.df_type, myData.hist_plot, myData.map_plot, myData.tab_data, myData.df_pie, myData.df_seller);
         drawTable(myData.tab_data);
       })

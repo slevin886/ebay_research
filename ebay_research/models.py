@@ -23,7 +23,8 @@ class User(db.Model, UserMixin):
     permissions = db.Column(db.Integer)  # 1 = paid, 0 = unpaid
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
     confirmed_on = db.Column(db.DateTime, nullable=True, default=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"))
-    searches = db.relationship('Search')
+    searches = db.relationship('Search', lazy='dynamic')
+    results = db.relationship('Results', lazy='dynamic')
 
     def __init__(self, email, password, country, state, permissions, registered_on=datetime.utcnow(), confirmed=False,
                  admin=False, confirmed_on=None):
@@ -78,8 +79,9 @@ class Search(db.Model):
     item_condition = db.Column(db.String(50), nullable=True)
     is_successful = db.Column(db.Boolean, nullable=False, default=True)
     downloaded = db.Column(db.Boolean, default=False, nullable=False)
+    pages_wanted = db.Column(db.Integer, default=1, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    search_results = db.relationship('Results')
+    search_results = db.relationship('Results', uselist=False)
 
     def __repr__(self):
         return f"<Search(full_query={self.keywords}, time_searched={self.time_searched}, user_id={self.user_id})>"
@@ -95,14 +97,14 @@ class Results(db.Model):
     top_rated_listing = db.Column(db.Float, nullable=True)  # top rated listing %
     top_seller = db.Column(db.String(200))
     top_seller_count = db.Column(db.Integer)
-    largest_cat_name = db.Column(db.String(200))
-    largest_cat_count = db.Column(db.Integer)
-    largest_sub_name = db.Column(db.String(200))
-    largest_sub_count = db.Column(db.Integer)
+    largest_cat_name = db.Column(db.String(200), nullable=True)
+    largest_cat_count = db.Column(db.Integer, nullable=True)
+    largest_sub_name = db.Column(db.String(200), nullable=True)
+    largest_sub_count = db.Column(db.Integer, nullable=True)
     total_entries = db.Column(db.Integer)
     total_watch_count = db.Column(db.Integer)
     avg_shipping_price = db.Column(db.Float)
-    pages_wanted = db.Column(db.Integer, nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     search_id = db.Column(db.Integer, db.ForeignKey('search.id'))
 
     def __repr__(self):

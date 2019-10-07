@@ -17,12 +17,12 @@ from ebay_research.plot_maker import (
 )
 
 # TODO: correct path to search results on eBay
+# TODO: correct the total items that isn't showing up in the database
 # TODO: implement repeat search on account page and possibly something do download search result metadata
 # TODO: add error pages
 # TODO: Implement additional item filters
 # TODO: Write test functions
-# TODO: Create figure or data for Category ID info
-# TODO: Create ability to hide/show different plots in the results, make look more like a dashboard
+# TODO: Create ability to hide/show different plots in the results
 # TODO: Provide credit to https://www.flaticon.com/ for icons
 
 main = Blueprint("main", __name__)
@@ -36,12 +36,8 @@ def home():
 @main.route('/account/<user_id>', methods=['GET', 'POST'])
 @login_required
 def account(user_id):
-    # TODO: eliminate or implement RepeatSearch
-    search_form = RepeatSearch()
     password_form = ChooseNewPassword()
-    if search_form.validate_on_submit() and search_form.search_id.data:
-        pass
-    elif password_form.validate_on_submit():
+    if password_form.validate_on_submit():
         password = password_form.old_password.data
         if current_user.validate_password(password):
             new_password = password_form.password.data
@@ -50,11 +46,11 @@ def account(user_id):
             flash('You have successfully changed your password!', 'success')
         else:
             flash("Whoops! You entered the wrong password, please try again or reset it from the login page", 'danger')
-    searches = db.session.query(Search, Results).join(Results).filter(Search.user_id == current_user.id) \
-        .order_by(Search.time_searched.desc()).limit(5).all()
-    number_searches = len(User.query.filter_by(id=current_user.id).first().searches)
+    searches = Search.query.filter_by(user_id=current_user.id).order_by(Search.time_searched.desc()).limit(5).all()
+    results = [i.search_results for i in searches]
+    number_searches = Search.query.filter_by(user_id=current_user.id).count()
     return render_template('account.html', user_id=user_id, searches=searches, number_searches=number_searches,
-                           search_Form=search_form, password_form=password_form)
+                           results=results, password_form=password_form)
 
 
 @main.route("/search", methods=['GET'])
@@ -70,20 +66,23 @@ def get_data():
         form_data = ingest_free_search_form(form)
         searching = EasyEbayData(api_id=current_app.config["EBAY_API"], **form_data)
         page_number = int(request.form.get('pageNumber'))
-        include_meta_data = False
-        if page_number == 1:
-            include_meta_data = True
-            search_record = Search(user_id=current_user.id, **form_data)
+        first_pull = True if request.form.get('first_pull') == 'true' else False
+        last_pull = True if request.form.get('last_pull') == 'true' else False
+        if first_pull:
+            pages_wanted = int(request.form.get('max_pages'))
+            search_record = Search(user_id=current_user.id, pages_wanted=pages_wanted, **form_data)
+            existing_records = None
         else:
             search_record = Search.query.filter_by(id=session['search_id']).first()
-            existing_records = pd.read_msgpack(current_app.redis.get(session['search_id']))
+            existing_records = pd.read_msgpack(current_app.redis.get(search_record.id))
 
-        base_data = searching.single_page_query(page_number=page_number, include_meta_data=include_meta_data)
+        base_data = searching.single_page_query(page_number=page_number, include_meta_data=first_pull)
 
         if isinstance(base_data, str):
-            search_record.is_successful = False
-            db.session.add(search_record)
-            db.session.commit()
+            if first_pull:
+                search_record.is_successful = False
+                db.session.add(search_record)
+                db.session.commit()
             if base_data == "connection_error":
                 message = "Uh oh! There seems to be a problem connecting to ebay's API, please try again later!"
             else:
@@ -93,24 +92,34 @@ def get_data():
         data = base_data['searchResult']['item']
         df = pd.DataFrame([searching.flatten_dict(i) for i in data])
 
-        if page_number == 1:
+        if first_pull:
             db.session.add(search_record)
             db.session.commit()
+            session['search_id'] = search_record.id
+            session['total_entries'] = searching.total_entries
         else:
             df = pd.concat([existing_records, df], axis=0, sort=False)
 
         current_app.redis.set(search_record.id, df.to_msgpack(compress="zlib"))
-        current_app.redis.expire(search_record.id, 600)
-        session['search_id'] = search_record.id
+        # TODO: make this one line so dont need to find twice
+        current_app.redis.expire(search_record.id, 1200)
+
         stats = summary_stats(df,
                               searching.largest_category,
                               searching.largest_sub_category,
                               searching.total_entries)
-        print(searching.largest_category)
-        # TODO: add logic to only commit results on the last pull
-        # results = Results(search_id=search_record.id, pages_wanted=1, **stats)
-        # db.session.add(results)
-        # db.session.commit()
+
+        if last_pull:
+            if not first_pull:
+                stats['largest_cat_name'] = session.get('largest_cat_name', None)
+                stats['largest_cat_count'] = session.get('largest_cat_count', None)
+                stats['largest_sub_name'] = session.get('largest_sub_name', None)
+                stats['largest_sub_count'] = session.get('largest_sub_count', None)
+                stats['total_entries'] = session.get('total_entries', None)
+            results = Results(search_id=search_record.id, user_id=current_user.id, **stats)
+            db.session.add(results)
+            db.session.commit()
+
         tab_data = prep_tab_data(df)
         df_seller = make_seller_bar(df)
         map_plot = create_us_county_map(df)
@@ -129,6 +138,7 @@ def get_data():
                        sunburst_plot=sunburst_plot,
                        stats=stats,
                        search_id=search_record.id)
+    return Response(response='please ensure you are putting sane values into the form...', status=400)
 
 
 @main.route("/get_csv", methods=["GET"])

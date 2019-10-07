@@ -61,7 +61,7 @@ class EasyEbayData:
         item_filter.append({'name': 'MinPrice', 'value': self.min_price})
         if self.max_price and self.max_price > self.min_price:
             item_filter.append({'name': 'MaxPrice', 'value': self.max_price})
-        if self.listing_type:
+        if self.listing_type and self.listing_type != 'All':
             item_filter.append({'name': 'ListingType', 'value': self.listing_type})
         if self.item_condition:
             item_filter.append({'name': 'Condition', 'value': self.item_condition})

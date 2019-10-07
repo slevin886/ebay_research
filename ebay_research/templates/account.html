@@ -4,61 +4,115 @@
     <div class="col">
         <h2 class="page_header">my account</h2>
         <h5><span style="color: darkred;">username</span>: {{ current_user.email }}</h5>
-        <h5><span style="color: darkred;">account created</span>: {{ current_user.registered_on }}</h5>
+        <h5><span style="color: darkred;">account created</span>: {{ current_user.registered_on.strftime('%m-%d-%Y') }}
+        </h5>
         <h5><span style="color: darkred;">total searches</span>: {{ number_searches }}</h5>
     </div>
 </div>
-{% if searches %}
 <div class="row mt-3">
     <div class="col">
-        <h3 class="page_header">recent searches</h3>
-        <table class="table table-striped table-bordered">
-            <tr class="table-info">
-                <th>id</th>
-                <th>keywords</th>
-                <th>search time</th>
-                <th>average price</th>
-                <th>items returned</th>
-                <th>items available</th>
-            </tr>
-            {% for search, result in searches %}
-            <tr>
-                <td>{{ search.id }}</td>
-                <td>{{ search.keywords }}</td>
-                <td>{{ search.time_searched }}</td>
-                <td>${{ result.avg_price }}</td>
-                <td>{{ result.returned_count }}</td>
-                <td>{{ result.total_entries }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-</div>
-<div class="row mt-3 mb-5">
-    <div class="col-4">
-        <h3 class="page_header">change password</h3>
-        <form method="POST" action="{{ url_for('main.account', user_id=current_user.id) }}">
-            {{ password_form.csrf_token }}
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="search-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+               aria-selected="true">recent searches</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="result-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
+               aria-selected="false">recent results</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact"
+               aria-selected="false">manage account</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="search-tab">
             <div class="row mt-3">
                 <div class="col">
-                    <div class="form-group">
-                        {{ password_form.old_password(class="form-control", placeholder="current password...") }}
-                    </div>
-                    <div class="form-group">
-                        {{ password_form.password(class="form-control", placeholder="new password...") }}
-                    </div>
-                    <div class="form-group">
-                        {{ password_form.confirm_password(class="form-control", placeholder="confirm password...") }}
-                    </div>
+                    {% if searches %}
+                    <table class="table">
+                        <tr class="table thead-dark">
+                            <th>id</th>
+                            <th>keywords</th>
+                            <th>search time</th>
+                            <th>items wanted</th>
+                            <th>listing type</th>
+                        </tr>
+                        {% for search in searches %}
+                        <tr>
+                            <td>{{ search.id }}</td>
+                            <td>{{ search.keywords }}</td>
+                            <td>{{ search.time_searched }}</td>
+                            <td>{{ search.pages_wanted * 100 }}</td>
+                            <td>{{ search.listing_type }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% else %}
+                    <h2>no recent searches available...</h2>
+                    {% endif %}
                 </div>
             </div>
-            <div class="row">
+          </div>
+          <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="result-tab">
+              <div class="row mt-3">
                 <div class="col">
-                    <button type="submit" class="btn btn-info btn-sm page_button">change password</button>
+                    {% if results %}
+                    <table class="table">
+                        <tr class="table thead-dark">
+                            <th>id</th>
+                            <th>average price</th>
+                            <th>median price</th>
+                            <th>total entries</th>
+                            <th>total watch count</th>
+                            <th>top seller</th>
+                        </tr>
+                        {% for result in results %}
+                        <tr>
+                            <td>{{ result.search_id }}</td>
+                            <td>${{ result.avg_price }}</td>
+                            <td>${{ result.median_price }}</td>
+                            <td>{{ result.total_entries }}</td>
+                            <td>{{ result.total_watch_count }}</td>
+                            <td>{{ result.top_seller }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% else %}
+                    <h2>no recent results available...</h2>
+                    {% endif %}
                 </div>
             </div>
-        </form>
+          </div>
+          <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="profile-tab">
+              <div class="row mt-3 mb-5">
+                <div class="col-4">
+                    <h3 class="page_header">change password</h3>
+                    <form method="POST" action="{{ url_for('main.account', user_id=current_user.id) }}">
+                        {{ password_form.csrf_token }}
+                        <div class="row mt-3">
+                            <div class="col">
+                                <div class="form-group">
+                                    {{ password_form.old_password(class="form-control", placeholder="current password...") }}
+                                </div>
+                                <div class="form-group">
+                                    {{ password_form.password(class="form-control", placeholder="new password...") }}
+                                </div>
+                                <div class="form-group">
+                                    {{ password_form.confirm_password(class="form-control", placeholder="confirm password...") }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <button type="submit" class="btn btn-success btn-sm page_button">change password</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+          </div>
+        </div>
     </div>
 </div>
-{% endif %}
 {% endblock %}
