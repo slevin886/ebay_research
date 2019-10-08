@@ -101,7 +101,7 @@ def make_seller_bar(df):
         df = df.groupby('sellerUserName', as_index=False).agg({'feedbackScore': 'mean',
                                                                'watchCount': 'sum',
                                                                'categoryName': 'count'})
-        df['feedbackScore'] = df['feedbackScore'].astype(str)
+        df['feedbackScore'] = df['feedbackScore'].round(2).astype(str)
         df['watchCount'] = df['watchCount'].astype(str)
         df['hover'] = 'Total Feedback Score: ' + df['feedbackScore'] + '<br>Total Watch Count: ' + df['watchCount']
     else:

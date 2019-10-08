@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row justify-content-center mt-3">
+<div class="row justify-content-center mt-3 mb-5">
     <div class="col">
         <div class="text-center">
             <img src="{{ url_for('static', filename='genius_logo.png') }}" height="225">
@@ -8,6 +8,20 @@
                 <span style="color: hotpink">e</span><span style="color: deepskyblue">b</span><span style="color: palevioletred">a</span><span style="color: cadetblue">y</span>
             </h2>
         </div>
+    </div>
+</div>
+<div class="row mt-5 mb-5">
+    <div class="col text-center">
+        <h5>customizable search</h5>
+        <img src="{{ url_for('static', filename='home_page_images/homepage_sunburst.png') }}" height="225">
+    </div>
+    <div class="col text-center">
+        <h5>full data exports</h5>
+        <img src="{{ url_for('static', filename='home_page_images/homepage_map.png') }}" height="225">
+    </div>
+    <div class="col text-center">
+        <h5>interactive dashboard</h5>
+        <img src="{{ url_for('static', filename='home_page_images/homepage_bar.png') }}" height="225">
     </div>
 </div>
 {% endblock %}

@@ -134,7 +134,7 @@
 {#            {%  if 'largest_cat_name' in stats.keys() %}#}
             <img src="{{ url_for('static', filename='icons/categories.png') }}" class="img-fluid" alt="Responsive image"
                  style="width:20px;float:left;margin-right:5px;margin-top:4px;">
-            <p>Largest Category: <strong><span id="largest_cat_name"></span>
+            <p>Largest Category: <strong><span id="largest_cat_name"></span><br>
                 (<span id="largest_cat_count"></span> items)</strong></p>
 {#            {% endif %}#}
         </div>
@@ -152,7 +152,7 @@
 {#            {%  if 'largest_sub_name' in stats.keys() %}#}
             <img src="{{ url_for('static', filename='icons/categories.png') }}" class="img-fluid" alt="Responsive image"
                  style="width:20px;float:left;margin-right:5px;margin-top:4px;">
-            <p>Largest Subcategory: <strong><span id="largest_sub_name"></span>
+            <p>Largest Subcategory: <strong><span id="largest_sub_name"></span><br>
                 (<span id="largest_sub_count"></span> items)</strong></p>
 {#            {% endif %}#}
         </div>
