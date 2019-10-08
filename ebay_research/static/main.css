@@ -1,9 +1,23 @@
 body {
     background: white;
 }
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #343a40;
+    color: white;
+    margin-top: 250px;
+}
 
 .dashboard {
     border: 1px solid black;
+}
+
+h5 {
+    font-family: "Bebas Neue", serif;
+    font-weight: bold;
 }
 
 a {
