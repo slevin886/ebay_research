@@ -2,13 +2,13 @@ body {
     background: white;
 }
 .footer {
-    position: fixed;
+    position: absolute;
+    height: 50px;
     left: 0;
     bottom: 0;
     width: 100%;
     background-color: #343a40;
     color: white;
-    margin-top: 250px;
 }
 
 .dashboard {

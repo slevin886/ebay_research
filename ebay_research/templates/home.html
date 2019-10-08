@@ -24,4 +24,15 @@
         <img src="{{ url_for('static', filename='home_page_images/homepage_bar.png') }}" height="225">
     </div>
 </div>
+<div class="row">
+    <div class="col text-center">
+        <h3>free data and analysis to <span style="color: #9C1A1C">shop</span> & <span style="color: rebeccapurple">sell</span>
+            <i>smarter</i></h3>
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col text-center">
+        <a class="button btn-primary btn-lg" role="button" href="{{ url_for('auth.register') }}">Register</a>
+    </div>
+</div>
 {% endblock %}
