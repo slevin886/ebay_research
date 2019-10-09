@@ -5,8 +5,8 @@ import pandas as pd
 from ebay_research import db
 from ebay_research.data_analysis import EasyEbayData
 from ebay_research.support_functions import ingest_free_search_form, summary_stats
-from ebay_research.models import Search, Results, User
-from ebay_research.forms import FreeSearch, ChooseNewPassword, RepeatSearch
+from ebay_research.models import Search, Results
+from ebay_research.forms import FreeSearch, ChooseNewPassword
 from ebay_research.plot_maker import (
     create_us_county_map,
     make_price_by_type,
@@ -16,9 +16,7 @@ from ebay_research.plot_maker import (
     make_listing_pie_chart,
 )
 
-# TODO: correct path to search results on eBay
-# TODO: correct the total items that isn't showing up in the database
-# TODO: implement repeat search on account page and possibly something do download search result metadata
+# TODO: implement repeat search on account page and possibly something to download search result metadata
 # TODO: add error pages
 # TODO: Implement additional item filters
 # TODO: Write test functions
@@ -100,9 +98,7 @@ def get_data():
         else:
             df = pd.concat([existing_records, df], axis=0, sort=False)
 
-        current_app.redis.set(search_record.id, df.to_msgpack(compress="zlib"))
-        # TODO: make this one line so dont need to find twice
-        current_app.redis.expire(search_record.id, 1200)
+        current_app.redis.set(search_record.id, df.to_msgpack(compress="zlib"), ex=1200)
 
         stats = summary_stats(df,
                               searching.largest_category,
@@ -137,6 +133,7 @@ def get_data():
                        df_seller=df_seller,
                        sunburst_plot=sunburst_plot,
                        stats=stats,
+                       search_url=searching.search_url,
                        search_id=search_record.id)
     return Response(response='please ensure you are putting sane values into the form...', status=400)
 
@@ -157,8 +154,3 @@ def get_csv():
         # TODO: file will be saved on s3 and can then be read in from there
         flash('Your session has timed out and the data is no longer saved! Please search again!', 'warning')
         return redirect(url_for('main.basic_search'))
-
-
-@main.errorhandler(400)
-def custom400(error):
-    return jsonify({'message': error.description})

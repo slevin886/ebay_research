@@ -156,6 +156,7 @@ class EasyEbayData:
         if response['paginationOutput']['totalPages'] == '0':
             print(f'There are no results for a search of: {self.full_query}')
             return "no_results_error"
+
         if include_meta_data:
             self.total_pages = int(response['paginationOutput']['totalPages'])
             self.total_entries = int(response['paginationOutput']['totalEntries'])

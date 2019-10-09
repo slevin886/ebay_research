@@ -46,8 +46,11 @@ async function pullData() {
           firstPull = false;
           formData.set('first_pull', 'false');
           searchID = myData['search_id'];
+
           document.getElementById('hideDashBoard').style.display = 'block';
           document.getElementById("total_entries").innerHTML = stats['total_entries'];
+          document.getElementById('search_url').href = myData['search_url'];
+
           let availablePages = Math.ceil(stats['total_entries'] / 100);
 
           if (availablePages < maxPages) {
@@ -55,7 +58,6 @@ async function pullData() {
           }
 
           if (stats['largest_cat_name'] != null) {
-            console.log(stats['largest_cat_name']);
             document.getElementById("largest_cat_name").innerHTML = stats['largest_cat_name'];
             document.getElementById("largest_cat_count").innerHTML = stats['largest_cat_count'];
             document.getElementById("largest_sub_name").innerHTML = stats['largest_sub_name'];
@@ -118,15 +120,17 @@ function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller) 
 
 
   // Price Histogram
-  let maxPrice = Math.max.apply(null, hist_plot);
-
+  // let maxPrice = Math.max.apply(null, hist_plot);
+  hist_plot.sort();
+  let len = hist_plot.length;
+  let per95 = Math.floor(len * 0.95) - 1;
   let data2 = [{'x': hist_plot, 'type': 'histogram',
-               'xbins': {'start': 0, 'size': Math.round(maxPrice / 25)},
+               'xbins': {'start': 0, 'size': Math.round(hist_plot[per95] / 50)},
                'marker': {'line': {'color': 'black', 'width': 2}}
                }];
 
-  let layout2 =  {'xaxis': {'title': 'Item Price', 'tickprefix': '$', 'type': 'log'},
-                  'yaxis': {'title': '# of Items',},
+  let layout2 =  {'xaxis': {'title': 'Item Price', 'tickprefix': '$',},
+                  'yaxis': {'title': '# of Items', 'type': 'log',},
                   'margin': {'t': 10}, ...commonLayout};
 
   Plotly.newPlot('histData', data2, layout2, {"displayModeBar": false});
@@ -193,6 +197,51 @@ function drawSunBurst(make_sunburst) {
   Plotly.newPlot('sunBurst', make_sunburst, layout, {"displayModeBar": false});
 }
 
+//creates clickable anchor tag for tabulator function
+const linkFormatter = function(cell, formatterParams){
+	let value = this.sanitizeHTML(cell.getValue()),
+	urlPrefix = formatterParams.urlPrefix || "",
+	label = this.emptyToSpace(value),
+	data;
+
+	if(formatterParams.labelField){
+		data = cell.getData();
+		label = data[formatterParams.labelField];
+	}
+
+	if(formatterParams.label){
+		switch(typeof formatterParams.label){
+			case "string":
+			label = formatterParams.label;
+			break;
+
+			case "function":
+			label = formatterParams.label(cell);
+			break;
+		}
+	}
+
+	if(formatterParams.urlField){
+		data = cell.getData();
+		value = data[formatterParams.urlField];
+	}
+
+	if(formatterParams.url){
+		switch(typeof formatterParams.url){
+			case "string":
+			value = formatterParams.url;
+			break;
+
+			case "function":
+			value = formatterParams.url(cell);
+			break;
+		}
+	}
+
+	return "<a href='" + urlPrefix + value + "' target='_blank'>" + label + "</a>";
+};
+
+
 function drawTable(tab_data) {
 	const table = new Tabulator("#tab_location", {
 			data: tab_data,           //load row data from array
@@ -212,7 +261,7 @@ function drawTable(tab_data) {
 				{title: "Image", field: "galleryURL", formatter: "image", width: 200},
 				{title: "Watch<br>Count", field: "watchCount"},
 				{title: "End Time", field: "endTime", width: 200, formatter: "textarea"},
-				{title: "View it!", field: "viewItemURL", formatter: "link", formatterParams: {'label': 'see on ebay'}},
+				{title: "View it!", field: "viewItemURL", formatter: linkFormatter, formatterParams: {'label': 'see on ebay'}},
 			],
 		}
 	)
