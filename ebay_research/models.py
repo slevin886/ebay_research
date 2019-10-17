@@ -69,7 +69,7 @@ class User(db.Model, UserMixin):
 class Search(db.Model):
     __tablename__ = 'search'
     id = db.Column(db.Integer, primary_key=True)
-    time_searched = db.Column(db.DateTime, default=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"), index=True)
+    time_searched = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     keywords = db.Column(db.String(80), nullable=False)
     excluded_words = db.Column(db.String(80), nullable=True)
     sort_order = db.Column(db.String(50), nullable=False)
@@ -92,6 +92,8 @@ class Results(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     avg_price = db.Column(db.Float)
     median_price = db.Column(db.Float)
+    min_price = db.Column(db.Float, nullable=True)
+    max_price = db.Column(db.Float, nullable=True)
     returned_count = db.Column(db.Integer)
     top_rated_percent = db.Column(db.Float)  # top rated seller %
     top_rated_listing = db.Column(db.Float, nullable=True)  # top rated listing %

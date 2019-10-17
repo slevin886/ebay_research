@@ -77,10 +77,13 @@ async function pullData() {
         document.getElementById("top_rated_percent").innerHTML = stats['top_rated_percent'];
         document.getElementById("avg_price").innerHTML = stats['avg_price'];
         document.getElementById("median_price").innerHTML = stats['median_price'];
+        document.getElementById("min_price").innerHTML = stats['min_price'];
+        document.getElementById("max_price").innerHTML = stats['max_price'];
         document.getElementById("avg_shipping_price").innerHTML = stats['avg_shipping_price'];
         document.getElementById("total_watch_count").innerHTML = stats['total_watch_count'];
 
-        drawFigures(myData.df_type, myData.hist_plot, myData.map_plot, myData.tab_data, myData.df_pie, myData.df_seller);
+        drawFigures(myData.df_type, myData.hist_plot, myData.map_plot, myData.tab_data,
+          myData.df_pie, myData.df_seller, myData.df_length);
         drawTable(myData.tab_data);
       })
       .catch((error) => {
@@ -107,9 +110,9 @@ async function pullData() {
 
 
 const commonLayout = {'plot_bgcolor': '#F8F8F8', 'paper_bgcolor':'#F8F8F8', 'hovermode': 'closest',
-  'font': {'family': 'Helvetica Neue'}, 'height': 350, 'width': 450,};
-
-function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller) {
+  'font': {'family': 'Helvetica Neue'}, 'height': 350};
+// 'height': 350, 'width': 450,
+function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller, df_length) {
 
   // Price by Type of Listing
   const layout = {'yaxis': {'title': 'Item Price', 'tickprefix': '$', 'type': 'log'},
@@ -190,12 +193,24 @@ function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller) 
                    'yaxis': {'title': '# of listed items'}, ...commonLayout};
 
   Plotly.newPlot('sellerBar', df_seller, layout7, {"displayModeBar": false});
+
+  // Time Available Plot
+
+  const layoutLengthBar = {
+    'yaxis': {'title': '# of Items'},
+    'xaxis': {'title': '# of Days of Available<br>(End Date - Start Date)'},
+    ...commonLayout
+  };
+
+  Plotly.newPlot('lengthBar', df_length, layoutLengthBar, {"displayModeBar": false});
 }
 
 function drawSunBurst(make_sunburst) {
   let layout = {'margin': {'t': 10, 'l': 0, 'r': 0, 'b': 10}, ...commonLayout};
   Plotly.newPlot('sunBurst', make_sunburst, layout, {"displayModeBar": false});
 }
+
+
 
 //creates clickable anchor tag for tabulator function
 const linkFormatter = function(cell, formatterParams){

@@ -14,8 +14,12 @@ from ebay_research.plot_maker import (
     prep_tab_data,
     make_sunburst,
     make_listing_pie_chart,
+    make_auction_length,
 )
 
+# TODO: possibly only draw figures on lastpull
+# TODO: make plotting in search multithreaded/processed to execute all at same time
+# TODO: rewrite plot functions to be individual functions
 # TODO: implement repeat search on account page and possibly something to download search result metadata
 # TODO: add error pages
 # TODO: Implement additional item filters
@@ -45,6 +49,7 @@ def account(user_id):
         else:
             flash("Whoops! You entered the wrong password, please try again or reset it from the login page", 'danger')
     searches = Search.query.filter_by(user_id=current_user.id).order_by(Search.time_searched.desc()).limit(5).all()
+    # print(searches[0].top_seller)
     results = [i.search_results for i in searches]
     number_searches = Search.query.filter_by(user_id=current_user.id).count()
     return render_template('account.html', user_id=user_id, searches=searches, number_searches=number_searches,
@@ -115,12 +120,12 @@ def get_data():
             results = Results(search_id=search_record.id, user_id=current_user.id, **stats)
             db.session.add(results)
             db.session.commit()
-
         tab_data = prep_tab_data(df)
         df_seller = make_seller_bar(df)
-        map_plot = create_us_county_map(df)
-        df_type = make_price_by_type(df)
+        map_plot = create_us_county_map(df[['postalCode', 'itemId']])
+        df_type = make_price_by_type(df[['listingType', 'currentPrice_value']])
         df_pie = make_listing_pie_chart(df["listingType"])
+        df_length = make_auction_length(df[['endTime', 'startTime']])
         if searching.item_aspects is None:
             sunburst_plot = None
         else:
@@ -131,6 +136,7 @@ def get_data():
                        df_pie=df_pie,
                        df_type=df_type,
                        df_seller=df_seller,
+                       df_length=df_length,
                        sunburst_plot=sunburst_plot,
                        stats=stats,
                        search_url=searching.search_url,

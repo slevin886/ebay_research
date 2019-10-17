@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row justify-content-center mt-3 mb-5">
+<div class="row justify-content-center mt-3">
     <div class="col">
         <div class="text-center">
             <img src="{{ url_for('static', filename='genius_logo.png') }}" height="225">
@@ -10,7 +10,7 @@
         </div>
     </div>
 </div>
-<div class="row mt-5 mb-5">
+<div class="row mt-5">
     <div class="col text-center">
         <h5>customizable search</h5>
         <img src="{{ url_for('static', filename='home_page_images/homepage_sunburst.png') }}" height="225">
@@ -24,15 +24,33 @@
         <img src="{{ url_for('static', filename='home_page_images/homepage_bar.png') }}" height="225">
     </div>
 </div>
-<div class="row">
+<br><br>
+<div class="row mt-5">
     <div class="col text-center">
-        <h3>free data and analysis to <span style="color: #9C1A1C">shop</span> & <span style="color: #9C1A1C">sell</span>
-            <i>smarter</i></h3>
+        <h2>free data and analysis to <span style="color: #9C1A1C">shop</span> & <span style="color: #9C1A1C">sell</span>
+            <i>smarter</i></h2>
     </div>
 </div>
-<div class="row mt-2">
+<div class="row mt-3">
     <div class="col text-center">
-        <a class="button btn-primary btn-lg" role="button" href="{{ url_for('auth.register') }}">Register</a>
+        <a class="button btn-primary btn-lg" role="button" href="{{ url_for('auth.register') }}">Register Now!</a>
+    </div>
+</div>
+<br><br>
+<hr>
+<div class="row mt-5">
+    <div class="col">
+        <h3>Track the <i>most popular items</i></h3>
+        <br><br>
+        <h3>Download <i>unique data sets</i> with 50+ variables</h3>
+    </div>
+    <div class="col text-center">
+        <img src="{{ url_for('static', filename='home_page_images/mac_genius.png') }}" height="350">
+    </div>
+    <div class="col">
+        <h3>Get <i>key statistics</i> on price and sellers</h3>
+        <br><br>
+        <h3>Saved search results enable you to <i>identify trends</i></h3>
     </div>
 </div>
 {% endblock %}

@@ -165,6 +165,9 @@
             <p>Median price of items: <strong>$<span id="median_price"></span></strong></p>
             <img src="{{ url_for('static', filename='icons/avg_price.png') }}" class="img-fluid" alt="Responsive image"
                 style="width:20px;float:left;margin-right:5px;">
+            <p>Price range: <strong>$<span id="min_price"></span>-$<span id="max_price"></span></strong></p>
+            <img src="{{ url_for('static', filename='icons/avg_price.png') }}" class="img-fluid" alt="Responsive image"
+                style="width:20px;float:left;margin-right:5px;">
             <p>Average shipping price: <strong>$<span id="avg_shipping_price"></span></strong></p>
             <img src="{{ url_for('static', filename='icons/binoculars.png') }}" class="img-fluid" alt="Responsive image"
                 style="width:20px;float:left;margin-right:5px;">
@@ -188,17 +191,17 @@
     <div class="row mt-3">
         <div class="col">
             <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
-                <h4 class="card-header">price distribution</h4>
+                <h4 class="card-header">seller locations by county</h4>
                 <div class="card-body">
-                    <div id="histData" class="d-flex justify-content-center"></div>
+                    <div id="usaMAP" class="d-flex justify-content-center"></div>
                 </div>
             </div>
         </div>
         <div class="col">
             <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
-                <h4 class="card-header">price distribution (by listing type)</h4>
+                <h4 class="card-header">largest sellers</h4>
                 <div class="card-body">
-                    <div id="dfTypePlot" class="d-flex justify-content-center"></div>
+                    <div id="sellerBar" class="d-flex justify-content-center"></div>
                 </div>
             </div>
         </div>
@@ -206,9 +209,9 @@
     <div class="row mt-3">
         <div class="col">
             <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
-                <h4 class="card-header">seller locations by county</h4>
+                <h4 class="card-header">price distribution</h4>
                 <div class="card-body">
-                    <div id="usaMAP" class="d-flex justify-content-center"></div>
+                    <div id="histData" class="d-flex justify-content-center"></div>
                 </div>
             </div>
         </div>
@@ -224,9 +227,9 @@
     <div class="row mt-3">
         <div class="col">
             <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
-                <h4 class="card-header">largest sellers</h4>
+                <h4 class="card-header">price distribution (by listing type)</h4>
                 <div class="card-body">
-                    <div id="sellerBar" class="d-flex justify-content-center"></div>
+                    <div id="dfTypePlot" class="d-flex justify-content-center"></div>
                 </div>
             </div>
         </div>
@@ -239,6 +242,16 @@
                         <p class="card-text text-center mt-2">click the inside labels of the pie to enlarge each
                             aspect</p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
+                <h4 class="card-header">days of availability</h4>
+                <div class="card-body">
+                    <div id="lengthBar" class="d-flex justify-content-center"></div>
                 </div>
             </div>
         </div>

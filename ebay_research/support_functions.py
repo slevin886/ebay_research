@@ -24,6 +24,8 @@ def summary_stats(df, largest_cat, largest_sub_cat, total_items_available):
     stats = dict()
     stats['avg_price'] = currency_maker(df['currentPrice_value'].astype(float).mean())
     stats['median_price'] = currency_maker(df['currentPrice_value'].astype(float).median())
+    stats['min_price'] = currency_maker(df['currentPrice_value'].astype(float).min())
+    stats['max_price'] = currency_maker(df['currentPrice_value'].astype(float).max())
     stats['avg_shipping_price'] = currency_maker(df['shippingServiceCost_value'].astype(float).mean())
     stats['total_watch_count'] = int(df['watchCount'].fillna(0).astype(int).sum())
     stats['returned_count'] = int(df.shape[0])
