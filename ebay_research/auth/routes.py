@@ -131,6 +131,5 @@ def login():
 @auth.route("/logout", methods=["GET"])
 def logout():
     logout_user()
-    session.clear()
     flash('You have successfully logged out!', 'success')
     return redirect(url_for('main.home'))

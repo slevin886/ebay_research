@@ -58,7 +58,12 @@
 </div>
 <div class="footer">
     <div class="container">
-        <div class="row">
+        <div class="row mt-2">
+            {% if current_user.is_authenticated %}
+            <div class="col">
+                <a href="{{ url_for('auth.contact') }}" style="color: white;"><strong>contact us</strong></a>
+            </div>
+            {% endif %}
             <div class="col text-right">
                 <p>Genius Bidding &copy;2019</p>
             </div>
