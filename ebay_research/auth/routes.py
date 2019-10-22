@@ -1,11 +1,11 @@
 from ebay_research import db
 from ebay_research.models import User
-from ebay_research.forms import EmailForm, SendConfirmation, LoginForm, ChangePassword
+from ebay_research.forms import EmailForm, SendConfirmation, LoginForm, ChangePassword, ContactForm
 from ebay_research.auth import auth
-from ebay_research.auth.email import send_email
+from ebay_research.auth.email import send_email, send_comment
 
 from flask import flash, render_template, url_for, redirect, session, request
-from flask_login import logout_user, login_user
+from flask_login import logout_user, login_user, login_required, current_user
 
 
 @auth.route("/register", methods=["GET", "POST"])
@@ -94,6 +94,20 @@ def resend_confirmation():
             flash('Please check your email to confirm your account and begin searching!', 'success')
             return redirect(url_for("main.home"))
     return render_template('confirmation.html', form=form)
+
+
+@auth.route("/contact", methods=["GET", "POST"])
+@login_required
+def contact():
+    # TODO: set up contact form
+    form = ContactForm()
+    if form.validate_on_submit():
+        subject, user_message = form.category.data, form.text_area_field.data
+        print(type(subject), type(user_message))
+        send_comment(current_user.email, subject, user_message)
+        flash('Thank you for your message!', 'success')
+        return redirect(url_for("main.home"))
+    return render_template('contact.html', form=form)
 
 
 @auth.route("/login", methods=["GET", "POST"])

@@ -63,6 +63,7 @@
                             <th>id</th>
                             <th>average price</th>
                             <th>median price</th>
+                            <th>price range</th>
                             <th>total entries</th>
                             <th>total watch count</th>
                             <th>top seller</th>
@@ -72,6 +73,7 @@
                             <td>{{ result.search_id }}</td>
                             <td>${{ result.avg_price }}</td>
                             <td>${{ result.median_price }}</td>
+                            <td>${{ result.min_price }}-${{ result.max_price }}</td>
                             <td>{{ result.total_entries }}</td>
                             <td>{{ result.total_watch_count }}</td>
                             <td>{{ result.top_seller }}</td>

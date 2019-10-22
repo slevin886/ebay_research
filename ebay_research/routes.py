@@ -49,7 +49,6 @@ def account(user_id):
         else:
             flash("Whoops! You entered the wrong password, please try again or reset it from the login page", 'danger')
     searches = Search.query.filter_by(user_id=current_user.id).order_by(Search.time_searched.desc()).limit(5).all()
-    # print(searches[0].top_seller)
     results = [i.search_results for i in searches]
     number_searches = Search.query.filter_by(user_id=current_user.id).count()
     return render_template('account.html', user_id=user_id, searches=searches, number_searches=number_searches,

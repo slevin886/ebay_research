@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DecimalField, SelectField, PasswordField, IntegerField
+from wtforms import (StringField, DecimalField, SelectField, PasswordField, IntegerField, TextAreaField)
 from wtforms.validators import DataRequired, Length, optional, Email, EqualTo
 
 STATES = [
@@ -169,6 +169,23 @@ class RepeatSearch(FlaskForm):
             Length(min=1, max=12),
             DataRequired()
         ]
+    )
+
+
+class ContactForm(FlaskForm):
+    category = SelectField(
+        u"What would you like to get in touch about?",
+        choices=[("General Comment", "General Comment"), ("Problem", "Problem"),
+                 ("Suggestion", "Suggestion")],
+        validators=[DataRequired()],
+    )
+    text_area_field = TextAreaField(
+        'Please enter your message below',
+        validators=[
+            Length(min=10, max=600),
+            DataRequired()
+        ],
+
     )
 
 

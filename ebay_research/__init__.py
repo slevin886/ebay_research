@@ -10,7 +10,7 @@ from flask_mail import Mail
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
 login_manager = LoginManager()
-login_manager.login_view = 'main.login'
+login_manager.login_view = 'auth.login'
 bcrypt = Bcrypt()
 mail = Mail()
 
