@@ -6,6 +6,7 @@ from redis import Redis
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail
+from flask_talisman import Talisman
 import logging
 from logging.handlers import SMTPHandler
 
@@ -21,6 +22,7 @@ mail = Mail()
 
 def create_app(settings='production'):
     app = Flask(__name__)
+    Talisman(app, content_security_policy=None)
     if settings == 'development':
         app.config.from_object(DevelopmentConfig)
     elif settings == 'testing':
