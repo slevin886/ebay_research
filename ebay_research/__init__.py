@@ -35,7 +35,7 @@ def create_app(settings='production'):
     bcrypt.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
-    # app.redis = Redis.from_url(app.config['REDIS_URL'])
+    app.redis = Redis.from_url(app.config['REDIS_URL'])
     from ebay_research.routes import main
     from ebay_research.auth import auth
     from ebay_research.errors import error_page
