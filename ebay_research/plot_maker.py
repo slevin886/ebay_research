@@ -8,6 +8,7 @@ def create_us_county_map(df):
     zipcode_map = pd.read_csv(path)
     zipcode_map['zip'] = zipcode_map['zip'].astype(str)
     df = df.groupby('postalCode', as_index=False)['itemId'].count()
+    # df['postalCode'] = df['postalCode'].str.replace('*', '0')
     df = pd.merge(df, zipcode_map, left_on='postalCode', right_on='zip').dropna()
     if df.shape[0] == 0:
         return None

@@ -68,6 +68,10 @@ async function pullData() {
             document.getElementById('hideSunBurst').style.display = 'block';
             drawSunBurst(myData.sunburst_plot);
           }
+          if (myData.map_plot != null) {
+            document.getElementById('hideMap').style.display = 'block';
+          }
+
         }
 
         document.getElementById("returned_count").innerHTML = stats['returned_count'];
@@ -147,45 +151,50 @@ function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller, 
   Plotly.newPlot('dfPie', df_pie, layout3, {"displayModeBar": false});
 
   // USA MAP PLOT
-  let sizeRef = 2. * Math.max.apply(null, map_plot['itemId']) / (Math.pow(40., 2));
+  if (map_plot) {
+    let sizeRef = 2. * Math.max.apply(null, map_plot['itemId']) / (Math.pow(40., 2));
 
-  let dataMap = [{
-          type:'scattergeo',
-          locationmode: 'USA-states',
-          lon: map_plot['lng'],
-          lat: map_plot['lat'],
-          text: map_plot['text'],
-          mode: 'markers',
-          hoverinfo: 'text',
-          marker:{size:map_plot['itemId'],
-                  sizemode:'area',
-                  sizeref: sizeRef,
-                  sizemin: 4,
-                  opacity:0.8,
-                  autocolorscale:true,
-                  line: {width: 1, color:'rgba(102, 102, 102)'},
-                  cmin: 0,
-                  color: map_plot['itemId'],
-                  cmax: Math.max.apply(null, map_plot['itemId'])}
-          }];
+    let dataMap = [{
+      type: 'scattergeo',
+      locationmode: 'USA-states',
+      lon: map_plot['lng'],
+      lat: map_plot['lat'],
+      text: map_plot['text'],
+      mode: 'markers',
+      hoverinfo: 'text',
+      marker: {
+        size: map_plot['itemId'],
+        sizemode: 'area',
+        sizeref: sizeRef,
+        sizemin: 4,
+        opacity: 0.8,
+        autocolorscale: true,
+        line: {width: 1, color: 'rgba(102, 102, 102)'},
+        cmin: 0,
+        color: map_plot['itemId'],
+        cmax: Math.max.apply(null, map_plot['itemId'])
+      }
+    }];
 
 
-  const layout5 = {
-          'margin': {'r': 0, 't': 0, 'l': 0, 'b': 0},
-          'geo': {'scope': 'usa',
-               'projection': {'type': 'albers usa'},
-               'showland': true,
-               'showlakes': false,
-               'landcolor': "rgb(240, 248, 255)",
-               'bgcolor': '#F8F8F8',
-               'subunitcolor': "rgb(0, 0, 0)",
-               'countrycolor': "rgb(202, 225, 255)",
-               'countrywidth': 0.5,
-               'subunitwidth': 0.5}, ...commonLayout
-      };
+    const layout5 = {
+      'margin': {'r': 0, 't': 0, 'l': 0, 'b': 0},
+      'geo': {
+        'scope': 'usa',
+        'projection': {'type': 'albers usa'},
+        'showland': true,
+        'showlakes': false,
+        'landcolor': "rgb(240, 248, 255)",
+        'bgcolor': '#F8F8F8',
+        'subunitcolor': "rgb(0, 0, 0)",
+        'countrycolor': "rgb(202, 225, 255)",
+        'countrywidth': 0.5,
+        'subunitwidth': 0.5
+      }, ...commonLayout
+    };
 
-  Plotly.newPlot('usaMAP', dataMap, layout5, {"displayModeBar": false});
-
+    Plotly.newPlot('usaMAP', dataMap, layout5, {"displayModeBar": false});
+  }
 
   // Seller bar plot
 

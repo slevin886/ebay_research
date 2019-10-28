@@ -9,3 +9,4 @@ sample_data.csv
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+*email_cred.csv
