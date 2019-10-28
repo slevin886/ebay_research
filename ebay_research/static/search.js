@@ -104,7 +104,7 @@ async function pullData() {
               <span aria-hidden="true">&times;</span>
           </button>
       `;
-      document.getElementById('top_search_page').prepend(errorNode);
+      document.getElementById('top_search_page').appendChild(errorNode);
       spinner.stop();
       break
     }

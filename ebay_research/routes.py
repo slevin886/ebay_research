@@ -18,10 +18,8 @@ from ebay_research.plot_maker import (
 )
 
 # TODO: possibly only draw figures on lastpull
-# TODO: make plotting in search multithreaded/processed to execute all at same time
-# TODO: rewrite plot functions to be individual functions
+# TODO: rewrite js plot functions to be individual functions
 # TODO: implement repeat search on account page and possibly something to download search result metadata
-# TODO: add error pages
 # TODO: Implement additional item filters
 # TODO: Write test functions
 # TODO: Create ability to hide/show different plots in the results
