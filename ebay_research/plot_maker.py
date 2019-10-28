@@ -1,14 +1,20 @@
 import pandas as pd
 import os
 
+ZIP_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'zipcode_data.csv')
+
 
 def create_us_county_map(df):
     # Upload keys for zipcode to lat/lon location
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'zipcode_data.csv')
-    zipcode_map = pd.read_csv(path)
+    zipcode_map = pd.read_csv(ZIP_PATH)
     zipcode_map['zip'] = zipcode_map['zip'].astype(str)
+
+    if df['postalCode'].str.contains('\*').sum() > 5:
+        df['postalCode'] = df['postalCode'].str[:3]  # sometimes returns 3 digit zip codes
+        zipcode_map['zip'] = zipcode_map['zip'].str[:3]
+        zipcode_map = zipcode_map.drop_duplicates(subset=['zip'])
+
     df = df.groupby('postalCode', as_index=False)['itemId'].count()
-    # df['postalCode'] = df['postalCode'].str.replace('*', '0')
     df = pd.merge(df, zipcode_map, left_on='postalCode', right_on='zip').dropna()
     if df.shape[0] == 0:
         return None
