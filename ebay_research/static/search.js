@@ -1,4 +1,4 @@
-
+// TODO: move plot functions to separate file
 const spinOptions = {
   lines: 13,
   length: 38,
