@@ -85,7 +85,7 @@ def prep_tab_data(df):
     df = df.sort_values(by='watchCount', ascending=False)
     if 'endTime' in topics_for_tab:
         df['endTime'] = pd.to_datetime(df['endTime'])
-    return df
+    return df.to_dict(orient="records")
 
 
 def make_listing_pie_chart(listing_type):
@@ -127,3 +127,15 @@ def make_auction_length(df):
     df = df.groupby('length', as_index=False)['endTime'].count()
     return [{'x': df['length'].tolist(), 'y': df['endTime'].tolist(),
              'type': 'bar', 'marker': {'line': {'color': 'black', 'width': '2'}, 'color': 'purple'}}]
+
+
+def make_box_plot(df):
+    df = df.pivot(columns='listingType', values='currentPrice_value')
+    data = []
+
+    for col in df.columns:
+        sub = df[col].dropna().tolist()
+        data.append(
+            {'type': 'box', 'y': sub, 'name': col, 'boxpoints': False}
+        )
+    return data

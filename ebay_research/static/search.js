@@ -85,9 +85,8 @@ async function pullData() {
         document.getElementById("max_price").innerHTML = stats['max_price'];
         document.getElementById("avg_shipping_price").innerHTML = stats['avg_shipping_price'];
         document.getElementById("total_watch_count").innerHTML = stats['total_watch_count'];
-
         drawFigures(myData.df_type, myData.hist_plot, myData.map_plot, myData.tab_data,
-          myData.df_pie, myData.df_seller, myData.df_length);
+          myData.df_pie, myData.df_seller, myData.df_length, myData.df_box);
         drawTable(myData.tab_data);
       })
       .catch((error) => {
@@ -116,7 +115,7 @@ async function pullData() {
 const commonLayout = {'plot_bgcolor': '#F8F8F8', 'paper_bgcolor':'#F8F8F8', 'hovermode': 'closest',
   'font': {'family': 'Helvetica Neue'}, 'height': 350};
 // 'height': 350, 'width': 450,
-function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller, df_length) {
+function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller, df_length, df_box) {
 
   // Price by Type of Listing
   const layout = {'yaxis': {'title': 'Item Price', 'tickprefix': '$', 'type': 'log'},
@@ -212,6 +211,14 @@ function drawFigures(df_type, hist_plot, map_plot, tab_data, df_pie, df_seller, 
   };
 
   Plotly.newPlot('lengthBar', df_length, layoutLengthBar, {"displayModeBar": false});
+
+  // Price Box Plot
+
+  const layoutBoxPlot = {
+    'yaxis': {'type': 'log', 'tickprefix':'$', 'title': 'Price (w/ Log Scaled Axis)'},
+    ...commonLayout
+  };
+  Plotly.newPlot('boxPrice', df_box, layoutBoxPlot, {"displayModeBar": false});
 }
 
 function drawSunBurst(make_sunburst) {

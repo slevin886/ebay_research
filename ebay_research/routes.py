@@ -13,6 +13,7 @@ from ebay_research.plot_maker import (
     make_seller_bar,
     prep_tab_data,
     make_sunburst,
+    make_box_plot,
     make_listing_pie_chart,
     make_auction_length,
 )
@@ -54,12 +55,14 @@ def account(user_id):
 
 
 @main.route("/search", methods=['GET'])
+@login_required
 def search():
     form = FreeSearch()
     return render_template("search.html", form=form)
 
 
 @main.route("/get_data", methods=['POST'])
+@login_required
 def get_data():
     form = FreeSearch(data=request.get_json())
     if form.validate():
@@ -123,17 +126,19 @@ def get_data():
         df_type = make_price_by_type(df[['listingType', 'currentPrice_value']])
         df_pie = make_listing_pie_chart(df["listingType"])
         df_length = make_auction_length(df[['endTime', 'startTime']])
+        df_box = make_box_plot(df[['listingType', 'currentPrice_value']].copy())
         if searching.item_aspects is None:
             sunburst_plot = None
         else:
             sunburst_plot = make_sunburst(searching.item_aspects)
         return jsonify(map_plot=map_plot,
-                       tab_data=tab_data.to_dict(orient="records"),
+                       tab_data=tab_data,
                        hist_plot=df["currentPrice_value"].tolist(),
                        df_pie=df_pie,
                        df_type=df_type,
                        df_seller=df_seller,
                        df_length=df_length,
+                       df_box=df_box,
                        sunburst_plot=sunburst_plot,
                        stats=stats,
                        search_url=searching.search_url,
@@ -142,6 +147,7 @@ def get_data():
 
 
 @main.route("/get_csv", methods=["GET"])
+@login_required
 def get_csv():
     if current_app.redis.exists(session['search_id']):
         df = pd.read_msgpack(current_app.redis.get(session['search_id']))
@@ -156,4 +162,4 @@ def get_csv():
     else:
         # TODO: file will be saved on s3 and can then be read in from there
         flash('Your session has timed out and the data is no longer saved! Please search again!', 'warning')
-        return redirect(url_for('main.basic_search'))
+        return redirect(url_for('main.search'))

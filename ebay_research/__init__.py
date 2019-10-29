@@ -16,6 +16,7 @@ db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
+login_manager.login_message_category = 'info'
 bcrypt = Bcrypt()
 mail = Mail()
 
@@ -43,18 +44,18 @@ def create_app(settings='production'):
     app.register_blueprint(auth)
     app.register_blueprint(error_page)
     # LOGGER CONFIGURATION
-    # if not app.debug and not app.testing:
-    #     auth = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-    #     secure = None
-    #     if app.config['MAIL_USE_TLS']:
-    #         secure = app.config['MAIL_USE_TLS']
-    #     mail_handler = SMTPHandler(
-    #         mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
-    #         fromaddr=app.config['MAIL_DEFAULT_SENDER'],
-    #         toaddrs=app.config['MAIL_DEFAULT_SENDER'], subject='Genius Bidding Failure',
-    #         credentials=auth, secure=secure)
-    #     mail_handler.setLevel(logging.ERROR)
-    #     app.logger.addHandler(mail_handler)
+    if not app.debug and not app.testing:
+        auth = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
+        secure = None
+        if app.config['MAIL_USE_TLS']:
+            secure = app.config['MAIL_USE_TLS']
+        mail_handler = SMTPHandler(
+            mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
+            fromaddr=app.config['MAIL_DEFAULT_SENDER'],
+            toaddrs=app.config['ADMIN_EMAIL'], subject='Genius Bidding Failure',
+            credentials=auth, secure=secure)
+        mail_handler.setLevel(logging.ERROR)
+        app.logger.addHandler(mail_handler)
     return app
 
 
