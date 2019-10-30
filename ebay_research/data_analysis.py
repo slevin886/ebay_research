@@ -13,11 +13,12 @@ from ebaysdk.finding import Connection as Finding
 class EasyEbayData:
 
     def __init__(self, api_id: str, keywords: str, excluded_words: str = None, sort_order: str = "BestMatch",
-                 get_category_info: bool = True,
-                 listing_type: str = None, min_price: float = 0.0, max_price: float = None, item_condition: str = None):
+                 get_category_info: bool = True, listing_type: str = None, min_price: float = 0.0,
+                 max_price: float = None, item_condition: str = None):
         """
-        A class that returns a clean data set of items for sale based on a keyword search from ebay. After instantiation,
-        call 'get_data' method to collect all data.
+        A class that returns a clean data set of items for sale based on a keyword search from ebay. After
+        instantiation, call 'full_data_pull' method with the number of pages wanted to collect data and return it
+        as a pandas dataframe.
         :param api_id: eBay developer app's ID
         :param keywords: Keywords should be between 2 & 350 characters, not case sensitive
         :param listing_type: A string for listing type (Auction, etc.) or None to search all

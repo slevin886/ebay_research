@@ -23,7 +23,7 @@ mail = Mail()
 
 def create_app(settings='production'):
     app = Flask(__name__)
-    Talisman(app, content_security_policy=None)
+    # Talisman(app, content_security_policy=None)
     if settings == 'development':
         app.config.from_object(DevelopmentConfig)
     elif settings == 'testing':
