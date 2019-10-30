@@ -19,6 +19,9 @@ from ebay_research.plot_maker import (
 )
 
 # TODO: possibly only draw figures on lastpull
+# TODO: Add blog and about page
+# TODO: Add hover helpers on search page, plus more info on top
+# TODO: reorganize search page to make # of items to pull more prominent
 # TODO: rewrite js plot functions to be individual functions
 # TODO: implement repeat search on account page and possibly something to download search result metadata
 # TODO: Implement additional item filters

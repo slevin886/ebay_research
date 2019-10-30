@@ -130,6 +130,7 @@ def make_auction_length(df):
 
 
 def make_box_plot(df):
+    df = df.reset_index(drop=True)
     df = df.pivot(columns='listingType', values='currentPrice_value')
     data = []
 
