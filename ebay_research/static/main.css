@@ -20,6 +20,10 @@ h5 {
     font-weight: bold;
 }
 
+.about_text {
+    font-size: 20px;
+}
+
 a {
     font-size: large;
 }

@@ -20,7 +20,7 @@
 </div>
 <div class="row mt-3">
     <div class="col">
-        <h3 class="page_header">search</h3>
+        <h3 class="page_header">Search <span style="color: hotpink">e</span><span style="color: deepskyblue">B</span><span style="color: palevioletred">a</span><span style="color: cadetblue">y</span></h3>
         <h5>choose your search criteria</h5>
     </div>
 </div>
@@ -47,7 +47,7 @@
                 <div class="col">
                     <div class="row">
                         <div class="col">
-                            <label><strong>Sort Results by:</strong></label>
+                            <label for="item_sort"><strong>Sort Results by:</strong></label>
                             <select class="form-control" id="item_sort" name="item_sort">
                                 <option value="BestMatch">Best Match</option>
                                 <option value="CurrentPriceHighest">Highest Price First</option>
@@ -94,7 +94,7 @@
                     </div>
                     <div class="row mt-3">
                         <div class="col">
-                            <label for="items_to_pull"><strong>Items to return in search:</strong></label>
+                            <label for="items_to_pull"><strong># of Items to return:</strong></label>
                             <select class="form-control" id="items_to_pull" name="items_to_pull">
                                 <option value=1 selected>100 items</option>
                                 <option value=5>500 items</option>
@@ -106,8 +106,8 @@
             </div>
             <div class="row">
                 <div class="col-3">
-                    <button type="submit" class="btn btn-success btn-lg page_button"
-                            onclick="return pullData()">Get Item Data!</button>
+                    <button type="submit" class="btn btn-success btn-lg page_button" id="searchButton">
+                        Get Item Data!</button>
                 </div>
                 <div class="col">
                     <div id="loading_spinner"></div>
@@ -281,6 +281,6 @@
             <div id="tab_location"></div>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='search_page/search.js') }}"></script>
+    <script src="{{ url_for('static', filename='search_page/search.js') }}" type="module"></script>
 </div>
 {% endblock %}

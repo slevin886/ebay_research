@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-66255121-2"></script>
     <script>
@@ -67,6 +68,9 @@
 <div class="footer">
     <div class="container">
         <div class="row mt-2">
+            <div class="col-1">
+                <a href="{{ url_for('main.about') }}" style="color: white;"><strong>about</strong></a>
+            </div>
             {% if current_user.is_authenticated %}
             <div class="col">
                 <a href="{{ url_for('auth.contact') }}" style="color: white;"><strong>contact us</strong></a>

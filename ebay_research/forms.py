@@ -88,7 +88,7 @@ class EmailForm(FlaskForm):
     )
     location = SelectField(
         u"Select your location",
-        choices=[("", ""), ("USA", "USA"), ("International", "International")],
+        choices=[("USA", "USA"), ("International", "International")],
         validators=[DataRequired()],
     )
     state = SelectField(

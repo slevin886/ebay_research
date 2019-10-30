@@ -1,7 +1,7 @@
 import {
   plotPriceByListing, plotPieListing, plotPriceBoxPlot, plotPriceHistogram,
   plotSellerMap, plotSunBurst, plotTimeAvailable, plotTopSellers
-} from './plot_functions';
+} from './plot_functions.js';
 
 // options for loading spinner
 const spinOptions = {
@@ -15,6 +15,8 @@ const spinOptions = {
 };
 
 async function pullData() {
+  // ensure button is disabled while searching
+  document.getElementById('searchButton').disabled = true;
   const formData = new FormData(mainForm);
   let firstPull = true;
   let errorMessage = '';
@@ -124,8 +126,12 @@ async function pullData() {
     }
   }
   spinner.stop();
+  document.getElementById('searchButton').disabled = false;
 }
 
+window.onload = function () {
+  document.getElementById('searchButton').addEventListener('click', pullData)
+};
 
 //creates clickable anchor tag for tabulator function
 const linkFormatter = function(cell, formatterParams){

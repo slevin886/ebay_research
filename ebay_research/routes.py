@@ -19,7 +19,8 @@ from ebay_research.plot_maker import (
 )
 
 # TODO: possibly only draw figures on lastpull
-# TODO: Add blog and about page
+# TODO: Add blog
+# TODO: Add more information to home page and about page
 # TODO: Add hover helpers on search page, plus more info on top
 # TODO: reorganize search page to make # of items to pull more prominent
 # TODO: rewrite js plot functions to be individual functions
@@ -35,6 +36,11 @@ main = Blueprint("main", __name__)
 @main.route('/', methods=["GET"])
 def home():
     return render_template('home.html')
+
+
+@main.route('/about', methods=['GET'])
+def about():
+    return render_template('about.html')
 
 
 @main.route('/account/<user_id>', methods=['GET', 'POST'])
