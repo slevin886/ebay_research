@@ -17,10 +17,6 @@
                aria-selected="true">recent searches</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="result-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile"
-               aria-selected="false">recent results</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact"
                aria-selected="false">manage account</a>
           </li>
@@ -29,38 +25,13 @@
           <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="search-tab">
             <div class="row mt-3">
                 <div class="col">
-                    {% if searches %}
+                    {% if search_results %}
                     <table class="table">
                         <tr class="table thead-dark">
                             <th>id</th>
                             <th>keywords</th>
                             <th>search time</th>
-                            <th>items wanted</th>
                             <th>listing type</th>
-                        </tr>
-                        {% for search in searches %}
-                        <tr>
-                            <td>{{ search.id }}</td>
-                            <td>{{ search.keywords }}</td>
-                            <td>{{ search.time_searched }}</td>
-                            <td>{{ search.pages_wanted * 100 }}</td>
-                            <td>{{ search.listing_type }}</td>
-                        </tr>
-                        {% endfor %}
-                    </table>
-                    {% else %}
-                    <h2>no recent searches available...</h2>
-                    {% endif %}
-                </div>
-            </div>
-          </div>
-          <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="result-tab">
-              <div class="row mt-3">
-                <div class="col">
-                    {% if results %}
-                    <table class="table">
-                        <tr class="table thead-dark">
-                            <th>id</th>
                             <th>average price</th>
                             <th>median price</th>
                             <th>price range</th>
@@ -68,9 +39,12 @@
                             <th>total watch count</th>
                             <th>top seller</th>
                         </tr>
-                        {% for result in results %}
+                        {% for search, result in search_results %}
                         <tr>
-                            <td>{{ result.search_id }}</td>
+                            <td>{{ search.id }}</td>
+                            <td>{{ search.keywords }}</td>
+                            <td>{{ search.time_searched.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>{{ search.listing_type }}</td>
                             <td>${{ result.avg_price }}</td>
                             <td>${{ result.median_price }}</td>
                             <td>${{ result.min_price }}-${{ result.max_price }}</td>
@@ -81,7 +55,7 @@
                         {% endfor %}
                     </table>
                     {% else %}
-                    <h2>no recent results available...</h2>
+                    <h2>no recent searches available...</h2>
                     {% endif %}
                 </div>
             </div>

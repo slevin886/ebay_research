@@ -23,7 +23,6 @@ from ebay_research.plot_maker import (
 # TODO: Add more information to home page and about page
 # TODO: Add hover helpers on search page, plus more info on top
 # TODO: reorganize search page to make # of items to pull more prominent
-# TODO: rewrite js plot functions to be individual functions
 # TODO: implement repeat search on account page and possibly something to download search result metadata
 # TODO: Implement additional item filters
 # TODO: Write test functions
@@ -56,11 +55,11 @@ def account(user_id):
             flash('You have successfully changed your password!', 'success')
         else:
             flash("Whoops! You entered the wrong password, please try again or reset it from the login page", 'danger')
-    searches = Search.query.filter_by(user_id=current_user.id).order_by(Search.time_searched.desc()).limit(5).all()
-    results = [i.search_results for i in searches]
     number_searches = Search.query.filter_by(user_id=current_user.id).count()
-    return render_template('account.html', user_id=user_id, searches=searches, number_searches=number_searches,
-                           results=results, password_form=password_form)
+    search_results = db.session.query(Search, Results).filter(Search.user_id == current_user.id).join(Results)\
+        .order_by(Search.time_searched.desc()).limit(10).all()
+    return render_template('account.html', user_id=user_id, search_results=search_results,
+                           number_searches=number_searches, password_form=password_form)
 
 
 @main.route("/search", methods=['GET'])
