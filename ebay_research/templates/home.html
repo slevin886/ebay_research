@@ -33,7 +33,9 @@
 </div>
 <div class="row mt-3">
     <div class="col text-center">
-        <a class="button btn-primary btn-lg" role="button" href="{{ url_for('auth.register') }}">Register Now!</a>
+        <a class="button btn-success btn-lg page_button" role="button" href="{{ url_for('auth.register') }}">
+            Register Now!
+        </a>
     </div>
 </div>
 <br><br>
@@ -51,6 +53,18 @@
         <h3>Get <i>key statistics</i> on price and sellers</h3>
         <br><br>
         <h3>Saved search results enable you to <i>identify trends</i></h3>
+    </div>
+</div>
+<br><br>
+<hr>
+<div class="row mt-5">
+    <div class="col text-center">
+        <h2>Not convinced?</h2>
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col text-center">
+        <a class="button btn-primary btn-lg page_button" role="button" href="{{ url_for('main.about') }}">Click here to learn more</a>
     </div>
 </div>
 {% endblock %}
