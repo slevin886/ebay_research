@@ -103,7 +103,6 @@ def contact():
     form = ContactForm()
     if form.validate_on_submit():
         subject, user_message = form.category.data, form.text_area_field.data
-        print(type(subject), type(user_message))
         send_comment(current_user.email, subject, user_message)
         flash('Thank you for your message!', 'success')
         return redirect(url_for("main.home"))

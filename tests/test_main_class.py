@@ -27,7 +27,6 @@ def test_class_init():
         len(ebay_data.item_filter) == 3
     ), "Here, here should be 3 item filters (min_price, listing_type, located_in)"
     # should have None values
-    assert ebay_data.wanted_pages is None
     assert ebay_data.total_entries is None
     assert ebay_data.item_aspects is None
     assert ebay_data.max_price is None

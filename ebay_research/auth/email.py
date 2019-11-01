@@ -22,13 +22,13 @@ def send_email(user, subject, template):
     return thr
 
 
-def send_comment(sender, subject, user_message):
+def send_comment(user_email, subject, user_message):
     app = current_app._get_current_object()
     msg = Message('[Genius Bidding]' + ' ' + subject,
                   sender=app.config['MAIL_DEFAULT_SENDER'],
-                  recipients=[app.config['MAIL_DEFAULT_SENDER']])
-    msg.body = render_template('email/send_comment.txt', sender=sender, user_message=user_message)
-    msg.html = render_template('email/send_comment.html', sender=sender, user_message=user_message)
+                  recipients=[app.config['ADMIN_EMAIL']])
+    msg.body = render_template('email/send_comment.txt', sender=user_email, user_message=user_message)
+    msg.html = render_template('email/send_comment.html', sender=user_email, user_message=user_message)
     thr = Thread(target=send_async_email, args=[app, msg])
     thr.start()
     return thr

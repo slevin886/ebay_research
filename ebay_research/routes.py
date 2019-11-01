@@ -74,14 +74,14 @@ def search():
 def get_data():
     form = FreeSearch(data=request.get_json())
     if form.validate():
-        form_data = ingest_free_search_form(form)
-        searching = EasyEbayData(api_id=current_app.config["EBAY_API"], **form_data)
+        search_parameters = ingest_free_search_form(form)
+        searching = EasyEbayData(api_id=current_app.config["EBAY_API"], **search_parameters)
         page_number = int(request.form.get('pageNumber'))
         first_pull = True if request.form.get('first_pull') == 'true' else False
         last_pull = True if request.form.get('last_pull') == 'true' else False
         if first_pull:
             pages_wanted = int(request.form.get('max_pages'))
-            search_record = Search(user_id=current_user.id, pages_wanted=pages_wanted, **form_data)
+            search_record = Search(user_id=current_user.id, pages_wanted=pages_wanted, **search_parameters)
             existing_records = None
         else:
             search_record = Search.query.filter_by(id=session['search_id']).first()
