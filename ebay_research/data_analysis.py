@@ -28,7 +28,6 @@ class EasyEbayData:
         self.api_id = api_id
         self.keywords = keywords  # keywords only search item titles
         self.exclude_words = excluded_words
-        self.pages_wanted: int = None  # must be at least 1 & integer
         self.usa_only = True  # for now, only support us sellers and removing kwarg from init
         self.min_price = min_price if min_price else 0.0
         self.max_price = max_price
@@ -41,8 +40,8 @@ class EasyEbayData:
         self.category_info = None  # dictionary of category id and subcategories
         self.largest_sub_category = None
         self.largest_category = None
-        self.total_pages: int = None  # the total number of available pages
-        self.total_entries: int = None  # the total number of items available given keywords (all categories)
+        self.total_pages: int = 0  # the total number of available pages
+        self.total_entries: int = 0  # the total number of items available given keywords (all categories)
         if excluded_words and len(excluded_words) > 2:
             excluded_words = ",".join(word for word in excluded_words.split(" "))
             self.full_query = keywords + " -(" + excluded_words + ")"
