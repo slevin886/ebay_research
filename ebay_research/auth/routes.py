@@ -3,6 +3,7 @@ from ebay_research.models import User
 from ebay_research.forms import EmailForm, SendConfirmation, LoginForm, ChangePassword, ContactForm
 from ebay_research.auth import auth
 from ebay_research.auth.email import send_email, send_comment
+from ebay_research.aws_functions import write_file_to_s3
 
 from flask import flash, render_template, url_for, redirect, session, request
 from flask_login import logout_user, login_user, login_required, current_user

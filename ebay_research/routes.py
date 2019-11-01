@@ -3,6 +3,7 @@ from flask import (Blueprint, render_template, request, flash, jsonify,
 from flask_login import current_user, login_required
 import pandas as pd
 from ebay_research import db
+from ebay_research.aws_functions import write_file_to_s3
 from ebay_research.data_analysis import EasyEbayData
 from ebay_research.support_functions import ingest_free_search_form, summary_stats
 from ebay_research.models import Search, Results
@@ -18,6 +19,7 @@ from ebay_research.plot_maker import (
     make_auction_length,
 )
 
+# TODO: add reading of csv from s3 if redis unavailable and reduce time of redis cache
 # TODO: possibly only draw figures on lastpull
 # TODO: Add blog
 # TODO: Add more information to home page and about page
@@ -128,12 +130,15 @@ def get_data():
             results = Results(search_id=search_record.id, user_id=current_user.id, **stats)
             db.session.add(results)
             db.session.commit()
+            s3_filename = str(current_user.id) + '_' + str(search_record.id) + '.csv'
+            write_file_to_s3(s3_filename, df)
+
         tab_data = prep_tab_data(df)
         df_seller = make_seller_bar(df)
-        map_plot = create_us_county_map(df[['postalCode', 'itemId']])
+        map_plot = create_us_county_map(df[['postalCode', 'itemId']].copy())
         df_type = make_price_by_type(df[['listingType', 'currentPrice_value']])
         df_pie = make_listing_pie_chart(df["listingType"])
-        df_length = make_auction_length(df[['endTime', 'startTime']])
+        df_length = make_auction_length(df[['endTime', 'startTime']].copy())
         df_box = make_box_plot(df[['listingType', 'currentPrice_value']].copy())
         if searching.item_aspects is None:
             sunburst_plot = None
