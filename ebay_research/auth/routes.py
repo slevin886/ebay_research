@@ -3,21 +3,17 @@ from ebay_research.models import User
 from ebay_research.forms import EmailForm, SendConfirmation, LoginForm, ChangePassword, ContactForm
 from ebay_research.auth import auth
 from ebay_research.auth.email import send_email, send_comment
-from ebay_research.aws_functions import write_file_to_s3
-
 from flask import flash, render_template, url_for, redirect, session, request
 from flask_login import logout_user, login_user, login_required, current_user
 
 
 @auth.route("/register", methods=["GET", "POST"])
 def register():
-    # TODO: Possibly add a counter on table to limit to 5 free searches
     form = EmailForm()
     if form.validate_on_submit():
         session["email"] = form.confirm_email.data
         user_exists = User.query.filter_by(email=session['email']).first()
         if user_exists:
-            print('working as expected here')
             flash('That email is already registered! Please login or reset password', 'danger')
         else:
             # change default permissions to 0
@@ -25,8 +21,9 @@ def register():
                             country=form.location.data, state=form.state.data, confirmed=False)
             db.session.add(new_user)
             db.session.commit()
-            send_email(new_user, 'Confirm Email Address', 'email/confirm_email')
-            flash('Please check your email to confirm your account and begin researching!', 'success')
+            send_email(new_user, 'Confirm your email address for Genius Bidding', 'email/confirm_email')
+            flash('Please check your email to confirm your account and begin researching! If you do not'
+                  'receive your email very soon, please check your spam folder.', 'success')
             return redirect(url_for("main.home"))
     return render_template("register.html", form=form)
 
@@ -57,7 +54,7 @@ def password_reset():
         if not user:
             flash('That email has not been registered. Please check your spelling or register that account.', 'warning')
             return render_template('password_reset.html')
-        send_email(user, 'Reset Password', 'email/reset_email')
+        send_email(user, 'Reset your password for Genius Bidding', 'email/reset_email')
         flash('An email has been sent to that address. Please follow the enclosed link to reset your password', 'warning')
         return redirect(url_for('main.home'))
     return render_template('password_reset.html', form=form)
@@ -91,7 +88,7 @@ def resend_confirmation():
             flash('You are already confirmed! Login to begin searching', 'warning')
             return redirect(url_for('auth.login'))
         else:
-            send_email(user, 'Confirm Email', 'email/confirm_email')
+            send_email(user, 'Confirm your email for Genius Bidding', 'email/confirm_email')
             flash('Please check your email to confirm your account and begin searching!', 'success')
             return redirect(url_for("main.home"))
     return render_template('confirmation.html', form=form)

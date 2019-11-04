@@ -28,7 +28,12 @@
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.home') }}">
-                <img src="{{ url_for('static', filename='brain_logo_white_border.png') }}" height="75" alt="genius bidding logo">
+                <img src="{{ url_for('static', filename='brain_logo_white_border.png') }}" id="nav_logo"
+                     alt="genius bidding logo">
+                <script>
+                    screenHeight = window.innerHeight / 7;
+                    document.getElementById('nav_logo').height = screenHeight.toString();
+                </script>
             </a>
             <div class="navbar-nav ml-auto" style="flex-direction: row;">
                 {% if current_user.is_authenticated %}

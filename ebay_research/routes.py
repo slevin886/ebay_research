@@ -19,6 +19,10 @@ from ebay_research.plot_maker import (
     make_auction_length,
 )
 
+# TODO: hash login password
+# TODO: figure out why emails ending up in spam, add warning about spam
+# TODO: add how to/suggested use page
+# TODO: make mobile friendly, particularly pngs and plots
 # TODO: add reading of csv from s3 if redis unavailable and reduce time of redis cache
 # TODO: possibly only draw figures on lastpull
 # TODO: Add blog

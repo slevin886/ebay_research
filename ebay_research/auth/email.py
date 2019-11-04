@@ -12,7 +12,7 @@ def send_async_email(app, msg):
 def send_email(user, subject, template):
     app = current_app._get_current_object()
     token = user.get_confirmation_token()
-    msg = Message('[Genius Bidding]' + ' ' + subject,
+    msg = Message(subject,
                   sender=app.config['MAIL_DEFAULT_SENDER'],
                   recipients=[user.email])
     msg.body = render_template(template + '.txt', user=user, token=token)

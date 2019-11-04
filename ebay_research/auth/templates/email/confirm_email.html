@@ -1,13 +1,13 @@
 <p>Hello,</p>
 <p>
-    To confirm your email
+    Use the link below to confirm your email:
     <a href="{{ url_for('auth.confirmation', token=token, _external=True) }}">
-        click here
-    </a>.
+        geniusbidding.com/confirmation
+    </a>
 </p>
 <p>Alternatively, you can paste the following link into your browser's address bar:</p>
 <p>{{ url_for('auth.confirmation', token=token, _external=True) }}</p>
 <p>If you have not requested to register with Genius Bidding simply ignore this message.</p>
-<p>Sincerely,</p>
+<p>Thanks!</p>
 <p>Scott</p>
 <p>Genius Bidding</p>
