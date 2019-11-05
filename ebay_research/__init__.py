@@ -8,13 +8,12 @@ from flask_bcrypt import Bcrypt
 from flask_mail import Mail
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
-import logging
-from logging.handlers import SMTPHandler
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 
 sentry_sdk.init(
     dsn="https://d93a22d6384f49809d90100f65157218@sentry.io/1808965",
-    integrations=[FlaskIntegration()]
+    integrations=[FlaskIntegration(), SqlalchemyIntegration()]
 )
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
@@ -47,19 +46,6 @@ def create_app(settings='production'):
     app.register_blueprint(main)
     app.register_blueprint(auth)
     app.register_blueprint(error_page)
-    # LOGGER CONFIGURATION
-    if not app.debug and not app.testing:
-        auth = (app.config['MAIL_USERNAME'], app.config['MAIL_PASSWORD'])
-        secure = None
-        if app.config['MAIL_USE_TLS']:
-            secure = app.config['MAIL_USE_TLS']
-        mail_handler = SMTPHandler(
-            mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
-            fromaddr=app.config['MAIL_DEFAULT_SENDER'],
-            toaddrs=app.config['ADMIN_EMAIL'], subject='Genius Bidding Failure',
-            credentials=auth, secure=secure)
-        mail_handler.setLevel(logging.ERROR)
-        app.logger.addHandler(mail_handler)
     return app
 
 

@@ -125,6 +125,7 @@ export function plotTimeAvailable(df_length){
 export function plotPriceBoxPlot(df_box){
   const layout = {
     'yaxis': {'type': 'log', 'tickprefix':'$', 'title': 'Price (w/ Log Scaled Axis)'},
+    'showlegend': false,
     ...commonLayout
   };
   Plotly.newPlot('boxPrice', df_box, layout, {"displayModeBar": false});

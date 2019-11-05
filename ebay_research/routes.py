@@ -19,8 +19,7 @@ from ebay_research.plot_maker import (
     make_auction_length,
 )
 
-# TODO: hash login password
-# TODO: figure out why emails ending up in spam, add warning about spam
+
 # TODO: add how to/suggested use page
 # TODO: make mobile friendly, particularly pngs and plots
 # TODO: add reading of csv from s3 if redis unavailable and reduce time of redis cache
@@ -69,11 +68,18 @@ def account(user_id):
             flash('You have successfully changed your password!', 'success')
         else:
             flash("Whoops! You entered the wrong password, please try again or reset it from the login page", 'danger')
+    page = request.args.get('page', 1, type=int)
     number_searches = Search.query.filter_by(user_id=current_user.id).count()
     search_results = db.session.query(Search, Results).filter(Search.user_id == current_user.id).join(Results)\
-        .order_by(Search.time_searched.desc()).limit(10).all()
-    return render_template('account.html', user_id=user_id, search_results=search_results,
-                           number_searches=number_searches, password_form=password_form)
+        .order_by(Search.time_searched.desc()).paginate(page, 10, False)
+    # creating pagination
+    next_url = url_for('main.account', page=search_results.next_num, user_id=current_user.id) \
+        if search_results.has_next else None
+    prev_url = url_for('main.account', page=search_results.prev_num, user_id=current_user.id) \
+        if search_results.has_prev else None
+    return render_template('account.html', user_id=user_id, search_results=search_results.items,
+                           number_searches=number_searches, password_form=password_form,
+                           next_url=next_url, prev_url=prev_url)
 
 
 @main.route("/search", methods=['GET'])
