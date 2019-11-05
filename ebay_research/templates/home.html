@@ -5,31 +5,58 @@
         <div class="text-center">
             <img src="{{ url_for('static', filename='genius_logo.png') }}" id="main_page_logo" alt="genius bidding logo">
             <script>
-                screenHeight = window.innerHeight / 2.5;
-                document.getElementById('main_page_logo').height = screenHeight.toString();
+                screenWidth = window.innerWidth / 4;
+                document.getElementById('main_page_logo').width = screenWidth.toString();
             </script>
-            <h2>market research for active sales on
+            <h2>a market research tool for
                 <span style="color: hotpink">e</span><span style="color: deepskyblue">b</span><span style="color: palevioletred">a</span><span style="color: cadetblue">y</span>
             </h2>
         </div>
     </div>
 </div>
-<div class="row mt-5">
-    <div class="col text-center" style="max-width: 33%;">
-        <h5>customizable search</h5>
-        <img src="{{ url_for('static', filename='home_page_images/homepage_sunburst.png') }}" height="225">
+<div class="row ml-5 mr-5">
+    <div class="col text-center mt-2">
+        <h5>Get smart about what's selling and who's selling with the ability to:</h5>
+        <p style="font-size: 20px">Identify the most popular items. Track prices over time through saved search results.
+            See who the big sellers are and how they're marketing their products.
+        </p>
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col text-center">
+        <div id="dfTypePlot"></div>
+        <img src="{{ url_for('static', filename='home_page_images/homepage_sunburst.png') }}" id="sunburst_home"
+            alt="sunburst plot">
+        <script>
+            screenWidth = window.innerWidth / 6;
+            document.getElementById('sunburst_home').width = screenWidth.toString();
+        </script>
     </div>
     <div class="col text-center">
-        <h5>full data exports</h5>
-        <img src="{{ url_for('static', filename='home_page_images/homepage_map.png') }}" height="225">
+        <img src="{{ url_for('static', filename='home_page_images/homepage_map.png') }}" id="map_home"
+            alt="usa map plot">
+        <script>
+            screenWidth = window.innerWidth / 4;
+            document.getElementById('map_home').width = screenWidth.toString();
+        </script>
     </div>
     <div class="col text-center">
-        <h5>interactive dashboard</h5>
-        <img src="{{ url_for('static', filename='home_page_images/homepage_bar.png') }}" height="225">
+        <img src="{{ url_for('static', filename='home_page_images/homepage_bar.png') }}" id="seller_home"
+            alt="bar plot image">
+        <script>
+            screenWidth = window.innerWidth / 4;
+            document.getElementById('seller_home').width = screenWidth.toString();
+        </script>
+    </div>
+</div>
+<div class="row ml-5 mr-5 mt-3">
+    <div class="col text-center">
+        <p style="font-size: 20px">Get informative statistics and interactive visualizations. Download full data sets as
+            CSVs to execute custom analysis. Best of all, it's completely FREE.</p>
     </div>
 </div>
 <br><br>
-<div class="row mt-5">
+<div class="row mt-2">
     <div class="col text-center">
         <h2>free data and analysis to <span style="color: #9C1A1C">shop</span> & <span style="color: #9C1A1C">sell</span>
             <i>smarter</i></h2>
@@ -54,8 +81,8 @@
         <img src="{{ url_for('static', filename='home_page_images/mac_genius.png') }}" id="genius_computer"
              alt="image of bidding search screen">
         <script>
-          screenHeight = window.innerHeight / 2;
-          document.getElementById('genius_computer').height = screenHeight.toString();
+          screenWidth = window.innerWidth / 3.5;
+          document.getElementById('genius_computer').width = screenWidth.toString();
         </script>
     </div>
     <div class="col">
@@ -76,4 +103,6 @@
         <a class="button btn-primary btn-lg page_button" role="button" href="{{ url_for('main.about') }}">Click here to learn more</a>
     </div>
 </div>
+{#<script>let map_data = {{ map_data|tojson }}; let price_data = {{ price_data|tojson }};</script>#}
+{#<script src="{{ url_for('static', filename='homepage/home.js') }}" type="module"></script>#}
 {% endblock %}
