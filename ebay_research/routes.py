@@ -36,10 +36,18 @@ from ebay_research.plot_maker import (
 # TODO: Provide credit to https://www.flaticon.com/ for icons
 
 main = Blueprint("main", __name__)
+# STATIC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/homepage/')
+
+
+@main.route('/debug-sentry')
+def trigger_error():
+    division_by_zero = 1 / 0
 
 
 @main.route('/', methods=["GET"])
 def home():
+    # map_data = pickle.load(open(STATIC_PATH + 'map.p', 'rb'))
+    # price_data = pickle.load(open(STATIC_PATH + 'price_listing.p', 'rb'))
     return render_template('home.html')
 
 

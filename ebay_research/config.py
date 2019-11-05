@@ -47,6 +47,5 @@ class TestingConfig(Config):
     FLASK_ENV = 'testing'
     # not yet relevant but should be
     BCRYPT_LOG_ROUNDS = 4
-    # disable csrf tokens for WTF forms (might not be relevant)
     WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = "postgresql://localhost/ebay_research_test"

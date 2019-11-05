@@ -6,12 +6,16 @@ from redis import Redis
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail
-from flask_talisman import Talisman
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 import logging
 from logging.handlers import SMTPHandler
 
-# TODO: Enable Redis!
 
+sentry_sdk.init(
+    dsn="https://d93a22d6384f49809d90100f65157218@sentry.io/1808965",
+    integrations=[FlaskIntegration()]
+)
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
 login_manager = LoginManager()
