@@ -11,10 +11,6 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 
-sentry_sdk.init(
-    dsn="https://d93a22d6384f49809d90100f65157218@sentry.io/1808965",
-    integrations=[FlaskIntegration(), SqlalchemyIntegration()]
-)
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
 login_manager = LoginManager()
@@ -33,6 +29,10 @@ def create_app(settings='production'):
         app.config.from_object(TestingConfig)
     else:
         app.config.from_object(ProductionConfig)
+        sentry_sdk.init(
+            dsn="https://d93a22d6384f49809d90100f65157218@sentry.io/1808965",
+            integrations=[FlaskIntegration(), SqlalchemyIntegration()]
+        )
     register_shellcontext(app)
     db.init_app(app)
     migrate.init_app(app, db)

@@ -2,6 +2,7 @@ import boto3
 import os
 from io import StringIO
 from threading import Thread
+import pandas as pd
 
 s3 = boto3.resource(
     "s3",
@@ -10,7 +11,7 @@ s3 = boto3.resource(
 )
 
 
-def async_s3_write(filename, df, directory='search_results/'):
+def async_s3_write(filename, df, directory=os.getenv('S3_DIRECTORY')):
     csv_buffer = StringIO()
     df.to_csv(csv_buffer, index=False)
     try:
@@ -23,3 +24,12 @@ def write_file_to_s3(filename, df):
     thr = Thread(target=async_s3_write, args=[filename, df])
     thr.start()
     return thr
+
+
+def read_file_from_s3(filename, directory=os.getenv('S3_DIRECTORY')):
+    try:
+        df = s3.Object('geniusbidding', directory + filename).get()['Body']
+        return pd.read_csv(df)
+    except Exception as e:
+        print(e)
+        return None

@@ -113,6 +113,7 @@ export function plotTopSellers(df_seller){
 
 export function plotTimeAvailable(df_length){
   const layout = {
+    'margin': {'t': 10},
     'yaxis': {'title': '# of Items'},
     'xaxis': {'title': '# of Days of Available<br>(End Date - Start Date)'},
     ...commonLayout
@@ -124,6 +125,7 @@ export function plotTimeAvailable(df_length){
 
 export function plotPriceBoxPlot(df_box){
   const layout = {
+    'margin': {'t': 10},
     'yaxis': {'type': 'log', 'tickprefix':'$', 'title': 'Price (w/ Log Scaled Axis)'},
     'showlegend': false,
     ...commonLayout

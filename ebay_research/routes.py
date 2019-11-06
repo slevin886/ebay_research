@@ -3,7 +3,7 @@ from flask import (Blueprint, render_template, request, flash, jsonify,
 from flask_login import current_user, login_required
 import pandas as pd
 from ebay_research import db
-from ebay_research.aws_functions import write_file_to_s3
+from ebay_research.aws_functions import write_file_to_s3, read_file_from_s3
 from ebay_research.data_analysis import EasyEbayData
 from ebay_research.support_functions import ingest_free_search_form, summary_stats
 from ebay_research.models import Search, Results
@@ -21,8 +21,7 @@ from ebay_research.plot_maker import (
 
 
 # TODO: add how to/suggested use page
-# TODO: make mobile friendly, particularly pngs and plots
-# TODO: add reading of csv from s3 if redis unavailable and reduce time of redis cache
+# TODO: make more mobile friendly
 # TODO: possibly only draw figures on lastpull
 # TODO: Add blog
 # TODO: Add more information to home page and about page
@@ -35,18 +34,10 @@ from ebay_research.plot_maker import (
 # TODO: Provide credit to https://www.flaticon.com/ for icons
 
 main = Blueprint("main", __name__)
-# STATIC_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/homepage/')
-
-
-@main.route('/debug-sentry')
-def trigger_error():
-    division_by_zero = 1 / 0
 
 
 @main.route('/', methods=["GET"])
 def home():
-    # map_data = pickle.load(open(STATIC_PATH + 'map.p', 'rb'))
-    # price_data = pickle.load(open(STATIC_PATH + 'price_listing.p', 'rb'))
     return render_template('home.html')
 
 
@@ -131,7 +122,7 @@ def get_data():
         else:
             df = pd.concat([existing_records, df], axis=0, sort=False)
 
-        current_app.redis.set(search_record.id, df.to_msgpack(compress="zlib"), ex=1200)
+        current_app.redis.set(search_record.id, df.to_msgpack(compress="zlib"), ex=60)
 
         stats = summary_stats(df,
                               searching.largest_category,
@@ -182,15 +173,19 @@ def get_data():
 def get_csv():
     if current_app.redis.exists(session['search_id']):
         df = pd.read_msgpack(current_app.redis.get(session['search_id']))
-        search_record = Search.query.get(session['search_id'])
-        search_record.downloaded = True
-        db.session.commit()
-        return Response(
-            df.to_csv(index=False),
-            content_type="text/csv",
-            headers={"Content-Disposition": "attachment;filename=ebay_research.csv"},
-        )
     else:
-        # TODO: file will be saved on s3 and can then be read in from there
-        flash('Your session has timed out and the data is no longer saved! Please search again!', 'warning')
+        filename = str(current_user.id) + '_' + str(session['search_id']) + '.csv'
+        df = read_file_from_s3(filename)
+
+    if not isinstance(df, pd.DataFrame):
+        flash('Whoops! We were unable to find any data for that search...', 'warning')
         return redirect(url_for('main.search'))
+
+    search_record = Search.query.get(session['search_id'])
+    search_record.downloaded = True
+    db.session.commit()
+    return Response(
+        df.to_csv(index=False),
+        content_type="text/csv",
+        headers={"Content-Disposition": "attachment;filename=ebay_research.csv"},
+    )
