@@ -43,9 +43,11 @@ def create_app(settings='production'):
     from ebay_research.routes import main
     from ebay_research.auth import auth
     from ebay_research.errors import error_page
+    from ebay_research.searching import searching
     app.register_blueprint(main)
     app.register_blueprint(auth)
     app.register_blueprint(error_page)
+    app.register_blueprint(searching)
     return app
 
 

@@ -35,11 +35,11 @@ class EasyEbayData:
         self.listing_type = listing_type
         self.item_condition = item_condition
         self.get_category_info = get_category_info
-        self.search_url = None  # will be the result url of the first searched page
-        self.item_aspects = None  # dictionary of item features
-        self.category_info = None  # dictionary of category id and subcategories
-        self.largest_sub_category = None
-        self.largest_category = None
+        self.search_url = ''  # will be the result url of the first searched page
+        self.item_aspects = dict()  # dictionary of item features
+        self.category_info = dict()  # dictionary of category id and subcategories
+        self.largest_sub_category = ''
+        self.largest_category = ''
         self.total_pages: int = 0  # the total number of available pages
         self.total_entries: int = 0  # the total number of items available given keywords (all categories)
         if excluded_words and len(excluded_words) > 2:

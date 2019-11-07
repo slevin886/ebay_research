@@ -23,7 +23,7 @@ def register():
             db.session.commit()
             send_email(new_user, 'Confirm your email address for Genius Bidding', 'email/confirm_email')
             flash('Please check your email to confirm your account and begin researching! If you do not'
-                  'receive your email very soon, please check your spam folder.', 'success')
+                  ' receive your email soon, please check your spam folder.', 'success')
             return redirect(url_for("main.home"))
     return render_template("register.html", form=form)
 
@@ -42,7 +42,7 @@ def confirmation(token):
         login_user(user)
         session['id'] = user.id
         flash('You have successfully confirmed your email! Start searching!', 'success')
-        return redirect(url_for('main.search'))
+        return redirect(url_for('searching.search'))
 
 
 @auth.route("/password_reset", methods=['GET', 'POST'])
@@ -119,7 +119,7 @@ def login():
             else:
                 login_user(user)
             session['id'] = user.id
-            return redirect(url_for('main.search'))
+            return redirect(url_for('searching.search'))
         else:
             flash('Whoops! Check that you entered the correct password & email!', 'danger')
     return render_template("login.html", form=form)

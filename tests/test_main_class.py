@@ -27,8 +27,8 @@ def test_class_init():
         len(ebay_data.item_filter) == 3
     ), "Here, here should be 3 item filters (min_price, listing_type, located_in)"
     # should have None values
-    assert ebay_data.total_entries is None
-    assert ebay_data.item_aspects is None
+    assert ebay_data.total_entries == 0
+    assert isinstance(ebay_data.item_aspects, dict) and not ebay_data.item_aspects
     assert ebay_data.max_price is None
     with pytest.raises(TypeError):
         assert EasyEbayData(), "can't initialize empty class"
@@ -103,21 +103,18 @@ def test_clean_category_info():
 
 
 def test_clean_aspect_dictionary():
-    fake_aspects = {'aspect': {'domainDisplayName': 'aspect subject',
-                               'aspect': [
-                                    {'valueHistogram': [
-                                        {'count': '1', '_valueName': 'val1'},
-                                        {'count': '1', '_valueName': 'val2'},
-                                    ],
-                                     '_name': 'name1'},
-                                    {'valueHistogram': [
-                                        {'count': '2', '_valueName': 'val3'},
-                                        {'count': '2', '_valueName': 'val4'}
-                                    ],
-                                     '_name': 'name2'}
-                               ]
-                               }
-                    }
+    fake_aspects = {'aspect': [
+        {'valueHistogram': [
+            {'count': '1', '_valueName': 'val1'},
+            {'count': '1', '_valueName': 'val2'},
+        ],
+         '_name': 'name1'},
+        {'valueHistogram': [
+            {'count': '2', '_valueName': 'val3'},
+            {'count': '2', '_valueName': 'val4'}
+        ],
+         '_name': 'name2'}
+    ]}
     ebay_data = EasyEbayData(api_id=API_ID, keywords="test class")
     test_results = ebay_data.clean_aspect_dictionary(fake_aspects)
     assert 'name1' in test_results.keys(), 'aspect names should be present in keys'

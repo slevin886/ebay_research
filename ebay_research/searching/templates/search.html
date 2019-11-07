@@ -99,14 +99,14 @@
                     <div class="row mb-2">
                         <div class="col">
                             <p style="margin-bottom: 0"><strong>Items to Return:</strong></p>
-                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                <label class="btn btn-light active">
+                            <div class="btn-group btn-group-toggle" role="group" data-toggle="buttons">
+                                <label class="btn btn-dark page_button active">
                                     <input type="radio" value=1 name="pull_options" autocomplete="off" checked>100
                                 </label>
-                                <label class="btn btn-light">
+                                <label class="btn btn-dark page_button">
                                     <input type="radio" value=5 name="pull_options" autocomplete="off">500
                                 </label>
-                                <label class="btn btn-light">
+                                <label class="btn btn-dark page_button">
                                     <input type="radio" value=10 name="pull_options" autocomplete="off">1000
                                 </label>
                             </div>
@@ -192,7 +192,7 @@
     </div>
     <div class="row">
         <div class="col-4">
-            <a class="btn btn-success page_button" href="{{ url_for('main.get_csv') }}">Download the Full Dataset</a>
+            <a class="btn btn-success page_button" href="{{ url_for('searching.get_csv') }}">Download the Full Dataset</a>
             <p class="mt-2">
                 <a href="" target="_blank" style="color: red;" id="search_url">click here</a> to see the results on ebay
             </p>
