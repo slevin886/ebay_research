@@ -82,17 +82,10 @@ async function pullData() {
 
         }
         // Setting main statistics on page
-        document.getElementById("returned_count").innerHTML = stats['returned_count'];
-        document.getElementById("top_rated_listing").innerHTML = stats['top_rated_listing'];
-        document.getElementById("top_seller").innerHTML = stats['top_seller'];
-        document.getElementById("top_seller_count").innerHTML = stats['top_seller_count'];
-        document.getElementById("top_rated_percent").innerHTML = stats['top_rated_percent'];
-        document.getElementById("avg_price").innerHTML = stats['avg_price'];
-        document.getElementById("median_price").innerHTML = stats['median_price'];
-        document.getElementById("min_price").innerHTML = stats['min_price'];
-        document.getElementById("max_price").innerHTML = stats['max_price'];
-        document.getElementById("avg_shipping_price").innerHTML = stats['avg_shipping_price'];
-        document.getElementById("total_watch_count").innerHTML = stats['total_watch_count'];
+        Object.keys(stats).forEach(key => {
+            document.getElementById(key).innerHTML = stats[key];
+          }
+        );
 
         plotPriceByListing(myData.df_type);
         plotPieListing(myData.df_pie);
@@ -102,7 +95,6 @@ async function pullData() {
         plotSellerMap(myData.map_plot);
         plotTimeAvailable(myData.df_length);
         plotTopSellers(myData.df_seller);
-
         drawTable(myData.tab_data);
 
       })
