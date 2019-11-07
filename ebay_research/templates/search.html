@@ -92,22 +92,33 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row mt-3">
-                        <div class="col">
-                            <label for="items_to_pull"><strong># of Items to return:</strong></label>
-                            <select class="form-control" id="items_to_pull" name="items_to_pull">
-                                <option value=1 selected>100 items</option>
-                                <option value=5>500 items</option>
-                                <option value=10>1000 items</option>
-                            </select>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-3">
-                    <button type="submit" class="btn btn-success btn-lg page_button" id="searchButton">
-                        Get Item Data!</button>
+                <div class="col">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <p style="margin-bottom: 0"><strong>Items to Return:</strong></p>
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-light active">
+                                    <input type="radio" value=1 name="pull_options" autocomplete="off" checked>100
+                                </label>
+                                <label class="btn btn-light">
+                                    <input type="radio" value=5 name="pull_options" autocomplete="off">500
+                                </label>
+                                <label class="btn btn-light">
+                                    <input type="radio" value=10 name="pull_options" autocomplete="off">1000
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button type="submit" class="btn btn-success btn-lg page_button" id="searchButton">
+                                Get Item Data!
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="col">
                     <div id="loading_spinner"></div>
@@ -128,7 +139,7 @@
         <div class="col">
             <img src="{{ url_for('static', filename='icons/item_img.png') }}" class="img-fluid" alt="Responsive image"
                 style="width:20px;float:left;margin-right:5px;">
-            <p>Items in Search: <strong><span id="returned_count"></span></strong></p>
+            <p>Items Returned: <strong><span id="returned_count"></span></strong></p>
             <img src="{{ url_for('static', filename='icons/item_img.png') }}" class="img-fluid" alt="Responsive image"
                 style="width:20px;float:left;margin-right:5px;">
             <p>Total Items Available: <strong><span id="total_entries"></span></strong></p>
