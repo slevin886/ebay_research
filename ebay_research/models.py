@@ -63,8 +63,10 @@ class User(db.Model, UserMixin):
         db.session.add(self)
 
     def __repr__(self):
-        return f"<User(email={self.email}, country={self.country}, state={self.state}, permissions={self.permissions})>"
+        return f"<User(email={self.email}, country={self.country}, state={self.state}, confirmed={self.confirmed})>"
 
+    def __str__(self):
+        return f"User: email={self.email}, country={self.country}, state={self.state}, confirmed={self.confirmed}\n"
 
 class Search(db.Model):
     __tablename__ = 'search'
