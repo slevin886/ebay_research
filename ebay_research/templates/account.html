@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='account_page/account.css') }}">
 <div class="row mt-3">
     <div class="col">
         <h2 class="page_header">my account</h2>
@@ -26,7 +27,7 @@
             <div class="row mt-3">
                 <div class="col">
                     {% if search_results %}
-                    <table class="table">
+                    <table class="table" style="border-bottom-style: solid">
                         <tr class="table thead-dark">
                             <th>id</th>
                             <th>keywords</th>
