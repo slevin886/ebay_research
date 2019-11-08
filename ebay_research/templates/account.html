@@ -74,7 +74,7 @@
               <div class="row mt-3 mb-5">
                 <div class="col-4">
                     <h3 class="page_header">change password</h3>
-                    <form method="POST" action="{{ url_for('main.account', user_id=current_user.id) }}">
+                    <form method="POST" action="{{ url_for('main.account') }}">
                         {{ password_form.csrf_token }}
                         <div class="row mt-3">
                             <div class="col">

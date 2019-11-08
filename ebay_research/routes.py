@@ -32,9 +32,9 @@ def about():
     return render_template('about.html')
 
 
-@main.route('/account/<user_id>', methods=['GET', 'POST'])
+@main.route('/account', methods=['GET', 'POST'])
 @login_required
-def account(user_id):
+def account():
     password_form = ChooseNewPassword()
     if password_form.validate_on_submit():
         password = password_form.old_password.data
@@ -50,10 +50,7 @@ def account(user_id):
     search_results = db.session.query(Search, Results).filter(Search.user_id == current_user.id).join(Results)\
         .order_by(Search.time_searched.desc()).paginate(page, 10, False)
     # creating pagination
-    next_url = url_for('main.account', page=search_results.next_num, user_id=current_user.id) \
-        if search_results.has_next else None
-    prev_url = url_for('main.account', page=search_results.prev_num, user_id=current_user.id) \
-        if search_results.has_prev else None
-    return render_template('account.html', user_id=user_id, search_results=search_results.items,
-                           number_searches=number_searches, password_form=password_form,
-                           next_url=next_url, prev_url=prev_url)
+    next_url = url_for('main.account', page=search_results.next_num) if search_results.has_next else None
+    prev_url = url_for('main.account', page=search_results.prev_num) if search_results.has_prev else None
+    return render_template('account.html', password_form=password_form, next_url=next_url, prev_url=prev_url,
+                           number_searches=number_searches, search_results=search_results.items)

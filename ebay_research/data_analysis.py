@@ -1,4 +1,5 @@
 import pandas as pd
+from typing import List
 from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection as Finding
 
@@ -28,7 +29,6 @@ class EasyEbayData:
         self.api_id = api_id
         self.keywords = keywords  # keywords only search item titles
         self.exclude_words = excluded_words
-        self.usa_only = True  # for now, only support us sellers and removing kwarg from init
         self.min_price = min_price if min_price else 0.0
         self.max_price = max_price
         self.sort_order = sort_order
@@ -52,21 +52,26 @@ class EasyEbayData:
     def __repr__(self):
         return f"[EasyEbayData] query: {self.full_query}"
 
-    def _create_item_filter(self):
+    def _create_item_filter(self) -> List[dict]:
+        """
+        Sets the search filters into the appropriate format where necessary
+        :return: List of dictionaries where each dictionary is a filter
+        """
         if self.sort_order in ['BidCountMost', 'BidCountFewest']:
             if self.listing_type not in ['Auction', 'AuctionWithBIN']:
                 print("Changing listing type to auction to support a sort order using bid count")
                 self.listing_type = 'Auction'  # sort order without that listing type returns nothing
         item_filter = list()
-        item_filter.append({'name': 'MinPrice', 'value': self.min_price})
+        item_filter.extend(
+            [{'name': 'MinPrice', 'value': self.min_price},
+             {'name': 'LocatedIn', 'value': 'US'}]  # only looks at US based sellers
+        )
         if self.max_price and self.max_price > self.min_price:
             item_filter.append({'name': 'MaxPrice', 'value': self.max_price})
         if self.listing_type and self.listing_type != 'All':
             item_filter.append({'name': 'ListingType', 'value': self.listing_type})
         if self.item_condition:
             item_filter.append({'name': 'Condition', 'value': self.item_condition})
-        if self.usa_only:
-            item_filter.append({'name': 'LocatedIn', 'value': 'US'})
         return item_filter
 
     def flatten_dict(self, item, acc=None, parent_key='', sep='_'):
@@ -126,8 +131,8 @@ class EasyEbayData:
 
     def single_page_query(self, page_number=1, include_meta_data=True):
         """
-        Tests that an initial API connection is successful and returns the initial raw response as a dictionary if
-        successful else returns a string of the error that occurred. Should generally be the first search used.
+        Tests that an initial API connection is successful and returns a list of unnested ebay item dictionaries .
+        If unsuccessful returns a string of the error that occurred.
         """
         output_selection = ['SellerInfo', 'StoreInfo']
 
@@ -142,13 +147,12 @@ class EasyEbayData:
                                                            'itemFilter': self.item_filter,
                                                            'sortOrder': self.sort_order,
                                                            'outputSelector': output_selection})
+            assert response.reply.ack == 'Success'
         except ConnectionError:
             print('Connection Error! Ensure that your API key was correctly and you have web connectivity.')
             return "connection_error"
-        try:
-            assert response.reply.ack == 'Success'
         except AssertionError:
-            print(f'There is an API error, please check the parameters of your search or rate limit: {self.full_query}')
+            print(f'There is an API error, check the parameters of your search or rate limit: {self.full_query}')
             return "api_error"
 
         response = response.dict()
@@ -162,7 +166,7 @@ class EasyEbayData:
             self.total_entries = int(response['paginationOutput']['totalEntries'])
             self._clean_category_data(response)
         self.search_url = response['itemSearchURL']
-        return response
+        return [self.flatten_dict(i) for i in response['searchResult']['item']]
 
     def _clean_category_data(self, response):
         try:
@@ -174,35 +178,32 @@ class EasyEbayData:
         except KeyError:
             print(f'There are no aspects for a search of: {self.full_query}')
 
-    def _get_pages_to_pull(self, response: dict, pages_wanted: int):
-        """response comes from test_connection to access total pages without making another API call"""
-        self.total_pages = int(response['paginationOutput']['totalPages'])
-        self.total_entries = int(response['paginationOutput']['totalEntries'])
+    def _get_pages_to_pull(self, pages_wanted: int = None):
+        """
+        A helper function if using full_data_pull that returns the number of pages available to pull
+        up to the ebay API limit or the max pages wanted by the user.
+        :param pages_wanted: the total pages wanted by the user
+        :return: the number of pages to pull as integer
+        """
         if pages_wanted:
             # can't pull more than max pages or 100 total pages
-            pages2pull = min([self.total_pages, pages_wanted, 100])
+            return min([self.total_pages, pages_wanted, 100])
         else:
-            pages2pull = min([self.total_pages, 100])
-        return pages2pull
+            return min([self.total_pages, 100])
 
     def full_data_pull(self, pages_wanted: int = None):
         response = self.single_page_query()
 
         if isinstance(response, str):
-            return response
-
-        if self.get_category_info:
-            self._clean_category_data(response)
-
-        data = response['searchResult']['item']
+            raise RuntimeError(response)
 
         all_items = []
 
-        all_items.extend([self.flatten_dict(i) for i in data])
+        all_items.extend(response)
 
-        pages2pull = self._get_pages_to_pull(response, pages_wanted)
+        pages2pull = self._get_pages_to_pull(pages_wanted)
 
-        if pages2pull < 2:  # stop if only pulling one/zero pages or only one page exists
+        if pages2pull < 2:
             return pd.DataFrame(all_items)
 
         for page in range(2, pages2pull + 1):
@@ -211,7 +212,6 @@ class EasyEbayData:
                 print(f'Unable to connect to page #: {page}\bPulled {page -1 } pages.')
                 return pd.DataFrame(all_items)
             else:
-                data = response['searchResult']['item']
-                all_items.extend([self.flatten_dict(i) for i in data])
+                all_items.extend(response)
 
         return pd.DataFrame(all_items)

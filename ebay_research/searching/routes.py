@@ -59,8 +59,7 @@ def get_data():
                 message = "There were no results for those search parameters, please try a different search."
             return Response(response=message, status=400)
 
-        data = base_data['searchResult']['item']
-        df = pd.DataFrame([easy_ebay.flatten_dict(i) for i in data])
+        df = pd.DataFrame(base_data)
 
         if first_pull:
             db.session.add(search_record)
