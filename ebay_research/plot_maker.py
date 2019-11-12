@@ -82,6 +82,7 @@ def prep_tab_data(df):
     df = df[topics_for_tab].dropna(subset=['watchCount'])
     if df.empty:
         return None
+    df['watchCount'] = df['watchCount'].astype(int)
     df = df.sort_values(by='watchCount', ascending=False)
     if 'endTime' in topics_for_tab:
         df['endTime'] = pd.to_datetime(df['endTime'])

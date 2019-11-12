@@ -68,6 +68,7 @@ class User(db.Model, UserMixin):
     def __str__(self):
         return f"User: email={self.email}, country={self.country}, state={self.state}, confirmed={self.confirmed}\n"
 
+
 class Search(db.Model):
     __tablename__ = 'search'
     id = db.Column(db.Integer, primary_key=True)

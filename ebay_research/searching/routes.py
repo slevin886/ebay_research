@@ -44,7 +44,7 @@ def get_data():
             existing_records = None
         else:
             search_record = Search.query.filter_by(id=session['search_id']).first()
-            existing_records = pd.read_msgpack(current_app.redis.get(search_record.id))
+            existing_records = read_file_from_s3(session['file_name'])
 
         base_data = easy_ebay.single_page_query(page_number=page_number, include_meta_data=first_pull)
 
@@ -64,12 +64,11 @@ def get_data():
         if first_pull:
             db.session.add(search_record)
             db.session.commit()
+            session['file_name'] = str(current_user.id) + '_' + str(search_record.id) + '.csv'
             session['search_id'] = search_record.id
             session['total_entries'] = easy_ebay.total_entries
         else:
             df = pd.concat([existing_records, df], axis=0, sort=False)
-
-        current_app.redis.set(search_record.id, df.to_msgpack(compress="zlib"), ex=60)
 
         stats = summary_stats(df,
                               easy_ebay.largest_category,
@@ -86,8 +85,6 @@ def get_data():
             results = Results(search_id=search_record.id, user_id=current_user.id, **stats)
             db.session.add(results)
             db.session.commit()
-            s3_filename = str(current_user.id) + '_' + str(search_record.id) + '.csv'
-            write_file_to_s3(s3_filename, df)
 
         tab_data = prep_tab_data(df)
         df_seller = make_seller_bar(df)
@@ -100,6 +97,7 @@ def get_data():
             sunburst_plot = None
         else:
             sunburst_plot = make_sunburst(easy_ebay.item_aspects)
+        write_file_to_s3(session['file_name'], df)
         return jsonify(map_plot=map_plot,
                        tab_data=tab_data,
                        hist_plot=df["currentPrice_value"].tolist(),
@@ -119,11 +117,8 @@ def get_data():
 @searching.route("/get_csv", methods=["GET"])
 @login_required
 def get_csv():
-    if current_app.redis.exists(session['search_id']):
-        df = pd.read_msgpack(current_app.redis.get(session['search_id']))
-    else:
-        filename = str(current_user.id) + '_' + str(session['search_id']) + '.csv'
-        df = read_file_from_s3(filename)
+
+    df = read_file_from_s3(session['file_name'])
 
     if not isinstance(df, pd.DataFrame):
         flash('Whoops! We were unable to find any data for that search...', 'warning')
