@@ -84,6 +84,7 @@ class Search(db.Model):
     downloaded = db.Column(db.Boolean, default=False, nullable=False)
     pages_wanted = db.Column(db.Integer, default=1, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    category_id = db.Column(db.String(50), default=None, nullable=True)
     search_results = db.relationship('Results', uselist=False)
 
     def __repr__(self):

@@ -1,7 +1,9 @@
 import {
   plotPriceByListing, plotPieListing, plotPriceBoxPlot, plotPriceHistogram,
-  plotSellerMap, plotSunBurst, plotTimeAvailable, plotTopSellers
+  plotSellerMap, plotSunBurst, plotTimeAvailable, plotTopSellers,
 } from './plot_functions.js';
+
+import {categoryInitiation} from "./category_ids.js";
 
 import {drawTable} from "./table_function.js";
 
@@ -126,4 +128,5 @@ async function pullData() {
 
 window.onload = function () {
   document.getElementById('searchButton').addEventListener('click', pullData)
+  categoryInitiation()
 };

@@ -1,4 +1,5 @@
 // Plot functions for search.html
+// MAKE PLOT HEIGHT IN COMMON LAYOUT RELATIVE TO SCREEN
 
 const commonLayout = {
   'plot_bgcolor': '#F8F8F8',

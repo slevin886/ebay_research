@@ -97,6 +97,20 @@
             <div class="row">
                 <div class="col">
                     <div class="row mb-2">
+                        <div class="col-6">
+                            <label for="category_select"><strong>In this category:</strong></label>
+                            <select class="form-control" id="category_select" name="category_select">
+                                <option value="" selected>All Categories</option>
+                            </select>
+                        </div>
+                        <div class="col-6" style="display: none;" id="showSubCategory">
+                            <label for="sub_category_select"><strong>In this subcategory:</strong></label>
+                            <select class="form-control" id="sub_category_select" name="sub_category_select">
+                                <option value="" selected>No Subcategory</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
                         <div class="col">
                             <p style="margin-bottom: 0"><strong>Items to Return:</strong></p>
                             <div class="btn-group btn-group-toggle" role="group" data-toggle="buttons">

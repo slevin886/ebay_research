@@ -15,7 +15,7 @@ class EasyEbayData:
 
     def __init__(self, api_id: str, keywords: str, excluded_words: str = None, sort_order: str = "BestMatch",
                  get_category_info: bool = True, listing_type: str = None, min_price: float = 0.0,
-                 max_price: float = None, item_condition: str = None):
+                 max_price: float = None, category_id: str = None, item_condition: str = None):
         """
         A class that returns a clean data set of items for sale based on a keyword search from ebay. After
         instantiation, call 'full_data_pull' method with the number of pages wanted to collect data and return it
@@ -31,6 +31,7 @@ class EasyEbayData:
         self.exclude_words = excluded_words
         self.min_price = min_price if min_price else 0.0
         self.max_price = max_price
+        self.category_id = category_id
         self.sort_order = sort_order
         self.listing_type = listing_type
         self.item_condition = item_condition
@@ -129,44 +130,59 @@ class EasyEbayData:
             all_aspects[asp['_name']] = sub_aspect
         return all_aspects
 
-    def single_page_query(self, page_number=1, include_meta_data=True):
+    def create_search_parameters(self, page_number, include_meta_data):
+        parameters = dict(
+            keywords=self.full_query,
+            paginationInput=dict(pageNumber=page_number, entriesPerPage=100),
+            itemFilter=self.item_filter,
+            sortOrder=self.sort_order,
+            outputSelector=['SellerInfo', 'StoreInfo'],
+        )
+        if include_meta_data:
+            parameters['outputSelector'].extend(['AspectHistogram', 'CategoryHistogram'])
+
+        if self.category_id:
+            parameters['categoryId'] = self.category_id
+        return parameters
+
+    def single_page_query(self, page_number=1, include_meta_data=True, return_df=False):
         """
         Tests that an initial API connection is successful and returns a list of unnested ebay item dictionaries .
         If unsuccessful returns a string of the error that occurred.
         """
-        output_selection = ['SellerInfo', 'StoreInfo']
-
-        if include_meta_data:
-            output_selection.extend(['AspectHistogram', 'CategoryHistogram'])
-
+        parameters = self.create_search_parameters(page_number, include_meta_data)
+        api = Finding(appid=self.api_id, config_file=None)
         try:
-            api = Finding(appid=self.api_id, config_file=None)
-            response = api.execute('findItemsByKeywords', {'keywords': self.full_query,
-                                                           'paginationInput': {'pageNumber': page_number,
-                                                                               'entriesPerPage': 100},
-                                                           'itemFilter': self.item_filter,
-                                                           'sortOrder': self.sort_order,
-                                                           'outputSelector': output_selection})
+            response = api.execute('findItemsAdvanced', parameters)
             assert response.reply.ack == 'Success'
         except ConnectionError:
-            print('Connection Error! Ensure that your API key was correctly and you have web connectivity.')
-            return "connection_error"
+            message = 'Connection Error! Ensure that your API key was correctly and you have web connectivity.'
+            print(message)
+            return message
         except AssertionError:
-            print(f'There is an API error, check the parameters of your search or rate limit: {self.full_query}')
-            return "api_error"
+            try:
+                message = response.dict()['errorMessage']['error']['message']
+            except KeyError:
+                message = 'There is an API error, check your rate limit or search parameters'
+            print(message)
+            return message
 
         response = response.dict()
 
         if response['paginationOutput']['totalPages'] == '0':
-            print(f'There are no results for a search of: {self.full_query}')
-            return "no_results_error"
+            message = f'There are no results for a search of: {self.full_query}'
+            print(message)
+            return message
 
         if include_meta_data:
             self.total_pages = int(response['paginationOutput']['totalPages'])
             self.total_entries = int(response['paginationOutput']['totalEntries'])
             self._clean_category_data(response)
         self.search_url = response['itemSearchURL']
-        return [self.flatten_dict(i) for i in response['searchResult']['item']]
+        response = [self.flatten_dict(i) for i in response['searchResult']['item']]
+        if return_df:
+            return pd.DataFrame(response)
+        return response
 
     def _clean_category_data(self, response):
         try:
