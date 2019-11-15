@@ -11,3 +11,18 @@ function toggleRecurVisibility(){
     items[i].style.display = displayMode;
   }
 }
+
+
+async function setRecurringSearch(searchId) {
+  await axios.post(
+    '/set_recurring_search',
+    {'search_id': searchId},
+  )
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  toggleRecurVisibility();
+}

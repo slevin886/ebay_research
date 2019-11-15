@@ -1,4 +1,5 @@
-from flask import (Blueprint, render_template, request, flash, url_for)
+from flask import (Blueprint, render_template, request,
+                   flash, url_for, jsonify)
 from flask_login import current_user, login_required
 from ebay_research import db
 from ebay_research.models import Search, Results
@@ -54,3 +55,13 @@ def account():
     prev_url = url_for('main.account', page=search_results.prev_num) if search_results.has_prev else None
     return render_template('account.html', password_form=password_form, next_url=next_url, prev_url=prev_url,
                            number_searches=number_searches, search_results=search_results.items)
+
+
+@main.route('/set_recurring_search', methods=['POST'])
+@login_required
+def set_recurring_search():
+    # TODO: add table of recurring searches, write script to pull and run recurring jobs
+    # TODO: ensure no one has more than two recurring searches, write message to help user
+    # TODO: show message to tell user it is set
+    search_id = int(request.get_json()['search_id'])
+    return jsonify({'message': 'success'}), 200
