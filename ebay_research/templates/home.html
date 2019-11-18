@@ -1,17 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='home_page_images/home.css') }}">
 <div class="row justify-content-center mt-3">
-    <div class="col">
-        <div class="text-center">
-            <img src="{{ url_for('static', filename='genius_logo.png') }}" id="main_page_logo" alt="genius bidding logo">
-            <script>
-                screenWidth = window.innerWidth / 3.5;
-                document.getElementById('main_page_logo').width = screenWidth.toString();
-            </script>
-            <h2>a market research tool for
-                <span style="color: hotpink">e</span><span style="color: deepskyblue">b</span><span style="color: palevioletred">a</span><span style="color: cadetblue">y</span>
-            </h2>
-        </div>
+    <div class="col text-center">
+        <img src="{{ url_for('static', filename='home_page_images/brain.png') }}" id="brain" alt="image of brain">
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col text-center">
+        <img src="{{ url_for('static', filename='home_page_images/logotext.png') }}" id="logo_text" alt="genius bidding text">
+    </div>
+    <script>
+        document.getElementById('logo_text').width = String(window.innerWidth / 3.5);
+        document.getElementById('brain').width = String(window.innerWidth / 5);
+    </script>
+</div>
+<div class="row">
+    <div class="col text-center">
+        <h2>a market research tool for
+            <span style="color: hotpink">e</span><span style="color: deepskyblue">b</span><span style="color: palevioletred">a</span><span style="color: cadetblue">y</span>
+        </h2>
     </div>
 </div>
 <div class="row ml-5 mr-5 mt-3">

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='registration/register.css') }}">
 <div class="row mt-5 ml-5">
     <div class="col">
         <h2 class="page_header">Register</h2>
@@ -35,6 +36,10 @@
             <button type="submit" class="btn btn-success btn-lg">Register!</button>
         </form>
     </div>
+    <div class="col text-center">
+        <img src="{{ url_for('static', filename='home_page_images/brain.png') }}" id="brain" alt="image of brain">
+        <script>document.getElementById('brain').width = String(window.innerWidth / 5);</script>
+    </div>
 </div>
-<script src="{{ url_for('static', filename='register.js') }}"></script>
+<script src="{{ url_for('static', filename='registration/register.js') }}"></script>
 {% endblock %}
