@@ -1,3 +1,5 @@
+let alertDiv = document.getElementById('js_alert');
+let messageDiv = document.getElementById('alert_message');
 
 const switchToggle = {'none': 'block', 'block': 'none'};
 
@@ -19,10 +21,61 @@ async function setRecurringSearch(searchId) {
     {'search_id': searchId},
   )
     .then((res) => {
-      console.log(res.data);
+      if (res.data.success) {
+        sessionStorage.setItem("reloading", "true");
+        sessionStorage.setItem("message", res.data.message);
+        location.reload();
+      } else {
+        messageDiv.innerText = res.data.message;
+        alertDiv.style.display = 'block';
+        alertDiv.classList.add('show');
+        alertDiv.classList.add('alert-danger');
+      }
     })
     .catch((error) => {
       console.log(error);
+      messageDiv.innerText = 'Whoops! Something went wrong, please try again later';
+      alertDiv.style.display = 'block';
+      alertDiv.classList.add('show');
     });
   toggleRecurVisibility();
 }
+
+
+async function stopRecurringSearch(recurId) {
+  await axios.post(
+    '/stop_recurring_search',
+    {'recur_id': recurId},
+  )
+    .then((res) => {
+      messageDiv.innerText = res.data.message;
+      alertDiv.style.display = 'block';
+      alertDiv.classList.add('show');
+      if (res.data.success) {
+        alertDiv.classList.add('alert-success');
+      } else {
+        alertDiv.classList.add('alert-danger');
+      }
+      let row = document.getElementById('recur_' + recurId);
+      row.parentNode.removeChild(row);
+    })
+    .catch((error) => {
+      console.log(error);
+      messageDiv.innerText = 'Whoops! Something went wrong, please try again later';
+      alertDiv.style.display = 'block';
+      alertDiv.classList.add('show');
+    });
+  toggleRecurVisibility();
+}
+
+window.onload = function () {
+  let reloading = sessionStorage.getItem("reloading");
+  if (reloading) {
+    messageDiv.innerText = sessionStorage.getItem("message");
+    alertDiv.style.display = 'block';
+    alertDiv.classList.add('show');
+    alertDiv.classList.add('alert-success');
+    sessionStorage.removeItem("reloading");
+    sessionStorage.removeItem("message");
+  }
+};

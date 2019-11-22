@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if searches %}
+<div class="row mt-3">
+    <div class="col-lg-4 col-sm col-xs">
+        <label for="recurring_search"><strong>View Search:</strong></label>
+        <select class="form-control" id="recurring_search" name="recurring_search">
+            {% for recur, search in searches %}
+            <option value="{{ recur.id }}">ID: {{ search.id }}, Keywords: {{ search.keywords }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col-lg-4 col-sm col-xs">
+        <label for="trend_topic"><strong>Trend Options:</strong></label>
+        <select class="form-control" id="trend_topic" name="trend_topic">
+            <option value="median_price">Median Price</option>
+            <option value="avg_price">Average Price</option>
+            <option value="min_price">Minimum Price</option>
+            <option value="max_price">Maximum Price</option>
+            <option value="top_rated_percent">% Top Rated Sellers</option>
+            <option value="top_rated_listing">% Top Rated Listing</option>
+{#            <option value="top_seller">Top Seller & Count</option>#}
+            <option value="total_entries">Total Items for Sale</option>
+            <option value="total_watch_count">Total Watch Count</option>
+            <option value="average_shipping_price">Average Shipping Price</option>
+        </select>
+    </div>
+</div>
+<div class="row mt-5 mb-5">
+    <div class="col">
+        <div id="trendPlot"></div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.8.6/apexcharts.min.js"></script>
+<script src="{{ url_for('static', filename='trends/trends.js') }}"></script>
+{% else %}
+<div class="row mt-5 mb-5">
+    <div class="col-lg-4 col-sm col-xs">
+        <h5>You currently have no recurring searches.</h5>
+        <p>By setting a recurring search, Genius Bidding will automatically run your
+            search each week and show you how your market is changing over time.</p>
+        <p>To set a recurring search, go to <a href="{{ url_for('main.account') }}">
+            your account page
+        </a>, click 'set recurring search', and select the search you'd like us to
+        track for you.</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -5,6 +5,8 @@ import os
 from time import time
 import jwt
 
+# TODO: add cascading deletes where applicable
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -85,7 +87,7 @@ class Search(db.Model):
     pages_wanted = db.Column(db.Integer, default=1, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     category_id = db.Column(db.String(50), default=None, nullable=True)
-    search_results = db.relationship('Results', uselist=False)
+    search_results = db.relationship('Results', lazy='dynamic')
 
     def __repr__(self):
         return f"<Search(full_query={self.keywords}, time_searched={self.time_searched}, user_id={self.user_id})>"
@@ -112,6 +114,25 @@ class Results(db.Model):
     avg_shipping_price = db.Column(db.Float)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     search_id = db.Column(db.Integer, db.ForeignKey('search.id'))
+    recurring = db.relationship('RecurringIds', uselist=False, backref="result_data")
 
     def __repr__(self):
         return f"<Results(id={self.id}, largest_category={self.largest_cat_name}, returned_count={self.returned_count})"
+
+
+class Recurring(db.Model):
+    __tablename__ = 'recurring'
+    id = db.Column(db.Integer, primary_key=True)
+    search_id = db.Column(db.INTEGER, db.ForeignKey('search.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    active = db.Column(db.Boolean, nullable=False)
+    day_of_week = db.Column(db.Integer, nullable=False)
+    recurring_ids = db.relationship('RecurringIds', lazy='dynamic')
+
+
+class RecurringIds(db.Model):
+    __tablename__ = 'recurring_ids'
+    id = db.Column(db.Integer, primary_key=True)
+    recurring_id = db.Column(db.Integer, db.ForeignKey('recurring.id'))
+    result_id = db.Column(db.Integer, db.ForeignKey('results.id'))
+    time_searched = db.Column(db.DateTime, default=datetime.utcnow, index=True)

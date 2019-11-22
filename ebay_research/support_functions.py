@@ -25,7 +25,7 @@ def currency_maker(dollars: float):
 BOOL_MAP = {'true': True, 'false': False}
 
 
-def summary_stats(df, largest_cat, largest_sub_cat, total_items_available):
+def summary_stats(df, largest_cat=None, largest_sub_cat=None, total_items_available=None):
     stats = dict()
     stats['avg_price'] = currency_maker(df['currentPrice_value'].astype(float).mean())
     stats['median_price'] = currency_maker(df['currentPrice_value'].astype(float).median())

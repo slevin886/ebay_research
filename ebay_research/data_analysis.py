@@ -175,10 +175,13 @@ class EasyEbayData:
             return message
 
         if include_meta_data:
-            self.total_pages = int(response['paginationOutput']['totalPages'])
-            self.total_entries = int(response['paginationOutput']['totalEntries'])
             self._clean_category_data(response)
+
+        # Eventually don't want to run these each time... need to check follow through
+        self.total_entries = int(response['paginationOutput']['totalEntries'])
+        self.total_pages = int(response['paginationOutput']['totalPages'])
         self.search_url = response['itemSearchURL']
+
         response = [self.flatten_dict(i) for i in response['searchResult']['item']]
         if return_df:
             return pd.DataFrame(response)
@@ -207,8 +210,8 @@ class EasyEbayData:
         else:
             return min([self.total_pages, 100])
 
-    def full_data_pull(self, pages_wanted: int = None):
-        response = self.single_page_query()
+    def full_data_pull(self, pages_wanted: int = None, include_meta_data=False):
+        response = self.single_page_query(include_meta_data=include_meta_data)
 
         if isinstance(response, str):
             raise RuntimeError(response)
@@ -225,7 +228,7 @@ class EasyEbayData:
         for page in range(2, pages2pull + 1):
             response = self.single_page_query(page_number=page, include_meta_data=False)
             if isinstance(response, str):
-                print(f'Unable to connect to page #: {page}\bPulled {page -1 } pages.')
+                print(f'Unable to connect to page #: {page}\bPulled { page - 1 } pages.')
                 return pd.DataFrame(all_items)
             else:
                 all_items.extend(response)

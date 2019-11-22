@@ -7,11 +7,6 @@
         <h5><span style="color: darkred;">account created</span>: {{ current_user.registered_on.strftime('%m-%d-%Y') }}
         </h5>
         <h5><span style="color: darkred;">total searches</span>: {{ number_searches }}</h5>
-        {% if search_results %}
-        <button type="button" class="btn btn-primary page_button"
-                onclick="toggleRecurVisibility();">Set Recurring Search
-        </button>
-        {% endif %}
     </div>
 </div>
 <div class="row mt-3">
@@ -22,15 +17,26 @@
                aria-selected="true">recent searches</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" id="recur-tab" data-toggle="tab" href="#recurTab" role="tab" aria-controls="recurTab"
+               aria-selected="false">recurring searches</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact"
                aria-selected="false">manage account</a>
           </li>
         </ul>
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="search-tab">
-            <div class="row mt-3">
-                <div class="col">
-                    {% if search_results %}
+              {% if search_results %}
+              <div class="row mt-4">
+                  <div class="col">
+                    <button type="button" class="btn btn-primary page_button"
+                            onclick="toggleRecurVisibility();">Set Recurring Search
+                    </button>
+                  </div>
+              </div>
+              <div class="row mt-3 mb-5">
+                  <div class="col">
                         <div class="table-responsive">
                             <table class="table table-responsive" style="border-bottom-style: solid">
                                 <tr class="table thead-dark">
@@ -82,6 +88,54 @@
                 </div>
             </div>
           </div>
+          <div class="tab-pane fade" id="recurTab" role="tabpanel" aria-labelledby="recur-tab">
+                <div class="row mt-3">
+                    <div class="col">
+                        <h5>Recurring Searches</h5>
+                        {% if recurring_searches %}
+                            <p>The following recurring searches are currently active:</p>
+                        {% else %}
+                            <p>You don't have any active recurring searches at the moment.</p>
+                        {% endif %}
+                    </div>
+                    {%  if recurring_searches %}
+                    <div class="col">
+                        <button type="button" class="btn btn-danger page_button"
+                                onclick="toggleRecurVisibility();">Stop Recurring Search
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="table-responsive">
+                            <table class="table table-responsive" style="border-bottom-style: solid">
+                                <tr class="table thead-dark">
+                                    <th>ID</th>
+                                    <th>Keywords</th>
+                                    <th>First Search Date</th>
+                                    <th>Times Searched</th>
+                                </tr>
+                                {% if recurring_searches %}
+                                {% for recur, search in recurring_searches %}
+                                <tr id="recur_{{ recur.id }}">
+                                    <td>{{ search.id }}</td>
+                                    <td>{{ search.keywords }}</td>
+                                    <td>{{ search.time_searched.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ recur.recurring_ids.all() | length }}</td>
+                                    <td class="hideRecurring">
+                                        <button type="button" class="btn btn-sm btn-danger" value="{{ recur.id }}"
+                                                id="recurStops" onclick="stopRecurringSearch(this.value)">stop
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
           <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="profile-tab">
               <div class="row mt-3 mb-5">
                 <div class="col-4">

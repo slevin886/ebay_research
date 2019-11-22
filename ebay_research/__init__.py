@@ -42,10 +42,12 @@ def create_app(settings='production'):
     from ebay_research.auth import auth
     from ebay_research.errors import error_page
     from ebay_research.searching import searching
+    from ebay_research.trends import recurring
     app.register_blueprint(main)
     app.register_blueprint(auth)
     app.register_blueprint(error_page)
     app.register_blueprint(searching)
+    app.register_blueprint(recurring)
     return app
 
 
