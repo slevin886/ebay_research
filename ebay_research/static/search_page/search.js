@@ -7,6 +7,9 @@ import {categoryInitiation} from "./category_ids.js";
 
 import {drawTable} from "./table_function.js";
 
+let alertDiv = document.getElementById('js_alert');
+let messageDiv = document.getElementById('alert_message');
+
 
 // options for loading spinner
 const spinOptions = {
@@ -25,7 +28,6 @@ async function pullData() {
   const formData = new FormData(mainForm);
   let firstPull = true;
   let errorMessage = '';
-  let showError = false;
   let maxPages = document.querySelector('input[name="pull_options"]:checked').value;
   let searchID;
   const target = document.getElementById('loading_spinner');
@@ -104,29 +106,21 @@ async function pullData() {
 
       })
       .catch((error) => {
-          errorMessage = error.response.data;
-          showError = true;
+          console.log(error);
+          messageDiv.innerText = 'Whoops! Something went wrong, we were unable to complete your search.';
+          alertDiv.style.display = 'block';
+          alertDiv.classList.add('show');
+          spinner.stop();
+          document.getElementById('searchButton').disabled = false;
+          break;
         }
       );
-    if (showError) {
-      let errorNode = document.createElement('div');
-      errorNode.setAttribute('class', 'alert alert-danger alert-dismissible fade show');
-      errorNode.innerHTML = `
-          <span>${errorMessage}</span>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-          </button>
-      `;
-      document.getElementById('top_search_page').appendChild(errorNode);
-      spinner.stop();
-      break
-    }
   }
   spinner.stop();
   document.getElementById('searchButton').disabled = false;
 }
 
 window.onload = function () {
-  document.getElementById('searchButton').addEventListener('click', pullData)
+  document.getElementById('searchButton').addEventListener('click', pullData);
   categoryInitiation()
 };
