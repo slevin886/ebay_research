@@ -20,6 +20,12 @@ from ebay_research.plot_maker import (
     make_auction_length,
 )
 
+# TODO: need to run the telecaster search and see why the last page is not being flagged
+# it seems there are only 700 available items but that the user isn't made aware
+# TODO: flashed warning is not being made on error
+# TODO: look into last pull
+# TODO: the error is happening because the form isn't validating which is sending stats
+# back as null
 
 @searching.route("/search", methods=['GET'])
 @login_required
@@ -46,20 +52,22 @@ def get_data():
             search_record = Search.query.filter_by(id=session['search_id']).first()
             existing_records = read_file_from_s3(session['file_name'])
 
-        base_data = easy_ebay.single_page_query(page_number=page_number, include_meta_data=first_pull)
-
-        if isinstance(base_data, str):
+        df = easy_ebay.single_page_query(
+            page_number=page_number,
+            include_meta_data=first_pull,
+            return_df=True
+        )
+        if isinstance(df, str):
+            print(df)
             if first_pull:
                 search_record.is_successful = False
                 db.session.add(search_record)
                 db.session.commit()
-            if base_data == "connection_error":
+            if df == "connection_error":
                 message = "Uh oh! There seems to be a problem connecting to ebay's API, please try again later!"
             else:
                 message = "There were no results for those search parameters, please try a different search."
             return Response(response=message, status=400)
-
-        df = pd.DataFrame(base_data)
 
         if first_pull:
             db.session.add(search_record)
@@ -67,13 +75,13 @@ def get_data():
             session['file_name'] = str(current_user.id) + '_' + str(search_record.id) + '.csv'
             session['search_id'] = search_record.id
             session['total_entries'] = easy_ebay.total_entries
+            stats = summary_stats(df,
+                                  easy_ebay.largest_category,
+                                  easy_ebay.largest_sub_category,
+                                  easy_ebay.total_entries)
         else:
             df = pd.concat([existing_records, df], axis=0, sort=False)
-
-        stats = summary_stats(df,
-                              easy_ebay.largest_category,
-                              easy_ebay.largest_sub_category,
-                              easy_ebay.total_entries)
+            stats = summary_stats(df)
 
         if last_pull:
             if not first_pull:
