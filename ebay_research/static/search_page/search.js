@@ -9,7 +9,7 @@ import {drawTable} from "./table_function.js";
 
 let alertDiv = document.getElementById('js_alert');
 let messageDiv = document.getElementById('alert_message');
-
+const plotSelection = document.getElementById('plotOptions');
 
 // options for loading spinner
 const spinOptions = {
@@ -23,6 +23,18 @@ const spinOptions = {
   color: ['#ff0000', '#000000'],
 };
 
+
+const plotKeys = {
+  sunburst_plot: plotSunBurst,
+  map_plot: plotSellerMap,
+  df_type: plotPriceByListing,
+  df_pie: plotPieListing,
+  df_seller: plotTopSellers,
+  df_box: plotPriceBoxPlot,
+  hist_plot: plotPriceHistogram,
+};
+
+let plottingData;
 
 async function pullAsync() {
   document.getElementById('searchButton').disabled = true;
@@ -42,6 +54,7 @@ async function pullAsync() {
     )
     .then((res) => {
       const myData = res.data;
+      plottingData = myData;
       const stats = myData.stats;
       document.getElementById('hideDashBoard').style.display = 'block';
       document.getElementById('search_url').href = myData.search_url;
@@ -52,21 +65,7 @@ async function pullAsync() {
           console.log(e);
         }
       });
-      if (myData.sunburst_plot) {
-        document.getElementById('hideSunBurst').style.display = 'block';
-        plotSunBurst(myData.sunburst_plot);
-      }
-      // Shouldn't happen any more, but sometimes bad zip code data
-      if (myData.map_plot) {
-        document.getElementById('hideMap').style.display = 'block';
-        plotSellerMap(myData.map_plot);
-      }
-      plotPriceByListing(myData.df_type);
-      plotPieListing(myData.df_pie);
-      plotTopSellers(myData.df_seller);
-      plotPriceBoxPlot(myData.df_box);
-      plotPriceHistogram(myData.hist_plot);
-      plotTopSellers(myData.df_seller);
+      drawPlot();
       drawTable(myData.tab_data);
     })
     .catch((error) => {
@@ -81,7 +80,14 @@ async function pullAsync() {
   }
 
 
+  function drawPlot(){
+    let selection = plotSelection.options[plotSelection.selectedIndex].value;
+    plotKeys[selection](plottingData[selection]);
+  }
+
+
 window.onload = function () {
   document.getElementById('searchButton').addEventListener('click', pullAsync);
+  plotSelection.addEventListener('change', drawPlot);
   categoryInitiation()
 };

@@ -19,7 +19,7 @@ export function plotPriceByListing(df_type) {
     'margin': {'t': 10}, 'legend': {"orientation": "h"},
     ...commonLayout
   };
-  Plotly.newPlot('dfTypePlot', df_type, layout, {"displayModeBar": false});
+  Plotly.newPlot('plotLocation', df_type, layout, {"displayModeBar": false});
 }
 
 
@@ -36,7 +36,7 @@ export function plotPriceHistogram(hist_plot) {
                   'yaxis': {'title': '# of Items', 'type': 'log',},
                   'margin': {'t': 10}, ...commonLayout};
 
-  Plotly.newPlot('histData', data, layout, {"displayModeBar": false});
+  Plotly.newPlot('plotLocation', data, layout, {"displayModeBar": false});
 }
 
 
@@ -47,7 +47,7 @@ export function plotPieListing(df_pie){
       ...commonLayout
     };
 
-    Plotly.newPlot('dfPie', df_pie, layout, {"displayModeBar": false});
+    Plotly.newPlot('plotLocation', df_pie, layout, {"displayModeBar": false});
 }
 
 
@@ -95,7 +95,7 @@ export function plotSellerMap(map_plot){
         ...commonLayout
       };
 
-      Plotly.newPlot('usaMAP', dataMap, layout, {"displayModeBar": false});
+      Plotly.newPlot('plotLocation', dataMap, layout, {"displayModeBar": false});
   }
 
 }
@@ -108,20 +108,8 @@ export function plotTopSellers(df_seller){
       'yaxis': {'title': '# of listed items'},
       ...commonLayout};
 
-    Plotly.newPlot('sellerBar', df_seller, layout, {"displayModeBar": false});
+    Plotly.newPlot('plotLocation', df_seller, layout, {"displayModeBar": false});
 }
-
-
-// export function plotTimeAvailable(df_length){
-//   const layout = {
-//     'margin': {'t': 10},
-//     'yaxis': {'title': '# of Items'},
-//     'xaxis': {'title': '# of Days of Available<br>(End Date - Start Date)'},
-//     ...commonLayout
-//   };
-//
-//   Plotly.newPlot('lengthBar', df_length, layout, {"displayModeBar": false});
-// }
 
 
 export function plotPriceBoxPlot(df_box){
@@ -131,7 +119,7 @@ export function plotPriceBoxPlot(df_box){
     'showlegend': false,
     ...commonLayout
   };
-  Plotly.newPlot('boxPrice', df_box, layout, {"displayModeBar": false});
+  Plotly.newPlot('plotLocation', df_box, layout, {"displayModeBar": false});
 }
 
 
@@ -140,5 +128,5 @@ export function plotSunBurst(make_sunburst) {
     'margin': {'t': 10, 'l': 0, 'r': 0, 'b': 10},
     ...commonLayout
   };
-  Plotly.newPlot('sunBurst', make_sunburst, layout, {"displayModeBar": false});
+  Plotly.newPlot('plotLocation', make_sunburst, layout, {"displayModeBar": false});
 }

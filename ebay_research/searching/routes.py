@@ -19,9 +19,13 @@ from ebay_research.plot_maker import (
     make_listing_pie_chart,
 )
 
-# TODO: On error pull user to the top of the page
+# TODO: Rewrite plotting functions to only be layout/minimal options and actually plotting within drawPlot
+# TODO: fix table at bottom of search page to be better in mobile
+# TODO: add ability to set recurring search from search page
 # TODO: Make avg. auction length a statistic
-# TODO: Combine price distribution plots
+# TODO: Combine price distribution plots and add bottom descriptors
+# TODO: Add logic to ensure that plot exists before putting into dropdown
+
 
 @searching.route("/search", methods=['GET'])
 @login_required

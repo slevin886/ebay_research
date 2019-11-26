@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row mt-3">
-    <div class="col">
-        <div id="top_search_page"></div>
-    </div>
-</div>
+<link rel="stylesheet" href="{{ url_for('static', filename='search_page/search.css') }}">
 <div class="row mt-3">
     <div class="col">
         <h3 class="page_header">Search <span style="color: hotpink">e</span><span style="color: deepskyblue">B</span><span style="color: palevioletred">a</span><span style="color: cadetblue">y</span></h3>
@@ -130,7 +126,7 @@
     </div>
 </div>
 <hr>
-<div style="display: none;" id="hideDashBoard">
+<div id="hideDashBoard">
     <div class="row mt-3">
         <div class="col">
             <h3 class="page_header">Result Summary</h3>
@@ -192,7 +188,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-4">
+        <div class="col-md-4">
             <a class="btn btn-success page_button" href="{{ url_for('searching.get_csv') }}">Download the Full Dataset</a>
             <p class="mt-2">
                 <a href="" target="_blank" style="color: red;" id="search_url">click here</a> to see the results on ebay
@@ -201,71 +197,25 @@
     </div>
     <hr>
     <div class="row mt-3">
-        <div class="col" style="display: none;" id="hideMap">
-            <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
-                <h4 class="card-header">seller locations by county</h4>
-                <div class="card-body">
-                    <div id="usaMAP" class="d-flex justify-content-center"></div>
-                </div>
-            </div>
+        <div class="col-md-6">
+            <h3 class="page_header" id="plot_title">Result Plots</h3>
         </div>
-        <div class="col">
-            <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
-                <h4 class="card-header">largest sellers</h4>
-                <div class="card-body">
-                    <div id="sellerBar" class="d-flex justify-content-center"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col">
-            <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
-                <h4 class="card-header">price distribution</h4>
-                <div class="card-body">
-                    <div id="histData" class="d-flex justify-content-center"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
-                <h4 class="card-header">items by listing type</h4>
-                <div class="card-body">
-                    <div id="dfPie" class="d-flex justify-content-center"></div>
-                </div>
-            </div>
+        <div class="col-md-6">
+            <label for="plotOptions"><strong>Select Plot to View:</strong></label>
+            <select class="form-control" id="plotOptions" name="plotOptions">
+                <option value="map_plot" selected>Seller Locations</option>
+                <option value="sunburst_plot">Item Aspects</option>
+                <option value="df_seller">Top Sellers</option>
+                <option value="hist_plot">Price Distribution Histogram</option>
+                <option value="df_box">Price Distribution Box Plot</option>
+                <option value="df_type">Price Distribution Scatter Plot</option>
+                <option value="df_pie">Sale Types</option>
+            </select>
         </div>
     </div>
     <div class="row mt-3">
         <div class="col">
-            <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
-                <h4 class="card-header">price distribution (by listing type)</h4>
-                <div class="card-body">
-                    <div id="dfTypePlot" class="d-flex justify-content-center"></div>
-                </div>
-            </div>
-        </div>
-        <div style="display: none;" id="hideSunBurst">
-            <div class="col">
-                <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
-                    <h4 class="card-header">listed item characteristics</h4>
-                    <div class="card-body">
-                        <div id="sunBurst" class="d-flex justify-content-center"></div>
-                        <p class="card-text text-center mt-2">click the inside labels of the pie to enlarge each
-                            aspect</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col">
-            <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
-                <h4 class="card-header">price by listing type</h4>
-                <div class="card-body">
-                    <div id="boxPrice" class="d-flex justify-content-center"></div>
-                </div>
-            </div>
+            <div id="plotLocation" class="d-flex justify-content-center"></div>
         </div>
     </div>
     <div class="row mt-3">
