@@ -6,17 +6,26 @@ li:first-child {
     margin-top:0;
 }
 
+html {
+    height: 100%;
+}
+
 body {
     background: white;
+    display: flex;
+    flex-flow: column;
+    height: 100%;
 }
 .footer {
-    position: absolute;
-    height: 50px;
-    left: 0;
-    bottom: 0;
-    width: 100%;
+    margin-top: auto;
     background-color: #343a40;
-    color: white;
+    /*position: absolute;*/
+    /*height: 50px;*/
+    /*left: 0;*/
+    /*bottom: 0;*/
+    /*width: 100%;*/
+    /*background-color: #343a40;*/
+    /*color: white;*/
 }
 
 .dashboard {

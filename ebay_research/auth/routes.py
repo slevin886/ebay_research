@@ -11,7 +11,7 @@ from flask_login import logout_user, login_user, login_required, current_user
 def register():
     form = EmailForm()
     if form.validate_on_submit():
-        session["email"] = form.confirm_email.data
+        session["email"] = form.email.data
         user_exists = User.query.filter_by(email=session['email']).first()
         if user_exists:
             flash('That email is already registered! Please login or reset password', 'danger')

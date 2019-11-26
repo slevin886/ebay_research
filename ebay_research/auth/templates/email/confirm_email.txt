@@ -1,12 +1,13 @@
-Hello,
+Hi,
 
-To confirm your email use the following link:
+Thank you for registering to use Genius Bidding!. Please use the following link
+to confirm your account and get started:
 
 {{ url_for('auth.confirmation', token=token, _external=True) }}
 
 If you have not registered for Genius Bidding simply ignore this message.
 
-Sincerely,
+Thanks!
 
 Scott
 Genius Bidding

@@ -62,30 +62,30 @@ class EmailForm(FlaskForm):
         validators=[
             Email(),
             Length(min=4, max=98),
-            EqualTo("confirm_email", message="Emails must match"),
+            # EqualTo("confirm_email", message="Emails must match"),
             DataRequired()
         ],
     )
-    confirm_email = StringField(
-        u"Confirm your email address",
-        validators=[
-            DataRequired()
-        ]
-    )
+    # confirm_email = StringField(
+    #     u"Confirm your email address",
+    #     validators=[
+    #         DataRequired()
+    #     ]
+    # )
     password = PasswordField(
-        u"Choose a Password",
+        u"Choose a password",
         validators=[
             Length(min=6, max=98),
-            EqualTo("confirm_password", "Passwords must match"),
+            # EqualTo("confirm_password", "Passwords must match"),
             DataRequired()
         ]
     )
-    confirm_password = PasswordField(
-        u"Confirm Password",
-        validators=[
-            DataRequired()
-        ]
-    )
+    # confirm_password = PasswordField(
+    #     u"Confirm Password",
+    #     validators=[
+    #         DataRequired()
+    #     ]
+    # )
     location = SelectField(
         u"Select your location",
         choices=[("USA", "USA"), ("International", "International")],
