@@ -10,6 +10,7 @@ def ingest_free_search_form(form):
     final['sort_order'] = request.form.get("item_sort")
     final['listing_type'] = request.form.get("listing_type")
     final['item_condition'] = request.form.get("condition")
+    final['pages_wanted'] = int(request.form.get('pages_wanted'))
     cat, sub_cat = request.form.get('category_select'), request.form.get('sub_category_select')
     if sub_cat:
         final['category_id'] = sub_cat

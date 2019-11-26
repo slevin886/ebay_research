@@ -2,9 +2,9 @@ import pandas as pd
 from typing import List
 from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection as Finding
+from concurrent.futures import ThreadPoolExecutor
 
-# TO Support In Future:
-# implement findItemsByCategory: ('GetCategoryInfo' to get valid category ids, max: 3)
+
 # search variation:
 # baseball card  (both words) baseball,card (exact phrase baseball card)
 # (baseball,card) (items with either baseball or card)  baseball -card (baseball but NOT card)
@@ -15,7 +15,8 @@ class EasyEbayData:
 
     def __init__(self, api_id: str, keywords: str, excluded_words: str = None, sort_order: str = "BestMatch",
                  get_category_info: bool = True, listing_type: str = None, min_price: float = 0.0,
-                 max_price: float = None, category_id: str = None, item_condition: str = None):
+                 max_price: float = None, category_id: str = None, item_condition: str = None,
+                 *args, **kwargs):
         """
         A class that returns a clean data set of items for sale based on a keyword search from ebay. After
         instantiation, call 'full_data_pull' method with the number of pages wanted to collect data and return it
@@ -234,3 +235,23 @@ class EasyEbayData:
                 all_items.extend(response)
 
         return pd.DataFrame(all_items)
+
+    def _async_pull(self, page_number):
+        parameters = self.create_search_parameters(page_number=page_number, include_meta_data=False)
+        api = Finding(appid=self.api_id, config_file=None)
+        try:
+            result = api.execute('findItemsAdvanced', parameters)
+            if result.reply.ack == 'Success':
+                return [self.flatten_dict(i) for i in result.dict()['searchResult']['item']]
+            return list()
+        except ConnectionError as error:
+            print(error)
+            return list()
+
+    def run_async(self, pages_wanted=1, max_workers=10, return_df=True, start_page=1):
+        with ThreadPoolExecutor(max_workers=max_workers) as pool:
+            results = pool.map(self._async_pull, [i for i in range(start_page, pages_wanted + 1)])
+        data = [item for pull in results for item in pull if pull]
+        if return_df:
+            return pd.DataFrame(data)
+        return data

@@ -122,12 +122,12 @@ def make_seller_bar(df):
              }]
 
 
-def make_auction_length(df):
-    df['length'] = pd.to_datetime(df['endTime']) - pd.to_datetime(df['startTime'])
-    df['length'] = df['length'].dt.days.astype(int)
-    df = df.groupby('length', as_index=False)['endTime'].count()
-    return [{'x': df['length'].tolist(), 'y': df['endTime'].tolist(),
-             'type': 'bar', 'marker': {'line': {'color': 'black', 'width': '2'}, 'color': 'purple'}}]
+# def make_auction_length(df):
+#     df['length'] = pd.to_datetime(df['endTime']) - pd.to_datetime(df['startTime'])
+#     df['length'] = df['length'].dt.days.astype(int)
+#     df = df.groupby('length', as_index=False)['endTime'].count()
+#     return [{'x': df['length'].tolist(), 'y': df['endTime'].tolist(),
+#              'type': 'bar', 'marker': {'line': {'color': 'black', 'width': '2'}, 'color': 'purple'}}]
 
 
 def make_box_plot(df):

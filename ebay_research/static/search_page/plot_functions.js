@@ -112,16 +112,16 @@ export function plotTopSellers(df_seller){
 }
 
 
-export function plotTimeAvailable(df_length){
-  const layout = {
-    'margin': {'t': 10},
-    'yaxis': {'title': '# of Items'},
-    'xaxis': {'title': '# of Days of Available<br>(End Date - Start Date)'},
-    ...commonLayout
-  };
-
-  Plotly.newPlot('lengthBar', df_length, layout, {"displayModeBar": false});
-}
+// export function plotTimeAvailable(df_length){
+//   const layout = {
+//     'margin': {'t': 10},
+//     'yaxis': {'title': '# of Items'},
+//     'xaxis': {'title': '# of Days of Available<br>(End Date - Start Date)'},
+//     ...commonLayout
+//   };
+//
+//   Plotly.newPlot('lengthBar', df_length, layout, {"displayModeBar": false});
+// }
 
 
 export function plotPriceBoxPlot(df_box){

@@ -37,6 +37,7 @@ async function setRecurringSearch(searchId) {
       messageDiv.innerText = 'Whoops! Something went wrong, please try again later';
       alertDiv.style.display = 'block';
       alertDiv.classList.add('show');
+      window.scrollTo(0, 0);
     });
   toggleRecurVisibility();
 }
@@ -64,6 +65,7 @@ async function stopRecurringSearch(recurId) {
       messageDiv.innerText = 'Whoops! Something went wrong, please try again later';
       alertDiv.style.display = 'block';
       alertDiv.classList.add('show');
+      window.scrollTo(0, 0);
     });
   toggleRecurVisibility();
 }
@@ -75,6 +77,7 @@ window.onload = function () {
     alertDiv.style.display = 'block';
     alertDiv.classList.add('show');
     alertDiv.classList.add('alert-success');
+    window.scrollTo(0, 0);
     sessionStorage.removeItem("reloading");
     sessionStorage.removeItem("message");
   }

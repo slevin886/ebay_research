@@ -1,18 +1,5 @@
 {% extends 'base.html' %}
-
 {% block content %}
-{% if form.errors %}
-<ul class=errors>
-{% for name, error in form.errors.items() %}
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span>Problem with {{ name }}: {{ error[0] }}. Try your search again.</span>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-{% endfor %}
-</ul>
-{% endif %}
 <div class="row mt-3">
     <div class="col">
         <div id="top_search_page"></div>
@@ -29,7 +16,7 @@
         <form id="mainForm" name="mainForm" onsubmit="return false">
             {{ form.csrf_token }}
             <div class="row mt-3">
-                <div class="col-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label><strong>Keywords to include<span style="color: red; vertical-align: top; font-size: 10px;">✱</span>:</strong></label>
                         {{ form.keywords_include(class="form-control", placeholder="Enter Keywords") }}</div>
@@ -37,14 +24,14 @@
                         {{ form.keywords_exclude(class="form-control", placeholder="optional") }}</div>
                 </div>
                 <!--MIN & MAX PRICE-->
-                <div class="col">
+                <div class="col-md-3">
                     <div class="form-group"><strong>{{ form.maximum_price.label }}</strong>
                         {{ form.maximum_price(class="form-control", placeholder="optional") }}</div>
                     <div class="form-group"><strong>{{ form.minimum_price.label }}</strong>
                         {{ form.minimum_price(class="form-control", placeholder="optional") }}</div>
                 </div>
                 <!--Sort Order of Results-->
-                <div class="col">
+                <div class="col-md-3">
                     <div class="row">
                         <div class="col">
                             <label for="item_sort"><strong>Sort Results by:</strong></label>
@@ -74,7 +61,7 @@
                     </div>
                 </div>
                 <!--SELLER LOCATION-->
-                <div class="col">
+                <div class="col-md-3">
                     <div class="row">
                         <div class="col">
                             <label for="condition"><strong>Item Condition:</strong></label>
@@ -97,13 +84,13 @@
             <div class="row">
                 <div class="col">
                     <div class="row mb-2">
-                        <div class="col-6">
+                        <div class="col-md-4">
                             <label for="category_select"><strong>In this category:</strong></label>
                             <select class="form-control" id="category_select" name="category_select">
                                 <option value="" selected>All Categories</option>
                             </select>
                         </div>
-                        <div class="col-6" style="display: none;" id="showSubCategory">
+                        <div class="col-md-4" style="display: none;" id="showSubCategory">
                             <label for="sub_category_select"><strong>In this subcategory:</strong></label>
                             <select class="form-control" id="sub_category_select" name="sub_category_select">
                                 <option value="" selected>No Subcategory</option>
@@ -127,16 +114,16 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
+                        <div class="col-md-3">
                             <button type="submit" class="btn btn-success btn-lg page_button" id="searchButton">
                                 Get Item Data!
                             </button>
                         </div>
+                        <div class="col-md-3">
+                            <div id="loading_spinner"></div>
+                            <script src="{{ url_for('static', filename='node_modules/spin.js/spin.js') }}"></script>
+                        </div>
                     </div>
-                </div>
-                <div class="col">
-                    <div id="loading_spinner"></div>
-                    <script src="{{ url_for('static', filename='node_modules/spin.js/spin.js') }}"></script>
                 </div>
             </div>
         </form>
@@ -272,14 +259,6 @@
         </div>
     </div>
     <div class="row mt-3">
-        <div class="col">
-            <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
-                <h4 class="card-header">days of availability</h4>
-                <div class="card-body">
-                    <div id="lengthBar" class="d-flex justify-content-center"></div>
-                </div>
-            </div>
-        </div>
         <div class="col">
             <div class="card bg-secondary shadow p-3 mb-5 bg-white rounded">
                 <h4 class="card-header">price by listing type</h4>
