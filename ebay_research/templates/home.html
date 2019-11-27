@@ -24,9 +24,9 @@
 </div>
 <div class="row ml-5 mr-5 mt-3">
     <div class="col text-center">
-        <h4>Get smart about what's selling and who's selling with the ability to:</h4>
-        <p style="font-size: 20px">Identify the most popular items. Track prices over time through saved search results.
-            See who the big sellers are and how they're marketing their products.
+        <h4>Get smart about what's selling with the ability to:</h4>
+        <p style="font-size: 20px"> Track prices and market indicators through customized and automated search
+            results. Gain insights into top sellers, how they're marketing their products, and important trends.
         </p>
     </div>
 </div>
@@ -59,8 +59,9 @@
 </div>
 <div class="row ml-5 mr-5 mt-3">
     <div class="col text-center">
-        <p style="font-size: 20px">Get informative statistics and interactive visualizations. Download full data sets as
-            CSVs to execute custom analysis. Best of all, it's completely FREE.</p>
+        <p style="font-size: 20px">Navigate an intuitive dashboard with interactive visualizations and key statistics. Download full data sets
+            from all of your searches and conduct custom analysis. Identify the most popular items and link directly to them on ebay.
+            Best of all, <strong>do it all for FREE</strong>.</p>
     </div>
 </div>
 <br><br>
@@ -77,13 +78,19 @@
         </a>
     </div>
 </div>
+<div class="row mt-3">
+    <div class="col text-center">
+        <p>Already registered? <a href="{{ url_for('auth.login') }}">Login</a></p>
+    </div>
+</div>
 <br><br>
 <hr>
 <div class="row mt-5">
     <div class="col">
-        <h3>Easily find the <i>most popular items</i></h3>
-        <br><br>
-        <h3>Download <i>unique data sets</i> with 50+ variables</h3>
+        <p style="font-size: 20px;">Set your searches to <i>run automatically</i> and <strong>we'll track the trends</strong>
+            for you</p>
+        <br>
+        <p style="font-size: 20px;">Download <strong>unique data sets</strong> with <i>50+ variables</i></p>
     </div>
     <div class="col text-center">
         <img src="{{ url_for('static', filename='home_page_images/mac_genius.png') }}" id="genius_computer"
@@ -94,9 +101,9 @@
         </script>
     </div>
     <div class="col">
-        <h3>Get <i>key statistics</i> on price and sellers</h3>
-        <br><br>
-        <h3>Saved search results enable you to <i>identify trends</i></h3>
+        <p style="font-size: 20px;">Get <strong>key statistics</strong> on <i>price and sellers</i></p>
+        <br>
+        <p style="font-size: 20px;">Search by <strong>keyword and category</strong> with <i>customizable filters</i></p>
     </div>
 </div>
 <br><br>
@@ -111,6 +118,4 @@
         <a class="button btn-primary btn-lg page_button" role="button" href="{{ url_for('main.about') }}">Click here to learn more</a>
     </div>
 </div>
-{#<script>let map_data = {{ map_data|tojson }}; let price_data = {{ price_data|tojson }};</script>#}
-{#<script src="{{ url_for('static', filename='homepage/home.js') }}" type="module"></script>#}
 {% endblock %}
