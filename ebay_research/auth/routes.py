@@ -21,7 +21,7 @@ def register():
                             country=form.location.data, state=form.state.data, confirmed=False)
             db.session.add(new_user)
             db.session.commit()
-            send_email(new_user, 'Thank you for registering with Genius Bidding!', 'email/confirm_email')
+            send_email(new_user, 'Confirm your Genius Bidding account', 'email/confirm_email')
             flash('Please check your email to confirm your account and begin researching! If you do not'
                   ' receive your email soon, please check your spam folder.', 'success')
             return redirect(url_for("main.home"))
