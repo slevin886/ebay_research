@@ -18,8 +18,8 @@ const spinOptions = {
   width: 17,
   radius: 45,
   scale: 0.2,
-  left: '10%',
-  top: '10%',
+  left: '70%',
+  top: '30%',
   color: ['#ff0000', '#000000'],
 };
 
@@ -82,7 +82,8 @@ async function pullAsync() {
 
   function drawPlot(){
     let selection = plotSelection.options[plotSelection.selectedIndex].value;
-    plotKeys[selection](plottingData[selection]);
+    let plot = plotKeys[selection](plottingData[selection]);
+    Plotly.newPlot('plotLocation', plot['data'], plot['layout'], {"displayModeBar": false});
   }
 
 

@@ -19,8 +19,7 @@ from ebay_research.plot_maker import (
     make_listing_pie_chart,
 )
 
-# TODO: Rewrite plotting functions to only be layout/minimal options and actually plotting within drawPlot
-# TODO: fix table at bottom of search page to be better in mobile
+# TODO: figure out how to toggle optional buttons on plots
 # TODO: add ability to set recurring search from search page
 # TODO: Make avg. auction length a statistic
 # TODO: Combine price distribution plots and add bottom descriptors
@@ -65,7 +64,7 @@ def get_async_data():
                                                return_df=False, start_page=2)
             result = result + more_results
 
-        df = pd.DataFrame(result).drop_duplicates(subset=['itemId'])
+        df = pd.DataFrame(result)
         stats = summary_stats(df,
                               easy_ebay.largest_category,
                               easy_ebay.largest_sub_category,

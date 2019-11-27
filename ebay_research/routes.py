@@ -1,23 +1,20 @@
 from flask import (Blueprint, render_template, request,
-                   flash, url_for, jsonify)
+                   flash, url_for)
 from flask_login import current_user, login_required
 from ebay_research import db
 from ebay_research.models import Search, Results, Recurring
 from ebay_research.forms import ChooseNewPassword
 from sqlalchemy import and_
 
-# TODO: fix size of the spinner for mobile
+
+# TODO: make navbar toggle to dropdown instead of new line
 # TODO: add how to/suggested use page
 # TODO: make more mobile friendly
-# TODO: possibly only draw figures on lastpull
 # TODO: Add blog
 # TODO: Add more information to home page and about page
 # TODO: Add hover helpers on search page, plus more info on top
-# TODO: reorganize search page to make # of items to pull more prominent
-# TODO: implement repeat search on account page and possibly something to download search result metadata
-# TODO: Implement additional item filters
+# TODO: ability to download from account page
 # TODO: Write test functions
-# TODO: Create ability to hide/show different plots in the results
 # TODO: Provide credit to https://www.flaticon.com/ for icons
 
 main = Blueprint("main", __name__)

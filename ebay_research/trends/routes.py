@@ -7,14 +7,14 @@ from sqlalchemy import and_
 from datetime import datetime
 import calendar
 
-# TODO: Have clicking on the recurring tab on account page hit the API to get active searches
-# and write those to the table
+# TODO: set pop up on account page that shows how to access recurring results
+
+DAY_RECURRING = {0: (0, 3), 1: (1, 4), 2: (2, 5), 3: (3, 6), 4: (1, 4), 5: (2, 5), 6: (2, 6)}
 
 
 @recurring.route('/set_recurring_search', methods=['POST'])
 @login_required
 def set_recurring_search():
-    # TODO: set pop up on account page that shows how to access recurring results
     current_recurring = Recurring.query.filter_by(user_id=current_user.id, active=True).all()
     if len(current_recurring) >= 2:
         return jsonify({'message': 'You can only have two recurring searches at a time, you must delete '
@@ -35,8 +35,15 @@ def set_recurring_search():
                       day_of_week=weekday, active=True)
     db.session.add(recur)
     db.session.commit()
+    first_search = Search.query.get(search_id)
+    first_recur = RecurringIds(recurring_id=recur.id,
+                               time_searched=first_search.time_searched,
+                               result_id=first_search.search_results[0].id)
+    db.session.add(first_recur)
+    db.session.commit()
     return jsonify({'message': f'Your recurring search has been set! The search will '
-                               f'be run once a week on {calendar.day_name[weekday]}.',
+                               f'be run twice weekly on {calendar.day_name[DAY_RECURRING[weekday][0]]}'
+                               f' and {calendar.day_name[DAY_RECURRING[weekday][1]]}.',
                     'success': True}), 200
 
 
@@ -63,12 +70,13 @@ def trends():
 
 
 def extract_results(obj):
-    final = obj.result_data.__dict__
+    # need to maintain obj to get time searched
+    result = obj.result_data.__dict__
     for category in ['largest_cat_count', 'user_id', 'largest_cat_name', 'largest_sub_name',
                      'largest_sub_count', 'id', '_sa_instance_state']:
-        final.pop(category, None)
-    final['date'] = obj.time_searched.date().strftime('%m/%d/%Y')
-    return final
+        result.pop(category, None)
+    result['date'] = obj.time_searched.date().strftime('%m/%d/%Y')
+    return result
 
 
 @recurring.route('/get_trend_data', methods=['POST'])

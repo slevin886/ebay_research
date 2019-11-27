@@ -116,7 +116,9 @@
                             </button>
                         </div>
                         <div class="col-md-3">
-                            <div id="loading_spinner"></div>
+                            <div class="position-relative">
+                                <div id="loading_spinner"></div>
+                            </div>
                             <script src="{{ url_for('static', filename='node_modules/spin.js/spin.js') }}"></script>
                         </div>
                     </div>
@@ -218,10 +220,14 @@
             <div id="plotLocation" class="d-flex justify-content-center"></div>
         </div>
     </div>
+    <div class="row">
+        <div class="col" id="plot_options">
+        </div>
+    </div>
     <div class="row mt-3">
         <div class="col">
             <hr>
-            <h3 class="page_header">popular items</h3>
+            <h3 class="page_header">Popular Items</h3>
             <h5>sorted by <strong>highest watch count</strong></h5>
         </div>
     </div>

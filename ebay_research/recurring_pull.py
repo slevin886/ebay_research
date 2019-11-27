@@ -12,6 +12,9 @@ import os
 SETTINGS = os.environ.get('APP_SETTINGS')
 EBAY_API = os.environ.get('EBAY_API')
 
+DAY_COMBOS = {0: (0,), 1: (1, 4), 2: (2, 5, 6), 3: (3, 0),
+              4: (1, 4), 5: (2, 5), 6: (3, 6)}
+
 
 def convert_table_to_search(recurring_objects):
     final = []
@@ -34,9 +37,9 @@ def convert_table_to_search(recurring_objects):
 
 
 def get_searches_to_replicate():
-    day = datetime.now().weekday()
+    day = datetime.utcnow().weekday()
     recurring_ids = db.session.query(Recurring, Search).filter(
-        and_(Recurring.day_of_week == day, Recurring.active == True)).join(Search).all()
+        and_(Recurring.day_of_week in DAY_COMBOS[day], Recurring.active == True)).join(Search).all()
     if recurring_ids:
         return convert_table_to_search(recurring_ids), True
     return [], False

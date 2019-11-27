@@ -46,8 +46,9 @@ const linkFormatter = function(cell, formatterParams){
 export function drawTable(tab_data) {
 	const table = new Tabulator("#tab_location", {
 			data: tab_data,           //load row data from array
-			layout: "fitColumns",      //fit columns to width of table
-			responsiveLayout: "hide",  //hide columns that dont fit on the table
+			// layout: "fitColumns",      //fit columns to width of table
+		 // fitColumns: true,
+			// responsiveLayout: "hide",  //hide columns that dont fit on the table
 			tooltips: true,            //show tool tips on cells
 			initialSort: [{column: "watchCount", dir: "desc"}],
 			pagination: "local",       //paginate the data
@@ -57,11 +58,11 @@ export function drawTable(tab_data) {
 			headerFilterPlaceholder: "search/filter...",
 			columns: [                 //define the table columns
 				{formatter: "rownum"},
-				{title: "Price", field: "currentPrice_value", formatter: "money", formatterParams: {symbol: "$"}},
-				{title: "Title", field: "title", formatter: "textarea", headerFilter: "input", width: 200,},
+				{title: "Price", field: "currentPrice_value", width: 90, formatter: "money", formatterParams: {symbol: "$"}},
+				{title: "Title", field: "title", formatter: "textarea", headerFilter: "input", width: 170,},
 				{title: "Image", field: "galleryURL", formatter: "image", width: 200},
 				{title: "Watch<br>Count", field: "watchCount"},
-				{title: "End Time", field: "endTime", width: 200, formatter: "textarea"},
+				{title: "End Time", field: "endTime", width: 170, formatter: "textarea"},
 				{title: "View it!", field: "viewItemURL", formatter: linkFormatter, formatterParams: {'label': 'see on ebay'}},
 			],
 		}
