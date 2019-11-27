@@ -1,13 +1,17 @@
 Hi,
 
-Thank you for registering to use Genius Bidding!. Please use the following link
+Thank you for registering to use Genius Bidding. Please use the following link
 to confirm your account and get started:
 
 {{ url_for('auth.confirmation', token=token, _external=True) }}
 
-If you have not registered for Genius Bidding simply ignore this message.
+Alternatively, you can paste the following link into your browser's address bar:
 
-Thanks!
+{{ url_for('auth.confirmation', token=token, _external=True) }}
+
+If you have not registered with Genius Bidding, simply ignore this message.
+
+Thanks,
 
 Scott
 Genius Bidding

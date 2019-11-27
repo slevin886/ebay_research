@@ -8,6 +8,8 @@ from ebay_research.auth.email import send_comment
 from sqlalchemy import and_
 import os
 
+# TODO: change the account page table to ensure that the select button is visible on left side
+
 
 SETTINGS = os.environ.get('APP_SETTINGS')
 EBAY_API = os.environ.get('EBAY_API')
