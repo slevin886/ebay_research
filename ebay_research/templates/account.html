@@ -12,23 +12,27 @@
 <div class="row mt-3">
     <div class="col">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link active" id="search-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
+          <li class="nav-item" style="margin-top: 0;">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home"
                aria-selected="true">recent searches</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" style="margin-top: 0;">
             <a class="nav-link" id="recur-tab" data-toggle="tab" href="#recurTab" role="tab" aria-controls="recurTab"
                aria-selected="false">recurring searches</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" style="margin-top: 0;">
             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact"
                aria-selected="false">manage account</a>
           </li>
         </ul>
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col">
         <div class="tab-content" id="myTabContent">
-          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="search-tab">
+          <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
               {% if search_results %}
-              <div class="row mt-4">
+              <div class="row mt-3">
                   <div class="col">
                     <button type="button" class="btn btn-primary page_button"
                             onclick="toggleRecurVisibility();">Set Recurring Search
@@ -72,9 +76,6 @@
                                 {% endfor %}
                             </table>
                         </div>
-                    {% else %}
-                    <h2>no recent searches available...</h2>
-                    {% endif %}
                 </div>
             </div>
             <div class="row">
@@ -87,10 +88,17 @@
                     {% endif %}
                 </div>
             </div>
+            {% else %}
+            <div class="row mt-3">
+                <div class="col">
+                    <h2>no recent searches available...</h2>
+                </div>
+            </div>
+            {% endif %}
           </div>
           <div class="tab-pane fade" id="recurTab" role="tabpanel" aria-labelledby="recur-tab">
                 <div class="row mt-3">
-                    <div class="col">
+                    <div class="col-md-8">
                         <h5>Recurring Searches</h5>
                         {% if recurring_searches %}
                             <p>The following recurring searches are currently active:</p>
@@ -98,7 +106,7 @@
                             <p>You don't have any active recurring searches at the moment.</p>
                         {% endif %}
                     </div>
-                    {%  if recurring_searches %}
+                    {% if recurring_searches %}
                     <div class="col">
                         <button type="button" class="btn btn-danger page_button"
                                 onclick="toggleRecurVisibility();">Stop Recurring Search
@@ -135,10 +143,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
+          </div>
           <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="profile-tab">
               <div class="row mt-3 mb-5">
-                <div class="col-4">
+                <div class="col-md-4">
                     <h3 class="page_header">change password</h3>
                     <form method="POST" action="{{ url_for('main.account') }}">
                         {{ password_form.csrf_token }}

@@ -82,6 +82,9 @@ async function pullAsync() {
 
   function drawPlot(){
     let selection = plotSelection.options[plotSelection.selectedIndex].value;
+    if (!plottingData[selection]){
+      selection = 'df_seller';
+    }
     let plot = plotKeys[selection](plottingData[selection]);
     Plotly.newPlot('plotLocation', plot['data'], plot['layout'], {"displayModeBar": false});
   }
