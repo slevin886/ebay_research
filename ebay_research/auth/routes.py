@@ -25,6 +25,12 @@ def register():
             flash('Please check your email to confirm your account and begin researching! If you do not'
                   ' receive your email soon, please check your spam folder.', 'success')
             return redirect(url_for("main.home"))
+
+    if form.errors:
+        errors = 'Please correct the following errors: '
+        for err in form.errors.keys():
+            errors = errors + ' ' + ' '.join(form.errors[err])
+        flash(errors, 'warning')
     return render_template("register.html", form=form)
 
 

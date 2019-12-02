@@ -17,18 +17,22 @@
                     <div class="form-group"><strong>{{ form.email.label }}</strong>
                         {{ form.email(class="form-control", placeholder="Enter Email", tabindex=1) }}
                     </div>
-                    <div class="form-group"><strong>{{ form.location.label }}</strong>
-                        {{ form.location(class="form-control", id="location", placeholder="",
-                                         tabindex=3) }}
-                    </div>
-                </div>
-                <div class="col-md-6">
                     <div class="form-group"><strong>{{ form.password.label }}</strong>
                         {{ form.password(class="form-control", type="password", placeholder="Enter Password",
                             tabindex=2) }}
                     </div>
+                    <div class="form-group"><strong>{{ form.confirm_password.label }}</strong>
+                        {{ form.confirm_password(class="form-control", type="password", placeholder="Confirm Password",
+                            tabindex=3) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group"><strong>{{ form.location.label }}</strong>
+                        {{ form.location(class="form-control", id="location", placeholder="",
+                                         tabindex=4) }}
+                    </div>
                     <div class="form-group" style="display: block;" id="state"><strong>{{ form.state.label }}</strong>
-                        {{ form.state(class="form-control", placeholder="", tabindex=4) }}
+                        {{ form.state(class="form-control", placeholder="", tabindex=5) }}
                     </div>
                 </div>
             </div>
