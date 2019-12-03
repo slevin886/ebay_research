@@ -101,13 +101,15 @@ def resend_confirmation():
 
 
 @auth.route("/contact", methods=["GET", "POST"])
-@login_required
 def contact():
-    # TODO: set up contact form
     form = ContactForm()
     if form.validate_on_submit():
+        if current_user.is_authenticated:
+            email = current_user.email
+        else:
+            email = form.email.data
         subject, user_message = form.category.data, form.text_area_field.data
-        send_comment(current_user.email, subject, user_message)
+        send_comment(email, subject, user_message)
         flash('Thank you for your message!', 'success')
         return redirect(url_for("main.home"))
     return render_template('contact.html', form=form)

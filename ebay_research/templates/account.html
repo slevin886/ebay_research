@@ -44,6 +44,7 @@
                         <div class="table-responsive">
                             <table class="table table-responsive" style="border-bottom-style: solid">
                                 <tr class="table thead-dark">
+                                    <th class="hideRecurring">Select One</th>
                                     <th>id</th>
                                     <th>keywords</th>
                                     <th>search time</th>
@@ -57,6 +58,11 @@
                                 </tr>
                                 {% for search, result in search_results %}
                                     <tr>
+                                        <td class="hideRecurring">
+                                            <button type="button" class="btn btn-sm btn-success" value="{{ search.id }}"
+                                                    id="recurring_boxes" onclick="setRecurringSearch(this.value)">select
+                                            </button>
+                                        </td>
                                         <td>{{ search.id }}</td>
                                         <td>{{ search.keywords }}</td>
                                         <td>{{ search.time_searched.strftime('%Y-%m-%d %H:%M') }}</td>
@@ -67,11 +73,6 @@
                                         <td>{{ result.total_entries }}</td>
                                         <td>{{ result.total_watch_count }}</td>
                                         <td>{{ result.top_seller }}</td>
-                                        <td class="hideRecurring">
-                                            <button type="button" class="btn btn-sm btn-success" value="{{ search.id }}"
-                                                    id="recurring_boxes" onclick="setRecurringSearch(this.value)">select
-                                            </button>
-                                        </td>
                                     </tr>
                                 {% endfor %}
                             </table>

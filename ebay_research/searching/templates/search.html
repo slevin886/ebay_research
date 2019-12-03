@@ -205,13 +205,13 @@
         <div class="col-md-6">
             <label for="plotOptions"><strong>Select Plot to View:</strong></label>
             <select class="form-control" id="plotOptions" name="plotOptions">
-                <option value="map_plot" id="map_plot" selected>Seller Locations</option>
-                <option value="sunburst_plot" id="sunburst_plot">Item Aspects</option>
-                <option value="df_seller" id="df_seller">Top Sellers</option>
-                <option value="hist_plot">Price Distribution Histogram</option>
-                <option value="df_box">Price Distribution Box Plot</option>
-                <option value="df_type">Price Distribution Scatter Plot</option>
-                <option value="df_pie">Sale Types</option>
+                <option class="search_plots" value="map_plot" id="map_plot">Seller Locations</option>
+                <option class="search_plots" value="sunburst_plot" id="sunburst_plot">Item Aspects</option>
+                <option class="search_plots" value="df_seller" id="df_seller">Top Sellers</option>
+                <option class="search_plots" value="hist_plot" id="hist_plot">Price Distribution Histogram</option>
+                <option class="search_plots" value="df_box" id="df_box">Price Distribution Box Plot</option>
+                <option class="search_plots" value="df_type" id="df_type">Price Distribution Scatter Plot</option>
+                <option class="search_plots" value="df_pie" id="df_pie">Sale Types</option>
             </select>
         </div>
     </div>
@@ -220,8 +220,20 @@
             <div id="plotLocation" class="d-flex justify-content-center"></div>
         </div>
     </div>
-    <div class="row">
-        <div class="col" id="plot_options">
+    <div class="row mt-2">
+        <div class="col">
+            <div class="d-flex flex-row">
+                <div class="pr-3">
+                    <button class="btn btn-primary btn-sm page_button" id="logButtonYaxis">
+                        Log yAxis
+                    </button>
+                </div>
+                <div class="pr-3">
+                    <button class="btn btn-primary btn-sm page_button" id="logButtonXaxis">
+                        Log xAxis
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row mt-3">

@@ -10,9 +10,13 @@ const commonLayout = {
 };
 
 
+const logButtonY = document.getElementById('logButtonYaxis');
+const logButtonX = document.getElementById('logButtonXaxis');
+
 // PLOTTING FUNCTIONS
 
 export function plotPriceByListing(df_type) {
+  logButtonY.style.display = 'block';
   const layout = {
     'yaxis': {'title': 'Item Price', 'tickprefix': '$', 'type': 'log'},
     'xaxis': {'showticklabels': false,},
@@ -25,6 +29,8 @@ export function plotPriceByListing(df_type) {
 
 export function plotPriceHistogram(hist_plot) {
   hist_plot.sort();
+  logButtonY.style.display = 'block';
+  logButtonX.style.display = 'block';
   const len = hist_plot.length;
   const per95 = Math.floor(len * 0.95) - 1;
   const data = [{'x': hist_plot, 'type': 'histogram',
@@ -32,7 +38,7 @@ export function plotPriceHistogram(hist_plot) {
                'marker': {'line': {'color': 'black', 'width': 2}}
                }];
 
-  const layout =  {'xaxis': {'title': 'Item Price', 'tickprefix': '$',},
+  const layout =  {'xaxis': {'title': 'Item Price', 'tickprefix': '$', 'type': 'linear'},
                   'yaxis': {'title': '# of Items', 'type': 'log',},
                   'margin': {'t': 10}, ...commonLayout};
 
@@ -97,6 +103,7 @@ export function plotSellerMap(map_plot){
 
 
 export function plotTopSellers(df_seller){
+    logButtonY.style.display = 'block';
     const layout = {
       'margin': {'t': 10},
       'xaxis': {'automargin': true, 'tickangle': 45},
@@ -107,6 +114,7 @@ export function plotTopSellers(df_seller){
 
 
 export function plotPriceBoxPlot(df_box){
+  logButtonY.style.display = 'block';
   const layout = {
     'margin': {'t': 10},
     'yaxis': {'type': 'log', 'tickprefix':'$', 'title': 'Price (w/ Log Scaled Axis)'},

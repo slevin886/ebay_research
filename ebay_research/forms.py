@@ -173,6 +173,14 @@ class RepeatSearch(FlaskForm):
 
 
 class ContactForm(FlaskForm):
+    email = StringField(
+        u"Enter your email address",
+        validators=[
+            Email(),
+            Length(min=4, max=98),
+            DataRequired()
+        ],
+    )
     category = SelectField(
         u"What would you like to get in touch about?",
         choices=[("General Comment", "General Comment"), ("Problem", "Problem"),

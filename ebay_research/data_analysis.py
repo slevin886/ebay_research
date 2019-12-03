@@ -152,7 +152,7 @@ class EasyEbayData:
         If unsuccessful returns a string of the error that occurred.
         """
         parameters = self.create_search_parameters(page_number, include_meta_data)
-        api = Finding(appid=self.api_id, config_file=None)
+        api = Finding(appid=self.api_id, config_file=None, https=True)
         try:
             response = api.execute('findItemsAdvanced', parameters)
             assert response.reply.ack == 'Success'
@@ -238,7 +238,7 @@ class EasyEbayData:
 
     def _async_pull(self, page_number):
         parameters = self.create_search_parameters(page_number=page_number, include_meta_data=False)
-        api = Finding(appid=self.api_id, config_file=None)
+        api = Finding(appid=self.api_id, config_file=None, https=True)
         try:
             result = api.execute('findItemsAdvanced', parameters)
             if result.reply.ack == 'Success':

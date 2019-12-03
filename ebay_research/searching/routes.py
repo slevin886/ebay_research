@@ -82,7 +82,7 @@ def get_async_data():
         df_pie = make_listing_pie_chart(df["listingType"])
         # df_length = make_auction_length(df[['endTime', 'startTime']].copy())
         df_box = make_box_plot(df[['listingType', 'currentPrice_value']].copy())
-        if easy_ebay.item_aspects is None:
+        if not easy_ebay.item_aspects:
             sunburst_plot = None
         else:
             sunburst_plot = make_sunburst(easy_ebay.item_aspects)
@@ -92,7 +92,6 @@ def get_async_data():
                        df_pie=df_pie,
                        df_type=df_type,
                        df_seller=df_seller,
-                       # df_length=df_length,
                        df_box=df_box,
                        sunburst_plot=sunburst_plot,
                        stats=stats,

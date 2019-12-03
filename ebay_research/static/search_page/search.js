@@ -10,6 +10,9 @@ import {drawTable} from "./table_function.js";
 let alertDiv = document.getElementById('js_alert');
 let messageDiv = document.getElementById('alert_message');
 const plotSelection = document.getElementById('plotOptions');
+const plotSelectOptions = document.getElementsByClassName('search_plots');
+const logButtonYaxis = document.getElementById('logButtonYaxis');
+const logButtonXaxis = document.getElementById('logButtonXaxis');
 
 // options for loading spinner
 const spinOptions = {
@@ -34,6 +37,13 @@ const plotKeys = {
   hist_plot: plotPriceHistogram,
 };
 
+function resetPlotOptionVisibility(){
+    let i;
+    for (i = 0; i < plotSelectOptions.length; i++) {
+        plotSelectOptions[i].style.display = "block";
+    }
+}
+
 let plottingData;
 
 async function pullAsync() {
@@ -56,6 +66,7 @@ async function pullAsync() {
       const myData = res.data;
       plottingData = myData;
       const stats = myData.stats;
+      resetPlotOptionVisibility();
       document.getElementById('hideDashBoard').style.display = 'block';
       document.getElementById('search_url').href = myData.search_url;
       Object.keys(stats).forEach(key => {
@@ -69,7 +80,12 @@ async function pullAsync() {
       drawTable(myData.tab_data);
     })
     .catch((error) => {
-      messageDiv.innerText = error.response.data['message'];
+      if (error.response){
+        messageDiv.innerText = error.response.data['message'];
+      } else {
+        console.log(error);
+        messageDiv.innerText = 'Whoops! Something went wrong, please try again!';
+      }
       alertDiv.style.display = 'block';
       alertDiv.classList.add('show');
       alertDiv.classList.add('alert-danger');
@@ -80,10 +96,31 @@ async function pullAsync() {
   }
 
 
+
+
+function changeLog(axis){
+    const switcher = {'log': 'linear', 'linear': 'log'};
+    let gd = document.getElementById('plotLocation');
+    let newValue = switcher[gd.layout[axis].type];
+    let option = axis + '.type';
+    let update = {};
+    update[option] = newValue;
+    Plotly.relayout('plotLocation', update)
+  }
+
+
+
   function drawPlot(){
+    logButtonYaxis.style.display = 'none';
+    logButtonXaxis.style.display = 'none';
     let selection = plotSelection.options[plotSelection.selectedIndex].value;
-    if (!plottingData[selection]){
-      selection = 'df_seller';
+    for (let option in plottingData) {
+      if (!plottingData[option]) {
+        document.getElementById(option).style.display = 'none';
+        if (option === selection){
+          selection = 'df_seller';
+        }
+      }
     }
     let plot = plotKeys[selection](plottingData[selection]);
     Plotly.newPlot('plotLocation', plot['data'], plot['layout'], {"displayModeBar": false});
@@ -92,6 +129,10 @@ async function pullAsync() {
 
 window.onload = function () {
   document.getElementById('searchButton').addEventListener('click', pullAsync);
+  logButtonYaxis.addEventListener('click',
+    function() {changeLog('yaxis');}, false);
+  logButtonXaxis.addEventListener('click',
+    function() {changeLog('xaxis')}, false);
   plotSelection.addEventListener('change', drawPlot);
   categoryInitiation()
 };
