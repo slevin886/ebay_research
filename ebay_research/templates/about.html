@@ -2,40 +2,79 @@
 {% block content %}
 <div class="row mt-5">
     <div class="col">
-        <h2>About <span style="color: darkred;">Genius</span><span style="color: rebeccapurple;">Bidding</span></h2>
+        <h2>About <span style="color: darkred;">Genius </span><span style="color: rebeccapurple;">Bidding</span></h2>
         <hr>
-        <p class="about_text">Genius Bidding is a <strong>free to use</strong> market research tool to help you make the most of your
-            eBay experience. Whether buying or selling, we will make it easy for you to understand your marketplace
-            as the shopper experiences it.
+        <p class="about_text">Genius Bidding is a <strong>free to use</strong> market research tool to help
+            optimize buying and selling on eBay. Genius Bidding allows you to search by keyword, category and more to gather
+            <strong>marketplace data, key statistics, and interactive visualizations</strong> on the eBay marketplace of your choice.
+        </p>
+        <p class="about_text">Registered users can <strong>set up to three searches to run automatically</strong>,
+            twice per week, and easily track trends in product pricing and availability. Genius Bidding also enables users
+            to <strong>download full CSV data sets</strong> from their searches to easily conduct custom analysis on their own.
         </p>
         <p class="about_text">
-            <strong>It's this simple</strong>:
+            <strong>It's this simple to get started</strong>:
         </p>
         <ol style="font-size: 20px;">
-            <li>Enter keywords that describe the item you want to buy/sell.</li>
-            <li><i>Optionally</i>: choose search criteria from a set of drop down menus
-                to more accurately reflect your target market.</li>
+            <li>Enter keywords that describe the item you want to buy/sell (e.g. 'Fender Guitar').</li>
+            <li>Choose search criteria from a set of drop down menus to more narrowly define your target market.</li>
                 <ul style="margin-top:10px;">
-                    <li>limit the results by listing type (auction, fixed price, etc.)</li>
-                    <li>sort the results (by best match, popularity, etc.)</li>
-                    <li>set minimum and maximum prices</li>
-                    <li>limit the result by item condition (new, used, etc.)</li>
+                    <li>Select by product category and subcategory (e.g. 'Musical Instruments').</li>
+                    <li>Limit the results by listing type (e.g. 'Fixed Price').</li>
+                    <li>Sort the results (e.g. 'Best Match').</li>
+                    <li>Set minimum and maximum prices.</li>
+                    <li>Limit the result by item condition (e.g. 'New')</li>
+                    <li>Choose to return data from up to 100, 500, or 1000 items.</li>
                 </ul>
-            <li>Click 'Get Item Data' to return your results!</li>
+            <li>When you're ready, click 'Get Item Data' to return your results!</li>
         </ol>
         <p class="about_text">
             <strong>What you'll get:</strong>
         </p>
         <ul style="font-size: 20px;">
-            <li>Key Statistics</li>
-            <li>Helpful Visualizations</li>
-            <li>Excel & CSV Downloads</li>
+            <li>Instantly, you'll receive a page with:</li>
+            <ul style="margin-top:10px;">
+                <li><strong>Key Statistics</strong>: median price, minimum and maximum price, average price,
+                     the name of the top seller, total items available, % of items with a top rated listing, and more.
+                </li>
+                <li>An ordered table of the<strong> Most Popular Items </strong>: the number of item watchers,
+                    images of the items, when the auctions end, and links to view the items on eBay.
+                </li>
+                <li><strong>Interactive Visualizations</strong>: a map of seller locations, a chart of the top
+                    sellers and key statistics on them, plots of price distribution, a chart of item characteristics, and more.
+                </li>
+                <li><strong>CSV Downloads</strong>: the ability to download a dataset with more than 50 variables
+                    describing each item.</li>
+            </ul>
         </ul>
-        <p class="about_text">We also provide you with a table of the most popular items (based on your search) with
-            corresponding images and links to the items on eBay. Genius Bidding gives you important information on currently listed items from
-            sellers located in the United States.
+        <p class="about_text">For all of your searches, key statistics are saved and accessible via a
+            table on your account page whenever you want them. For the marketplaces you're most interested in,
+            you can set a search to recur automatically twice per week.</p>
+        <p class="about_text"> Over time, Genius Bidding will track your recurring search results and
+            provide you a dashboard on your 'trends' page to show you how key marketplace characteristics are
+            changing over time (e.g. how prices and the number of listed items are increasing/decreasing).</p>
+        <hr>
+        <h2>FAQs</h2>
+        <br>
+        <p class="about_text" style="color: rebeccapurple;">What items are included in the results?</p>
+        <p class="about_text">Genius Bidding gives you important information on currently listed items from
+            <i>sellers located in the United States</i>.
         </p>
-        <h1>UNDER CONSTRUCTION</h1>
+        <p class="about_text" style="color: rebeccapurple;">Why do I need to register?</p>
+        <p class="about_text">A couple of reasons: (1) Genius Bidding is most useful it if is used over time to
+            track a particular product marketplace (e.g. 'Gold Watches') and you can only access this data over time if
+            it can be uniquely attached to your account. (2) To ensure API limits are adhered to by setting a reasonable
+            limit for each user's daily search count.
+        </p>
+        <p class="about_text" style="color: rebeccapurple;">How do you make money?</p>
+        <p class="about_text">We don't. Genius Bidding is not-for-profit.</p>
+        <p class="about_text" style="color: rebeccapurple;">Do you advertise?</p>
+        <p class="about_text">No, there are no advertisements on this site and the only data
+            Genius Bidding maintains are from your searches on this site and your account details.</p>
+        <p class="about_text" style="color: rebeccapurple;">Where is my confirmation email?</p>
+        <p class="about_text">If you didn't receive your registration/other email within a minute or two
+            check if it is in your spam folder.</p>
+        <p>Other questions/concerns? <a href="{{ url_for('auth.contact') }}">Get in touch</a></p>
     </div>
 </div>
 {% endblock %}
