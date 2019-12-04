@@ -61,6 +61,9 @@ def register_shellcontext(app):
             'db': db,
             'User': models.User,
             'Search': models.Search,
+            'Results': models.Results,
+            'Recurring': models.Recurring,
+            'RecurringIds': models.RecurringIds,
         }
 
     app.shell_context_processor(shell_context)

@@ -8,8 +8,6 @@ from ebay_research.auth.email import send_comment
 from sqlalchemy import and_
 import os
 
-# TODO: change the account page table to ensure that the select button is visible on left side
-
 
 SETTINGS = os.environ.get('APP_SETTINGS')
 EBAY_API = os.environ.get('EBAY_API')
@@ -41,7 +39,7 @@ def convert_table_to_search(recurring_objects):
 def get_searches_to_replicate():
     day = datetime.utcnow().weekday()
     recurring_ids = db.session.query(Recurring, Search).filter(
-        and_(Recurring.day_of_week in DAY_COMBOS[day], Recurring.active == True)).join(Search).all()
+        and_(Recurring.day_of_week.in_(DAY_COMBOS[day]), Recurring.active == True)).join(Search).all()
     if recurring_ids:
         return convert_table_to_search(recurring_ids), True
     return [], False
