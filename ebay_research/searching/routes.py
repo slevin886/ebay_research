@@ -9,17 +9,11 @@ from ebay_research.data_analysis import EasyEbayData
 from ebay_research.support_functions import ingest_free_search_form, summary_stats
 from ebay_research.models import Search, Results
 from ebay_research.forms import FreeSearch
-from ebay_research.plot_maker import (
-    create_us_county_map,
-    make_price_by_type,
-    make_seller_bar,
-    prep_tab_data,
-    make_sunburst,
-    make_box_plot,
-    make_listing_pie_chart,
-)
+from ebay_research.plot_maker import MakePlots
 
-# TODO: figure out how to toggle optional buttons on plots
+
+# TODO: Close the results view on search page on each new click of the button
+# TODO: Add what days a search recurs on to account page
 # TODO: add ability to set recurring search from search page
 # TODO: Make avg. auction length a statistic
 # TODO: Combine price distribution plots and add bottom descriptors
@@ -52,7 +46,7 @@ def get_async_data():
                 message = 'Sorry there are no items for those search parameters'
             else:
                 message = 'Whoops! Something went wrong. Please try again later.'
-            return jsonify(message=message, status=400), 400
+            return jsonify(message=message), 400
 
         db.session.add(search_record)
         db.session.commit()
@@ -75,30 +69,12 @@ def get_async_data():
         db.session.commit()
         session['file_name'] = str(current_user.id) + '_' + str(search_record.id) + '.csv'
         write_file_to_s3(session['file_name'], df)
-        tab_data = prep_tab_data(df)
-        df_seller = make_seller_bar(df)
-        map_plot = create_us_county_map(df[['postalCode', 'itemId']].copy())
-        df_type = make_price_by_type(df[['listingType', 'currentPrice_value']])
-        df_pie = make_listing_pie_chart(df["listingType"])
-        # df_length = make_auction_length(df[['endTime', 'startTime']].copy())
-        df_box = make_box_plot(df[['listingType', 'currentPrice_value']].copy())
-        if not easy_ebay.item_aspects:
-            sunburst_plot = None
-        else:
-            sunburst_plot = make_sunburst(easy_ebay.item_aspects)
-        return jsonify(map_plot=map_plot,
-                       tab_data=tab_data,
-                       hist_plot=df["currentPrice_value"].tolist(),
-                       df_pie=df_pie,
-                       df_type=df_type,
-                       df_seller=df_seller,
-                       df_box=df_box,
-                       sunburst_plot=sunburst_plot,
-                       stats=stats,
-                       search_url=easy_ebay.search_url,
-                       search_id=search_record.id)
+        plots = MakePlots(df, easy_ebay.item_aspects)
+        plots.run()
+        return jsonify(stats=stats, search_url=easy_ebay.search_url, search_id=search_record.id,
+                       **plots.results), 200
     return jsonify(message='Whoops! Please ensure you entered text for keywords and put only numeric values '
-                             'in the price entries...', status=400), 400
+                           'in the price entries...'), 400
 
 
 @searching.route("/get_csv", methods=["GET"])
