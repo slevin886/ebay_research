@@ -39,7 +39,7 @@ def convert_table_to_search(recurring_objects):
 def get_searches_to_replicate():
     day = datetime.utcnow().weekday()
     recurring_ids = db.session.query(Recurring, Search).filter(
-        and_(Recurring.day_of_week.in_(DAY_COMBOS[day]), Recurring.active == True)).join(Search).all()
+        and_(Recurring.day_of_week.in_(DAY_COMBOS[day]), Recurring.active.is_(True))).join(Search).all()
     if recurring_ids:
         return convert_table_to_search(recurring_ids), True
     return [], False

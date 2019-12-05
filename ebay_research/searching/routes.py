@@ -12,7 +12,6 @@ from ebay_research.forms import FreeSearch
 from ebay_research.plot_maker import MakePlots
 
 
-# TODO: Close the results view on search page on each new click of the button
 # TODO: Add what days a search recurs on to account page
 # TODO: add ability to set recurring search from search page
 # TODO: Make avg. auction length a statistic

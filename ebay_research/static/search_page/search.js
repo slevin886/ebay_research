@@ -1,4 +1,3 @@
-// TODO: Clear results on each search
 // TODO: undefined: popping up still as the warning message...
 import {
   plotPriceByListing, plotPieListing, plotPriceBoxPlot, plotPriceHistogram,
@@ -15,6 +14,7 @@ const plotSelection = document.getElementById('plotOptions');
 const plotSelectOptions = document.getElementsByClassName('search_plots');
 const logButtonYaxis = document.getElementById('logButtonYaxis');
 const logButtonXaxis = document.getElementById('logButtonXaxis');
+const hideDashBoard = document.getElementById('hideDashBoard');
 
 // options for loading spinner
 const spinOptions = {
@@ -49,6 +49,7 @@ function resetPlotOptionVisibility(){
 let plottingData;
 
 async function pullAsync() {
+  hideDashBoard.style.display = 'none';
   document.getElementById('searchButton').disabled = true;
   let formData = new FormData(mainForm);
   let pagesWanted = document.querySelector('input[name="pull_options"]:checked').value;
@@ -69,7 +70,6 @@ async function pullAsync() {
       let stats = myData.stats;
       plottingData = myData;
       resetPlotOptionVisibility();
-      document.getElementById('hideDashBoard').style.display = 'block';
       document.getElementById('search_url').href = myData.search_url;
       Object.keys(stats).forEach(key => {
         try {
@@ -79,9 +79,11 @@ async function pullAsync() {
         }
       });
       drawPlot();
+      hideDashBoard.style.display = 'block';  // has to be before drawTable or does not render
       drawTable(myData.tab_data);
     })
     .catch((error) => {
+      hideDashBoard.style.display = 'none';
       if (error.response){
         messageDiv.innerText = error.response.data['message'];
       } else {
