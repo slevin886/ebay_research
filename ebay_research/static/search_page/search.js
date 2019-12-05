@@ -1,3 +1,5 @@
+// TODO: Clear results on each search
+// TODO: undefined: popping up still as the warning message...
 import {
   plotPriceByListing, plotPieListing, plotPriceBoxPlot, plotPriceHistogram,
   plotSellerMap, plotSunBurst, plotTopSellers,
@@ -48,7 +50,7 @@ let plottingData;
 
 async function pullAsync() {
   document.getElementById('searchButton').disabled = true;
-  const formData = new FormData(mainForm);
+  let formData = new FormData(mainForm);
   let pagesWanted = document.querySelector('input[name="pull_options"]:checked').value;
   formData.append('pages_wanted', pagesWanted.toString());
   const target = document.getElementById('loading_spinner');
@@ -63,9 +65,9 @@ async function pullAsync() {
       }
     )
     .then((res) => {
-      const myData = res.data;
+      let myData = res.data;
+      let stats = myData.stats;
       plottingData = myData;
-      const stats = myData.stats;
       resetPlotOptionVisibility();
       document.getElementById('hideDashBoard').style.display = 'block';
       document.getElementById('search_url').href = myData.search_url;
