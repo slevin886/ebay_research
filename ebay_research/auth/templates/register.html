@@ -15,14 +15,14 @@
             <div class="row mt-3">
                 <div class="col-md-6">
                     <div class="form-group"><strong>{{ form.email.label }}</strong>
-                        {{ form.email(class="form-control", placeholder="Enter Email", tabindex=1) }}
+                        {{ form.email(class="form-control", tabindex=1) }}
                     </div>
                     <div class="form-group"><strong>{{ form.password.label }}</strong>
-                        {{ form.password(class="form-control", type="password", placeholder="Enter Password",
+                        {{ form.password(class="form-control", type="password",
                             tabindex=2) }}
                     </div>
                     <div class="form-group"><strong>{{ form.confirm_password.label }}</strong>
-                        {{ form.confirm_password(class="form-control", type="password", placeholder="Confirm Password",
+                        {{ form.confirm_password(class="form-control", type="password",
                             tabindex=3) }}
                     </div>
                 </div>

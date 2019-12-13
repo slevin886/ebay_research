@@ -2,50 +2,66 @@
 {% block content %}
 <div class="row mt-5">
     <div class="col">
-        <h2>About <span style="color: darkred;">Genius </span><span style="color: rebeccapurple;">Bidding</span></h2>
-        <hr>
-        <p class="about_text">Genius Bidding is a <strong>free to use</strong> market research tool to help
-            optimize buying and selling on eBay. Genius Bidding allows you to search by keyword, category and more to gather
-            <strong>marketplace data, key statistics, and interactive visualizations</strong> on the eBay marketplace of your choice.
+        <h2>About Genius Bidding</h2>
+        <p class="about_text">Genius Bidding is a free to use market research tool to help
+            optimize buying and selling on <span style="color: hotpink">e</span><span style="color: deepskyblue">b</span><span style="color: palevioletred">a</span><span style="color: cadetblue">y</span>.
+            Genius Bidding allows you to search by keyword, category and more to gather data and statistics on the products you care about.
         </p>
-        <p class="about_text">Registered users can <strong>set up to three searches to run automatically</strong>,
-            twice per week, and easily track trends in product pricing and availability. Genius Bidding also enables users
-            to <strong>download full CSV data sets</strong> from their searches to easily conduct custom analysis on their own.
+    </div>
+</div>
+<div class="row mt-3 mb-3 pb-4 pt-3" style="background-color: #e9ecef; border-radius: 0 0 100% 0 ;">
+    <div class="col">
+        <h4 style="color:#5D737E;">Track trends in price, availability, interest and more</h4>
+        <img class="img-fluid" src="{{ url_for('static', filename='home_page_images/price_trend.png') }}" id="price_trend"
+            alt="plot of price trending">
+        <script>
+            screenWidth = window.innerWidth / 1.5;
+            document.getElementById('price_trend').width = screenWidth.toString();
+        </script>
+    </div>
+</div>
+<div class="row mt-0">
+    <div class="col">
+        <p class="about_text">Registered users can set up to three searches to run automatically,
+            twice per week, and easily track trends in product pricing, consumer interest, and items available.
         </p>
+    </div>
+</div>
+<div class="row mt-0">
+    <div class="col">
+        <p class="about_text">Users can also instantly get key statistics on the current market as well as see how items are being
+            listed, and which items are drawing the most consumer attention.
+        </p>
+    </div>
+</div>
+<div class="row mt-3 mb-3 pb-4 pt-3" style="background-color: #e9ecef; border-radius: 0 0 100% 0 ;">
+    <div class="col">
+        <h4 style="color:#5D737E;">See what the most popular items are and how they're being marketed</h4>
+        <img class="img-fluid" src="{{ url_for('static', filename='home_page_images/comp2.png') }}" id="composition"
+            alt="image of item characteristics">
+        <script>
+            screenWidth = window.innerWidth / 1.5;
+            document.getElementById('composition').width = screenWidth.toString();
+        </script>
+    </div>
+</div>
+<div class="row mt-0">
+    <div class="col">
         <p class="about_text">
-            <strong>It's this simple to get started</strong>:
-        </p>
-        <ol style="font-size: 20px;">
-            <li>Enter keywords that describe the item you want to buy/sell (e.g. 'Fender Guitar').</li>
-            <li>Choose search criteria from a set of drop down menus to more narrowly define your target market.</li>
-                <ul style="margin-top:10px;">
-                    <li>Select by product category and subcategory (e.g. 'Musical Instruments').</li>
-                    <li>Limit the results by listing type (e.g. 'Fixed Price').</li>
-                    <li>Sort the results (e.g. 'Best Match').</li>
-                    <li>Set minimum and maximum prices.</li>
-                    <li>Limit the result by item condition (e.g. 'New')</li>
-                    <li>Choose to return data from up to 100, 500, or 1000 items.</li>
-                </ul>
-            <li>When you're ready, click 'Get Item Data' to return your results!</li>
-        </ol>
-        <p class="about_text">
-            <strong>What you'll get:</strong>
+            Specifically, you'll get:
         </p>
         <ul style="font-size: 20px;">
-            <li>Instantly, you'll receive a page with:</li>
-            <ul style="margin-top:10px;">
-                <li><strong>Key Statistics</strong>: median price, minimum and maximum price, average price,
-                     the name of the top seller, total items available, % of items with a top rated listing, and more.
-                </li>
-                <li>An ordered table of the<strong> Most Popular Items </strong>: the number of item watchers,
-                    images of the items, when the auctions end, and links to view the items on eBay.
-                </li>
-                <li><strong>Interactive Visualizations</strong>: a map of seller locations, a chart of the top
-                    sellers and key statistics on them, plots of price distribution, a chart of item characteristics, and more.
-                </li>
-                <li><strong>CSV Downloads</strong>: the ability to download a dataset with more than 50 variables
-                    describing each item.</li>
-            </ul>
+            <li>Key Statistics: median price, minimum and maximum price, average price,
+                 the name of the top seller, total items available, % of items with a top rated listing, and more.
+            </li>
+            <li>An ordered table of the Most Popular Items : the number of item watchers,
+                images of the items, when the auctions end, and links to view the items on eBay.
+            </li>
+            <li>Interactive Visualizations: a map of seller locations, a chart of the top
+                sellers and key statistics on them, plots of price distribution, a chart of item characteristics, and more.
+            </li>
+            <li>CSV Downloads: the ability to download a dataset with more than 50 variables
+                describing each item.</li>
         </ul>
         <p class="about_text">For all of your searches, key statistics are saved and accessible via a
             table on your account page whenever you want them. For the marketplaces you're most interested in,

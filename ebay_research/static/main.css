@@ -1,3 +1,9 @@
+.navbar {
+    -webkit-box-shadow: 0 8px 6px -6px #999;
+    -moz-box-shadow: 0 8px 6px -6px #999;
+    box-shadow: 0 8px 6px -6px #999;
+}
+
 li {
     margin-top: 10px;
 }
@@ -8,6 +14,7 @@ li:first-child {
 
 html {
     height: 100%;
+    font-family: "Bebas Neue", serif;
 }
 
 body {
@@ -23,10 +30,14 @@ body {
     border: 1px solid black;
 }
 
-h5 {
-    font-family: "Bebas Neue", serif;
-    font-weight: bold;
+.page_button.active {
+    background-color: #7f868d !important;
 }
+
+/*p, h1, h2, h3, h4, h5, label {*/
+/*    font-family: "Bebas Neue", serif;*/
+/*    !*font-weight: bold;*!*/
+/*}*/
 
 .about_text {
     font-size: 20px;

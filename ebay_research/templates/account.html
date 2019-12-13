@@ -3,10 +3,11 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='account_page/account.css') }}">
 <div class="row mt-3">
     <div class="col">
-        <h5><span style="color: darkred;">username</span>: {{ current_user.email }}</h5>
-        <h5><span style="color: darkred;">account created</span>: {{ current_user.registered_on.strftime('%m-%d-%Y') }}
+        <h4 style="color: #167AF6;">My Account</h4>
+        <h5>{{ current_user.email }}</h5>
+        <h5><span style="color: #167AF6; font-size: 16px;">created on</span> {{ current_user.registered_on.strftime('%m-%d-%Y') }}
         </h5>
-        <h5><span style="color: darkred;">total searches</span>: {{ number_searches }}</h5>
+        <h5><span style="color: #167AF6; font-size: 16px;">total searches</span> {{ number_searches }}</h5>
     </div>
 </div>
 <div class="row mt-3">
@@ -43,7 +44,7 @@
                   <div class="col">
                         <div class="table-responsive">
                             <table class="table table-responsive" style="border-bottom-style: solid">
-                                <tr class="table thead-dark">
+                                <tr class="table" style="background-color:  #f8f9fa;">
                                     <th class="hideRecurring">Select One</th>
                                     <th>id</th>
                                     <th>keywords</th>

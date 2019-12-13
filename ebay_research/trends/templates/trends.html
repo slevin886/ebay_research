@@ -13,7 +13,7 @@
 </div>
 <div class="row mt-3">
     <div class="col-lg-4 col-sm col-xs">
-        <label for="trend_topic"><strong>Trend Options:</strong></label>
+        <label for="trend_topic"><strong>See trends in:</strong></label>
         <select class="form-control" id="trend_topic" name="trend_topic">
             <option value="median_price">Median Price</option>
             <option value="avg_price">Average Price</option>
@@ -24,7 +24,7 @@
 {#            <option value="top_seller">Top Seller & Count</option>#}
             <option value="total_entries">Total Items for Sale</option>
             <option value="total_watch_count">Total Watch Count</option>
-            <option value="average_shipping_price">Average Shipping Price</option>
+{#            <option value="average_shipping_price">Average Shipping Price</option>#}
         </select>
     </div>
 </div>
@@ -40,7 +40,7 @@
     <div class="col-lg-4 col-sm col-xs">
         <h5>You currently have no recurring searches.</h5>
         <p>By setting a recurring search, Genius Bidding will automatically run your
-            search each week and show you how your market is changing over time.</p>
+            search twice per week and show you how that market is changing over time.</p>
         <p>To set a recurring search, go to <a href="{{ url_for('main.account') }}">
             your account page,
         </a> click 'set recurring search', and select the search you'd like us to
