@@ -1,0 +1,20 @@
+#gavel {
+    transform: rotate(270deg);
+    transform-origin: bottom left;
+    animation-name: swing;
+    animation-duration: 2s;
+    animation-delay: 1s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+@keyframes swing {
+    from {
+        rotate(270deg);
+        transform-origin: bottom left;
+    }
+    to {
+        transform: rotate(360deg);
+        transform-origin: bottom left;
+    }
+}

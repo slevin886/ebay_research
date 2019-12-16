@@ -1,15 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='about_page/about.css') }}">
 <div class="row mt-5">
     <div class="col">
-        <h2>About Genius Bidding</h2>
+        <div class="row align-items-center">
+            <div class="flex-column d-flex p-2">
+                <h2>Genius Bidding</h2>
+            </div>
+            <div class="flex-column d-flex p-2">
+                <img src="{{ url_for('static', filename='home_page_images/gavel.png') }}"
+                             alt="gavel" class="img-fluid" id="gavel" width="85px;">
+            </div>
+        </div>
         <p class="about_text">Genius Bidding is a free to use market research tool to help
             optimize buying and selling on <span style="color: hotpink">e</span><span style="color: deepskyblue">b</span><span style="color: palevioletred">a</span><span style="color: cadetblue">y</span>.
             Genius Bidding allows you to search by keyword, category and more to gather data and statistics on the products you care about.
         </p>
     </div>
 </div>
-<div class="row mt-3 mb-3 pb-4 pt-3" style="background-color: #e9ecef; border-radius: 0 0 100% 0 ;">
+<div class="row mt-3 mb-3 pb-4 pt-3" style="background-color: #e9ecef;">
     <div class="col">
         <h4 style="color:#5D737E;">Track trends in price, availability, interest and more</h4>
         <img class="img-fluid" src="{{ url_for('static', filename='home_page_images/price_trend.png') }}" id="price_trend"
@@ -34,7 +43,7 @@
         </p>
     </div>
 </div>
-<div class="row mt-3 mb-3 pb-4 pt-3" style="background-color: #e9ecef; border-radius: 0 0 100% 0 ;">
+<div class="row mt-3 mb-3 pb-4 pt-3" style="background-color: #e9ecef;">
     <div class="col">
         <h4 style="color:#5D737E;">See what the most popular items are and how they're being marketed</h4>
         <img class="img-fluid" src="{{ url_for('static', filename='home_page_images/comp2.png') }}" id="composition"
