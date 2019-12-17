@@ -1,3 +1,19 @@
 #hideDashBoard {
     display: none;
 }
+
+.result_img {
+    width:20px;
+    float:left;
+    margin-right:8px;
+    margin-top:4px;
+}
+.result_main {
+    font-size: 22px;
+    font-weight: normal;
+}
+
+.support_text {
+    font-size: 18px;
+    font-weight: lighter;
+}

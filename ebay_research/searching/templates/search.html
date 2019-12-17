@@ -134,56 +134,57 @@
 <div id="hideDashBoard">
     <div class="row mt-3">
         <div class="col">
-            <h3 class="page_header">Results</h3>
+            <h3>Results</h3>
         </div>
     </div>
-    <div class="row mt-3 pt-3" style="background-color: #f8f9fa; border-radius: 30px;">
+    <div class="row">
         <div class="col">
-            <img src="{{ url_for('static', filename='icons/item_img.png') }}" class="img-fluid" alt="Responsive image"
-                style="width:20px;float:left;margin-right:5px;">
-            <p>Items Returned: <strong><span id="returned_count"></span></strong></p>
-            <img src="{{ url_for('static', filename='icons/item_img.png') }}" class="img-fluid" alt="Responsive image"
-                style="width:20px;float:left;margin-right:5px;">
-            <p>Total Items Available: <strong><span id="total_entries"></span></strong></p>
-            <img src="{{ url_for('static', filename='icons/top_rated.png') }}" class="img-fluid" alt="Responsive image"
-                style="width:20px;float:left;margin-right:5px;">
-            <p>% Items w/ Top Rated Listing: <strong><span id="top_rated_listing"></span>%</strong></p>
-            <img src="{{ url_for('static', filename='icons/categories.png') }}" class="img-fluid" alt="Responsive image"
-                 style="width:20px;float:left;margin-right:5px;margin-top:4px;">
-            <p>Largest Category: <strong><span id="largest_cat_name"></span><br>
-                (<span id="largest_cat_count"></span> items)</strong></p>
+            <p>Analyzed <span id="returned_count" class="result_main"></span> items from
+                <span id="total_entries" class="result_main"></span> available items
+            </p>
+        </div>
+    </div>
+    <div class="row mt-1 ml-3 mr-3">
+        <div class="col">
+            <img src="{{ url_for('static', filename='icons/avg_price.png') }}" class="img-fluid result_img"
+                 alt="price image">
+            <p class="support_text">Average item price is <span class="result_main">$<span id="avg_price"></span></span></p>
+            <img src="{{ url_for('static', filename='icons/avg_price.png') }}" class="img-fluid result_img"
+                 alt="price image">
+            <p class="support_text">Price range is <span class="result_main">$<span id="min_price"></span>-$<span id="max_price"></span></span>
+            </p>
+            <img src="{{ url_for('static', filename='icons/binoculars.png') }}" class="img-fluid result_img"
+                 alt="binoculars">
+            <p class="support_text">Total watch count is <span id="total_watch_count" class="result_main"></span></p>
+            <img src="{{ url_for('static', filename='icons/top_rated.png') }}"
+                 class="img-fluid result_img" alt="a book">
+            <p class="support_text">Is a top rated item <span class="result_main"><span id="top_rated_listing"></span>%</span></p>
+            <img src="{{ url_for('static', filename='icons/categories.png') }}" class="img-fluid result_img"
+                 alt="tabular data">
+            <p class="support_text">Largest category is<br><span class="result_main"><span id="largest_cat_name"></span>
+                (<span id="largest_cat_count"></span> items)</span></p>
         </div>
         <div class="col">
-            <img src="{{ url_for('static', filename='icons/seller_icon.png') }}" class="img-fluid" alt="Responsive image"
-                style="width:20px;float:left;margin-right:5px;">
-            <p>Top Seller: <strong><span id="top_seller"></span></strong></p>
-            <img src="{{ url_for('static', filename='icons/seller_icon.png') }}" class="img-fluid" alt="Responsive image"
-                style="width:20px;float:left;margin-right:5px;">
-            <p>Top Seller Item Count: <strong><span id="top_seller_count"></span></strong></p>
-            <img src="{{ url_for('static', filename='icons/top_rated.png') }}" class="img-fluid" alt="Responsive image"
-                style="width:20px;float:left;margin-right:5px;">
-            <p>% Items from Top Rated Seller: <strong><span id="top_rated_percent"></span>%</strong></p>
-            <img src="{{ url_for('static', filename='icons/categories.png') }}" class="img-fluid" alt="Responsive image"
-                 style="width:20px;float:left;margin-right:5px;margin-top:4px;">
-            <p>Largest Subcategory: <strong><span id="largest_sub_name"></span><br>
-                (<span id="largest_sub_count"></span> items)</strong></p>
-        </div>
-        <div class="col">
-            <img src="{{ url_for('static', filename='icons/avg_price.png') }}" class="img-fluid" alt="Responsive image"
-                style="width:20px;float:left;margin-right:5px;">
-            <p>Average price of items: <strong>$<span id="avg_price"></span></strong></p>
-            <img src="{{ url_for('static', filename='icons/avg_price.png') }}" class="img-fluid" alt="Responsive image"
-                style="width:20px;float:left;margin-right:5px;">
-            <p>Median price of items: <strong>$<span id="median_price"></span></strong></p>
-            <img src="{{ url_for('static', filename='icons/avg_price.png') }}" class="img-fluid" alt="Responsive image"
-                style="width:20px;float:left;margin-right:5px;">
-            <p>Price range: <strong>$<span id="min_price"></span>-$<span id="max_price"></span></strong></p>
-            <img src="{{ url_for('static', filename='icons/avg_price.png') }}" class="img-fluid" alt="Responsive image"
-                style="width:20px;float:left;margin-right:5px;">
-            <p>Average shipping price: <strong>$<span id="avg_shipping_price"></span></strong></p>
-            <img src="{{ url_for('static', filename='icons/binoculars.png') }}" class="img-fluid" alt="Responsive image"
-                style="width:20px;float:left;margin-right:5px;">
-            <p>Total Watch Count: <strong><span id="total_watch_count"></span></strong></p>
+            <img src="{{ url_for('static', filename='icons/avg_price.png') }}" class="img-fluid result_img"
+                 alt="cash image">
+            <p class="support_text">Median price is <span class="result_main">$<span id="median_price"></span></span></p>
+            <img src="{{ url_for('static', filename='icons/avg_price.png') }}" class="img-fluid result_img"
+                 alt="bank image">
+            <p class="support_text">Average shipping price is <span class="result_main">$<span id="avg_shipping_price"></span>
+                </span></p>
+            <img src="{{ url_for('static', filename='icons/seller_icon.png') }}" class="img-fluid result_img"
+                 alt="salesman image">
+            <p class="support_text">Top Seller is <span id="top_seller" class="result_main"></span></p>
+            <img src="{{ url_for('static', filename='icons/seller_icon.png') }}" class="img-fluid result_img"
+                 alt="salesman image">
+            <p class="support_text">Top seller has <span class="result_main"><span id="top_seller_count"></span> items</span></p>
+            <img src="{{ url_for('static', filename='icons/top_rated.png') }}" class="img-fluid result_img"
+                 alt="book image">
+            <p class="support_text">Seller is top rated <span class="result_main"><span id="top_rated_percent"></span>%</span></p>
+            <img src="{{ url_for('static', filename='icons/categories.png') }}" class="img-fluid result_img"
+                 alt="table image">
+            <p class="support_text">Largest subcategory is<br><span class="result_main"><span id="largest_sub_name"></span>
+                (<span id="largest_sub_count"></span> items)</span></p>
         </div>
     </div>
     <div class="row mt-2">
@@ -196,11 +197,11 @@
     </div>
     <hr>
     <div class="row mt-3">
-        <div class="col-md-6">
-            <h3 class="page_header" id="plot_title">Plots</h3>
-        </div>
-        <div class="col-md-6">
-            <label for="plotOptions"><strong>Select Plot to View:</strong></label>
+{#        <div class="col-md-6">#}
+{#            <h3 class="page_header" id="plot_title">Plots</h3>#}
+{#        </div>#}
+        <div class="col-md-3">
+            <label for="plotOptions">Select a plot to view</label>
             <select class="form-control" id="plotOptions" name="plotOptions">
                 <option class="search_plots" value="map_plot" id="map_plot">Seller Locations</option>
                 <option class="search_plots" value="sunburst_plot" id="sunburst_plot">Item Aspects</option>
