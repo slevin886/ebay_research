@@ -1,3 +1,7 @@
+"""
+Tests EasyEbayData class- the main class for interacting with ebay's API
+"""
+
 import pytest
 import os
 from ebay_research.data_analysis import EasyEbayData

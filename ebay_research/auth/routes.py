@@ -1,3 +1,8 @@
+"""
+These are the URLs related to authorization and authentication, including registration, password resets, login, logout,
+etc.
+"""
+
 from ebay_research import db
 from ebay_research.models import User
 from ebay_research.forms import EmailForm, SendConfirmation, LoginForm, ChangePassword, ContactForm
@@ -9,6 +14,9 @@ from flask_login import logout_user, login_user, login_required, current_user
 
 @auth.route("/register", methods=["GET", "POST"])
 def register():
+    """
+    Registration page
+    """
     form = EmailForm()
     if form.validate_on_submit():
         session["email"] = form.email.data
@@ -36,6 +44,10 @@ def register():
 
 @auth.route("/confirmation/<token>", methods=["GET"])
 def confirmation(token):
+    """
+    This is the page you are redirected to from confirmation email, either immediately redirects
+    or sends a new confirmation email if token is expired.
+    """
     user = User.confirm_token(token)
     if not user:
         form = SendConfirmation()
