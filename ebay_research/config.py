@@ -18,7 +18,7 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB limit of file uploads
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = os.environ.get('SECRET_KEY') if os.environ.get('SECRET_KEY') else 'sldkflksjdflkj234lnln'
     SQLALCHEMY_DATABASE_URI = DB_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     REDIS_URL = os.environ.get('REDIS_URL')
@@ -28,8 +28,8 @@ class Config(object):
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
-    ADMIN_EMAIL = 'slevin886@gmail.com'
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER') if os.environ.get('MAIL_DEFAULT_SENDER') else 'test@test.com'
+    ADMIN_EMAIL = 'test@test.com'  # TODO: add your email
 
 
 class ProductionConfig(Config):
@@ -48,4 +48,4 @@ class TestingConfig(Config):
     # not yet relevant but should be
     BCRYPT_LOG_ROUNDS = 4
     WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI = "postgresql://localhost/ebay_research_test"
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')

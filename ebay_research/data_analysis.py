@@ -1,14 +1,13 @@
+"""
+This is the main class for working with ebay's API. It provides several ways to extract data from the API and
+cleans the data.
+"""
+
 import pandas as pd
 from typing import List
 from ebaysdk.exception import ConnectionError
 from ebaysdk.finding import Connection as Finding
 from concurrent.futures import ThreadPoolExecutor
-
-
-# search variation:
-# baseball card  (both words) baseball,card (exact phrase baseball card)
-# (baseball,card) (items with either baseball or card)  baseball -card (baseball but NOT card)
-# baseball -(card,star) (baseball but NOT card or star)
 
 
 class EasyEbayData:
